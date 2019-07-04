@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\App;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\UserVerificationRequest;
+use App\Http\Requests\ResendCodeRequest;
 
 use Exception;
 
@@ -41,10 +42,6 @@ class UsersController extends Controller
             }else{
 
                 $user = auth()->user();
-                    
-                $token = $user->createToken('authToken')->accessToken;
-                $user['token'] = $token;
-                $this->data['data'] = $user;
             
                 if(!$user->verified){
 
@@ -56,6 +53,9 @@ class UsersController extends Controller
 
                     $this->data['code'] = 200;
                     $this->data['message'] = __('messages.login_success');
+                    $token = $user->createToken('authToken')->accessToken;
+                    $user['token'] = $token;
+                    $this->data['data'] = $user;
 
                 }
 
@@ -100,7 +100,7 @@ class UsersController extends Controller
             if($user){
                 $this->data['code'] = 200;
                 $this->data['message'] = __('messages.signup_success');
-                $this->data['data'] = $user;
+                // $this->data['data'] = $user;
                 $this->sendVerificationCode($user->id);
             }else{
                 throw new Exception;
@@ -118,25 +118,36 @@ class UsersController extends Controller
     public function verify(UserVerificationRequest $request){
 
         //Checking if authorized access
-        if(auth()->guard('api')->check()){
-
-            $otp = $request->code; 
+        // if(auth()->guard('api')->check()){
 
             try {
-                if(!auth()->guard('api')->user()->verified){
+
+                $otp = $request->code; 
+                $user = User::where("phone", $request->phone)
+                            ->where("country_code", $request->country_code)
+                            ->first();
+
+                // if(!auth()->guard('api')->user()->verified){
+                if(!$user->verified){
                     
-                    if($otp == auth()->guard('api')->user()->otp){    
+                    // if($otp == auth()->guard('api')->user()->otp){    
+                    if($otp == $user->otp){    
 
                         //Update the user instance in the DB
-                        $user = User::find(auth()->guard('api')->user()->id);
+                        // $user = User::find(auth()->guard('api')->user()->id);
                         $user->verified = true;
                         $user->otp = null;
                         $user->save();
 
+                        //Issuing Token
+                        $token = $user->createToken('authToken')->accessToken;
+                        $user['token'] = $token;
+
                         //Refreshing the cached user
-                        auth()->guard('api')->setUser($user);
+                        // auth()->guard('api')->setUser($user);
                         $this->data['code'] = 200;
                         $this->data['message'] = __('messages.verification_success');
+                        $this->data['data'] = $user;
 
                     }else{
 
@@ -158,33 +169,45 @@ class UsersController extends Controller
     
             }
             
-        }else{
+        // }else{
 
-            $this->data['code'] = 400;
-            $this->data['message'] = __('messages.unauthorized');
+        //     $this->data['code'] = 400;
+        //     $this->data['message'] = __('messages.unauthorized');
 
-        }
+        // }
 
         return response()->json($this->data , 200);
     }
 
-    public function resendCode(Request $request){
+    public function resendCode(ResendCodeRequest $request){
 
-        if(auth()->guard('api')->check()){
+        // if(auth()->guard('api')->check()){
 
             try{
-        
+                
+                $user = User::where("phone", $request->phone)
+                            ->where("country_code", $request->country_code)
+                            ->first();
+
+                if(!$user){
+                    $this->data['code'] = 401;
+                    $this->data['message'] = __('messages.login_fail');
+                }else{
                     //Update the user instance in the DB
-                    $user = User::find(auth()->guard('api')->user()->id);
+                    // $user = User::find(auth()->guard('api')->user()->id);
+                    // $user = auth()->user();
                     $user->otp = null;
                     $user->save();
 
                     //Refreshing the cached user
-                    auth()->guard('api')->setUser($user);
+                    // auth()->guard('api')->setUser($user);
+                    // auth()->setUser($user);
                     $this->sendVerificationCode($user->id);
 
                     $this->data['code'] = 200;
                     $this->data['message'] = __('messages.resend_code_success');
+                }
+                
 
             } catch (Exception $e) {
 
@@ -192,12 +215,12 @@ class UsersController extends Controller
                 $this->initErrorResponse($e);
 
             }
-        }else{
+        // }else{
 
-            $this->data['code'] = 400;
-            $this->data['message'] = __('messages.unauthorized');
+        //     $this->data['code'] = 400;
+        //     $this->data['message'] = __('messages.unauthorized');
 
-        }
+        // }
 
         return response()->json($this->data , 200);
     }

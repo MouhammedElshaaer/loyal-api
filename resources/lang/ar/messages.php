@@ -17,6 +17,7 @@ return [
     'validation_error'=> 'نرجو التأكد من صحة البيانات',
 
     'resend_code_success'=> 'تم إعادة إرسال الرمز',
+    'resend_code_fail'=> 'لم يتم الحصول على مستخدم بهذا الرقم',
 
     'unauthorized'=> 'طلب غير مصرح',
 

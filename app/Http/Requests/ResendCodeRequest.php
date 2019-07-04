@@ -7,10 +7,9 @@ use Illuminate\Support\Facades\App;
 
 use App\Http\Requests\Traits\UsesCustomErrorMessage;
 
-class UserVerificationRequest extends FormRequest
+class ResendCodeRequest extends FormRequest
 {
     use UsesCustomErrorMessage;
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -31,7 +30,6 @@ class UserVerificationRequest extends FormRequest
         return [
             'phone' => 'required',
             'country_code' => 'required',
-            'code' => 'required|numeric'
         ];
     }
 

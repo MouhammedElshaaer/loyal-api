@@ -17,6 +17,7 @@ return [
     'validation_error'             => 'Would you check that you have filled all required fields',
 
     'resend_code_success'             => 'Verification code has been sent',
+    'resend_code_fail'             => 'No user associated with this phone number',
 
     'unauthorized'             => 'Unauthorized access',
 
