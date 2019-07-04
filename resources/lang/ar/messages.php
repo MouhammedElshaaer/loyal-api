@@ -11,13 +11,14 @@ return [
 
     'non_verified'=> 'برجاء تفعيل حسابك',
     'verification_success'=> 'تم تفعيل الحساب',
+    'verification_fail'=> 'لم يوجد مستخدم بهذه البيانات',
     'already_verified'=> 'ًلقد تم تفعيل هذا الحساب مسبقا',
     'invalid_otp'=> 'الكود غير صحيح',
 
     'validation_error'=> 'نرجو التأكد من صحة البيانات',
 
     'resend_code_success'=> 'تم إعادة إرسال الرمز',
-    'resend_code_fail'=> 'لم يتم الحصول على مستخدم بهذا الرقم',
+    'resend_code_fail'=> 'لم يوجد مستخدم بهذه البيانات',
 
     'unauthorized'=> 'طلب غير مصرح',
 

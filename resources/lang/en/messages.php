@@ -11,6 +11,7 @@ return [
 
     'non_verified'             => 'Would you please verify your Loyal account',
     'verification_success'             => 'Verification complete',
+    'verification_fail'             => 'No user associated with this phone number',
     'already_verified'             => 'This account already verified',
     'invalid_otp'             => 'Invalid code',
 

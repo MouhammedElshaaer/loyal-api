@@ -126,42 +126,47 @@ class UsersController extends Controller
                 $user = User::where("phone", $request->phone)
                             ->where("country_code", $request->country_code)
                             ->first();
+                if($user){
+                    // if(!auth()->guard('api')->user()->verified){
+                    if(!$user->verified){
+                        
+                        // if($otp == auth()->guard('api')->user()->otp){    
+                        if($otp == $user->otp){    
 
-                // if(!auth()->guard('api')->user()->verified){
-                if(!$user->verified){
-                    
-                    // if($otp == auth()->guard('api')->user()->otp){    
-                    if($otp == $user->otp){    
+                            //Update the user instance in the DB
+                            // $user = User::find(auth()->guard('api')->user()->id);
+                            $user->verified = true;
+                            $user->otp = null;
+                            $user->save();
 
-                        //Update the user instance in the DB
-                        // $user = User::find(auth()->guard('api')->user()->id);
-                        $user->verified = true;
-                        $user->otp = null;
-                        $user->save();
+                            //Issuing Token
+                            $token = $user->createToken('authToken')->accessToken;
+                            $user['token'] = $token;
 
-                        //Issuing Token
-                        $token = $user->createToken('authToken')->accessToken;
-                        $user['token'] = $token;
+                            //Refreshing the cached user
+                            // auth()->guard('api')->setUser($user);
+                            $this->data['code'] = 200;
+                            $this->data['message'] = __('messages.verification_success');
+                            $this->data['data'] = $user;
 
-                        //Refreshing the cached user
-                        // auth()->guard('api')->setUser($user);
-                        $this->data['code'] = 200;
-                        $this->data['message'] = __('messages.verification_success');
-                        $this->data['data'] = $user;
+                        }else{
 
-                    }else{
+                            $this->data['code'] = 400;
+                            $this->data['message'] = __('messages.invalid_otp');
+
+                        }
+                    }else {
 
                         $this->data['code'] = 400;
-                        $this->data['message'] = __('messages.invalid_otp');
+                        $this->data['message'] = __('messages.already_verified');
 
                     }
-                }else {
+                }else{
 
                     $this->data['code'] = 400;
-                    $this->data['message'] = __('messages.already_verified');
+                    $this->data['message'] = __('messages.resend_code_fail');
 
                 }
-
             } catch (Exception $e) {
 
                 report($e);
@@ -190,8 +195,8 @@ class UsersController extends Controller
                             ->first();
 
                 if(!$user){
-                    $this->data['code'] = 401;
-                    $this->data['message'] = __('messages.login_fail');
+                    $this->data['code'] = 400;
+                    $this->data['message'] = __('messages.resend_code_fail');
                 }else{
                     //Update the user instance in the DB
                     // $user = User::find(auth()->guard('api')->user()->id);
