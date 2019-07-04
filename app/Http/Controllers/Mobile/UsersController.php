@@ -34,31 +34,38 @@ class UsersController extends Controller
         $attributes = $request->all();
 
         try {
-
-            if(!auth()->guard('api')->attempt($attributes)){
+            
+            if(!auth()->attempt($attributes)){
                 $this->data['code'] = 401;
                 $this->data['message'] = __('messages.login_fail');
+            }else{
+
+                $user = auth()->user();
+                    
+                $token = $user->createToken('authToken')->accessToken;
+                $user['token'] = $token;
+                $this->data['data'] = $user;
+            
+                if(!$user->verified){
+
+                    $this->data['code'] = 402;
+                    $this->data['message'] = __('messages.non_verified');
+                    $this->sendVerificationCode($user->id);
+
+                }else{
+
+                    $this->data['code'] = 200;
+                    $this->data['message'] = __('messages.login_success');
+
+                }
+
             }
-    
-            if(!auth()->guard('api')->user()->verified){
-                $this->data['code'] = 402;
-                $this->data['message'] = __('messages.non_verified');
-                $this->sendVerificationCode();
-            }
+
         } catch (Exception $e) {
 
             report($e);
             $this->initErrorResponse($e);
         }
-
-        $user = auth()->guard('api')->user();
-
-        $token = auth()->guard('api')->user()->createToken('authToken')->accessToken;
-        $user['token'] = $token;
-
-        $this->data['code'] = 200;
-        $this->data['message'] = __('messages.login_success');
-        $this->data['data'] = $user;
 
         return response()->json($this->data, 200);
     }
@@ -174,7 +181,7 @@ class UsersController extends Controller
 
                     //Refreshing the cached user
                     auth()->guard('api')->setUser($user);
-                    $this->sendVerificationCode();
+                    $this->sendVerificationCode($user->id);
 
                     $this->data['code'] = 200;
                     $this->data['message'] = __('messages.resend_code_success');
@@ -196,7 +203,7 @@ class UsersController extends Controller
     }
 
 
-    public function sendVerificationCode(){
+    public function sendVerificationCode($id){
 
         /**
          * TODO:
@@ -206,7 +213,7 @@ class UsersController extends Controller
         // $otp = $this->generateOTP(4);
         $otp = "1234";
         //Update the user instance in the DB
-        $user = User::find(auth()->guard('api')->user()->id);
+        $user = User::find($id);
         $user->otp = $otp;
         $user->save();
         //Refreshing the cached user
