@@ -35,12 +35,12 @@ class UsersController extends Controller
 
         try {
 
-            if(!auth()->attempt($attributes)){
+            if(!auth()->guard('api')->attempt($attributes)){
                 $this->data['code'] = 401;
                 $this->data['message'] = __('messages.login_fail');
             }
     
-            if(!auth()->user()->verified){
+            if(!auth()->guard('api')->user()->verified){
                 $this->data['code'] = 402;
                 $this->data['message'] = __('messages.non_verified');
                 $this->sendVerificationCode();
@@ -51,9 +51,9 @@ class UsersController extends Controller
             $this->initErrorResponse($e);
         }
 
-        $user = auth()->user();
+        $user = auth()->guard('api')->user();
 
-        $token = auth()->user()->createToken('authToken')->accessToken;
+        $token = auth()->guard('api')->user()->createToken('authToken')->accessToken;
         $user['token'] = $token;
 
         $this->data['code'] = 200;
@@ -191,7 +191,7 @@ class UsersController extends Controller
             $this->data['message'] = __('messages.unauthorized');
 
         }
-        
+
         return response()->json($this->data , 200);
     }
 
