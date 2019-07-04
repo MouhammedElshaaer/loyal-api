@@ -86,7 +86,6 @@ class UsersController extends Controller
         // }
 
         $attributes = $request->all();
-        dump($attributes);
         $attributes['password'] = bcrypt($attributes['password']);
 
         $this->data['code'] = 400;
