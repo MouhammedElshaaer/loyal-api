@@ -16,8 +16,9 @@ use Illuminate\Http\Request;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-
-Route::post('mobile/login', 'Mobile\UsersController@login');
-Route::post('mobile/register', 'Mobile\UsersController@register');
-Route::post('mobile/verify', 'Mobile\UsersController@verify');
-Route::post('mobile/resend', 'Mobile\UsersController@resendCode');//->middleware('auth:api');
+// Route::group(['middleware' => ['web', 'auth:api']], function () {
+    Route::post('mobile/login', 'Mobile\UsersController@login');
+    Route::post('mobile/register', 'Mobile\UsersController@register');
+    Route::post('mobile/verify', 'Mobile\UsersController@verify');//->middleware('auth:api');
+    Route::post('mobile/resend', 'Mobile\UsersController@resendCode');//->middleware('auth:api');
+// });
