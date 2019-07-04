@@ -34,6 +34,7 @@ class CreateUserRequest extends FormRequest
             'password' => 'required|min:8',
             'phone' => 'required|unique:users',
             'country_code' => 'required',
+            'image' => 'required',
         ];
     }
 
