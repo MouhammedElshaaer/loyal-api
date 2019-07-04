@@ -50,8 +50,7 @@ class UsersController extends Controller
             
             $this->data['code'] = 500;
             $this->data['message'] = "Internal server error";
-            // $this->data['data'] = $e->getTraceAsString();
-            $this->data['data'] = $e;
+            $this->data['data'] = $e->getTraceAsString();
 
             return response()->json($this->data , 200);
         }
