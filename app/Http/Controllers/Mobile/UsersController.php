@@ -101,7 +101,7 @@ class UsersController extends Controller
                 $this->data['code'] = 200;
                 $this->data['message'] = __('messages.signup_success');
                 $this->data['data'] = $user;
-                $this->sendVerificationCode();
+                $this->sendVerificationCode($user->id);
             }else{
                 throw new Exception;
             }
