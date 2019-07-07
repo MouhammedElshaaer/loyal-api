@@ -63,7 +63,6 @@ class UsersController extends Controller
     public function socailLogin(SocialLoginRequest $request)
     {
         $provider =  $request->provider_name;
-        // $accessToken = $request->headers->get('access_token');
         $accessToken = $request->access_token;
         $providerUser = null;
         
@@ -103,7 +102,7 @@ class UsersController extends Controller
             $user = $linkedSocialAccount->user;
 
             if(!$user->phone){
-                $this->signupSuccessResponse($user);
+                $this->socialSignupSuccessResponse($user);
             }else{
                 $this->verifiedResponse($user);
             }
@@ -165,7 +164,7 @@ class UsersController extends Controller
 
     public function completeSignup(CompleteSignupRequest $request){
         
-        $accessToken = $request->headers->get('access_token');
+        $accessToken = $request->access_token;
         $provider =  $request->provider_name;
         $attributes = $request->all();
         $attributes['password'] = bcrypt($attributes['password']);
