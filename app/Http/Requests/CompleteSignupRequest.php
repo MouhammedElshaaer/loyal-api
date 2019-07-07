@@ -31,7 +31,6 @@ class CompleteSignupRequest extends FormRequest
         return [
             'access_token' => 'required',
             'provider_name' => 'required|string',
-            'password' => 'required|min:8',
             'country_code' => 'required',
             'phone' => 'required|unique:users|numeric|digits_between:8,14'
         ];
