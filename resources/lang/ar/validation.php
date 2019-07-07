@@ -100,6 +100,9 @@ return [
     */
 
     'custom' => [
+        'provider_name' => [
+            'required' => 'تأكد من تحديد التطبيق',
+        ],
         'name' => [
             'required' => 'تأكد من ملئ خانة الاسم',
         ],

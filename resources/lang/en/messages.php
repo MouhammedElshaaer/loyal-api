@@ -3,25 +3,27 @@
 
 return [
 
-    'login_success'             => 'Greetings our Loyal user',
-    'login_fail'             => 'Sorry, We cannot match your Loyal account credentials',
+    'login_success'=> 'Greetings our Loyal customer',
+    'login_fail'=> 'Sorry, We cannot match your Loyal account credentials',
 
-    'signup_success'             => 'Congratulations, You are now a Loyal user',
-    'signup_fail'             => 'Sorry, something went wrong, please try again',
+    'signup_success'=> 'Congratulations, You are now a Loyal customer',
+    'signup_fail'=> 'Sorry, something went wrong, please try again',
 
-    'non_verified'             => 'Would you please verify your Loyal account',
-    'verification_success'             => 'Verification complete',
-    'verification_fail'             => 'No user associated with this phone number',
-    'already_verified'             => 'This account already verified',
-    'invalid_otp'             => 'Invalid code',
+    'social_signup_success'=> 'Congratulations, You are now one step away from being a loyal customer',
 
-    'validation_error'             => 'Would you check that you have filled all required fields',
+    'non_verified'=> 'Would you please verify your Loyal account',
+    'verification_success'=> 'Verification complete',
+    'verification_fail'=> 'No user associated with this phone number',
+    'already_verified'=> 'This account already verified',
+    'invalid_otp'=> 'Invalid code',
 
-    'resend_code_success'             => 'Verification code has been sent',
-    'resend_code_fail'             => 'No user associated with this phone number',
+    'validation_error'=> 'Would you check that you have filled all required fields',
 
-    'unauthorized'             => 'Unauthorized access',
+    'resend_code_success'=> 'Verification code has been sent',
+    'resend_code_fail'=> 'No user associated with this phone number',
 
-    'server_error'             => 'Internal Server Error',
+    'unauthorized'=> 'Unauthorized access',
+
+    'server_error'=> 'Internal Server Error',
     
 ];

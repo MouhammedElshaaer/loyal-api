@@ -9,6 +9,9 @@ return [
     'signup_success'=> 'مبروك, أنت الان من مستخدمين لويال',
     'signup_fail'=> 'لم نستطع إنشاء حساب لك',
 
+    'social_signup_success'=> 'Congratulations, You are now one step away from being a loyal customer',
+    'social_signup_success'=> 'مبروك، أكمل بياناتك لتصبح أحد عملاء لويال',
+
     'non_verified'=> 'برجاء تفعيل حسابك',
     'verification_success'=> 'تم تفعيل الحساب',
     'verification_fail'=> 'لم يوجد مستخدم بهذه البيانات',

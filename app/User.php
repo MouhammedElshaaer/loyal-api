@@ -7,6 +7,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+use App\Models\LinkedSocialAccount;
+
 class User extends Authenticatable
 {
     use Notifiable, HasApiTokens;
@@ -37,4 +39,9 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function linkedSocialAccounts()
+    {
+        return $this->hasMany(LinkedSocialAccount::class);
+    }
 }

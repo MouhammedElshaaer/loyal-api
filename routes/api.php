@@ -19,6 +19,10 @@ use Illuminate\Http\Request;
 // Route::group(['middleware' => ['web', 'auth:api']], function () {
     Route::post('mobile/login', 'Mobile\UsersController@login');
     Route::post('mobile/register', 'Mobile\UsersController@register');
-    Route::post('mobile/verify', 'Mobile\UsersController@verify');//->middleware('auth:api');
-    Route::post('mobile/resend', 'Mobile\UsersController@resendCode');//->middleware('auth:api');
+    Route::post('mobile/login/social', 'Mobile\UsersController@socailLogin');
+    Route::post('mobile/signup/complete', 'Mobile\UsersController@completeSignup');
+
+    Route::post('mobile/verify', 'Mobile\UsersController@verify');
+    Route::post('mobile/resend', 'Mobile\UsersController@resendCode');
+    
 // });
