@@ -17,7 +17,6 @@ use App\Http\Requests\CompleteSignupRequest;
 use App\Http\Requests\SocialLoginRequest;
 
 use Exception;
-use Image;
 
 use App\User;
 use App\Models\LinkedSocialAccount;
@@ -64,7 +63,8 @@ class UsersController extends Controller
     public function socailLogin(SocialLoginRequest $request)
     {
         $provider =  $request->provider_name;
-        $accessToken = $request->headers->get('access_token');
+        // $accessToken = $request->headers->get('access_token');
+        $accessToken = $request->access_token;
         $providerUser = null;
         
         try {
