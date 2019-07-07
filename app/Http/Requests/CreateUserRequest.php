@@ -32,9 +32,8 @@ class CreateUserRequest extends FormRequest
             'name' => 'required',
             'email' => 'email|required|unique:users',
             'password' => 'required|min:8',
-            'phone' => 'required|unique:users',
-            'country_code' => 'required',
-            'image' => 'required',
+            'phone' => 'required|unique:users|numeric|digits_between:8,14',
+            'country_code' => 'required'
         ];
     }
 
@@ -52,7 +51,7 @@ class CreateUserRequest extends FormRequest
 
     public function message()
     {
-        return __('messeges.validation_error');
+        return __('messages.validation_error');
     }
 
 }

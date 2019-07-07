@@ -100,7 +100,6 @@ class UsersController extends Controller
             if($user){
                 $this->data['code'] = 200;
                 $this->data['message'] = __('messages.signup_success');
-                // $this->data['data'] = $user;
                 $this->sendVerificationCode($user->id);
             }else{
                 throw new Exception;
@@ -117,115 +116,86 @@ class UsersController extends Controller
 
     public function verify(UserVerificationRequest $request){
 
-        //Checking if authorized access
-        // if(auth()->guard('api')->check()){
+        try {
 
-            try {
+            $otp = $request->code; 
+            $user = User::where("phone", $request->phone)
+                        ->where("country_code", $request->country_code)
+                        ->first();
+            if($user){
+                if(!$user->verified){
+                    
+                    if($otp == $user->otp){    
 
-                $otp = $request->code; 
-                $user = User::where("phone", $request->phone)
-                            ->where("country_code", $request->country_code)
-                            ->first();
-                if($user){
-                    // if(!auth()->guard('api')->user()->verified){
-                    if(!$user->verified){
-                        
-                        // if($otp == auth()->guard('api')->user()->otp){    
-                        if($otp == $user->otp){    
+                        //Update the user instance in the DB
+                        $user->verified = true;
+                        $user->otp = null;
+                        $user->save();
 
-                            //Update the user instance in the DB
-                            // $user = User::find(auth()->guard('api')->user()->id);
-                            $user->verified = true;
-                            $user->otp = null;
-                            $user->save();
+                        //Issuing Token
+                        $token = $user->createToken('authToken')->accessToken;
+                        $user['token'] = $token;
 
-                            //Issuing Token
-                            $token = $user->createToken('authToken')->accessToken;
-                            $user['token'] = $token;
+                        $this->data['code'] = 200;
+                        $this->data['message'] = __('messages.verification_success');
+                        $this->data['data'] = $user;
 
-                            //Refreshing the cached user
-                            // auth()->guard('api')->setUser($user);
-                            $this->data['code'] = 200;
-                            $this->data['message'] = __('messages.verification_success');
-                            $this->data['data'] = $user;
-
-                        }else{
-
-                            $this->data['code'] = 400;
-                            $this->data['message'] = __('messages.invalid_otp');
-
-                        }
-                    }else {
+                    }else{
 
                         $this->data['code'] = 400;
-                        $this->data['message'] = __('messages.already_verified');
+                        $this->data['message'] = __('messages.invalid_otp');
 
                     }
-                }else{
+                }else {
 
                     $this->data['code'] = 400;
-                    $this->data['message'] = __('messages.resend_code_fail');
+                    $this->data['message'] = __('messages.already_verified');
 
                 }
-            } catch (Exception $e) {
+            }else{
 
-                report($e);
-                $this->initErrorResponse($e);
-    
+                $this->data['code'] = 400;
+                $this->data['message'] = __('messages.resend_code_fail');
+
             }
-            
-        // }else{
+        } catch (Exception $e) {
 
-        //     $this->data['code'] = 400;
-        //     $this->data['message'] = __('messages.unauthorized');
+            report($e);
+            $this->initErrorResponse($e);
 
-        // }
+        }
 
         return response()->json($this->data , 200);
     }
 
     public function resendCode(ResendCodeRequest $request){
+        try{
+            
+            $user = User::where("phone", $request->phone)
+                        ->where("country_code", $request->country_code)
+                        ->first();
 
-        // if(auth()->guard('api')->check()){
+            if(!$user){
+                $this->data['code'] = 400;
+                $this->data['message'] = __('messages.resend_code_fail');
+            }else{
+                //Update the user instance in the DB
+                $user->otp = null;
+                $user->save();
 
-            try{
-                
-                $user = User::where("phone", $request->phone)
-                            ->where("country_code", $request->country_code)
-                            ->first();
+                $this->sendVerificationCode($user->id);
 
-                if(!$user){
-                    $this->data['code'] = 400;
-                    $this->data['message'] = __('messages.resend_code_fail');
-                }else{
-                    //Update the user instance in the DB
-                    // $user = User::find(auth()->guard('api')->user()->id);
-                    // $user = auth()->user();
-                    $user->otp = null;
-                    $user->save();
-
-                    //Refreshing the cached user
-                    // auth()->guard('api')->setUser($user);
-                    // auth()->setUser($user);
-                    $this->sendVerificationCode($user->id);
-
-                    $this->data['code'] = 200;
-                    $this->data['message'] = __('messages.resend_code_success');
-                }
-                
-
-            } catch (Exception $e) {
-
-                report($e);
-                $this->initErrorResponse($e);
-
+                $this->data['code'] = 200;
+                $this->data['message'] = __('messages.resend_code_success');
             }
-        // }else{
+            
 
-        //     $this->data['code'] = 400;
-        //     $this->data['message'] = __('messages.unauthorized');
+        } catch (Exception $e) {
 
-        // }
+            report($e);
+            $this->initErrorResponse($e);
+
+        }
 
         return response()->json($this->data , 200);
     }

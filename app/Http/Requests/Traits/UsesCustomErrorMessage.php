@@ -17,10 +17,14 @@ trait UsesCustomErrorMessage
    */
   protected function failedValidation(Validator $validator)
   {
+    /**
+     * Those next line of codes calls the message function exists in the Request classes
+     * to return their custom message
+     */
     // $message = (method_exists($this, 'message'))
     //   ? $this->container->call([$this, 'message'])
     //   : 'The given data was invalid.';
-
+    
     throw new HttpResponseException(response()->json([
       'code' => 400,
       'message' => $validator->errors()->first(),
