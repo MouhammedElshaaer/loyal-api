@@ -167,7 +167,6 @@ class UsersController extends Controller
         $accessToken = $request->access_token;
         $provider =  $request->provider_name;
         $attributes = $request->all();
-        $attributes['password'] = bcrypt($attributes['password']);
 
         try {
 
@@ -323,7 +322,11 @@ class UsersController extends Controller
 
         $this->data['code'] = 200;
         $this->data['message'] = __('messages.social_signup_success');
-        $this->data['data'] = ["image"=>$user->image];
+        $this->data['data'] = [
+            "image"=>$user->image,
+            "name" => $user->name,
+            "email" => $user->email
+        ];
     }
 
     private function generateOTP($len) {
