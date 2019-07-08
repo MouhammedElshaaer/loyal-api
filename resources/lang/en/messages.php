@@ -22,6 +22,9 @@ return [
     'resend_code_success'=> 'Verification code has been sent',
     'resend_code_fail'=> 'No user associated with this phone number',
 
+    'uploading_success'=> 'File uploaded successfully',
+    'uploading_failed'=> 'Image uploading failed',
+
     'unauthorized'=> 'Unauthorized access',
 
     'server_error'=> 'Internal Server Error',

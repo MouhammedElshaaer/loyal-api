@@ -18,11 +18,15 @@ use App\Http\Requests\SocialLoginRequest;
 
 use Exception;
 
+use App\Http\Traits\ResponseUtilities;
+
 use App\User;
 use App\Models\LinkedSocialAccount;
 
 class UsersController extends Controller
 {
+    use ResponseUtilities;
+
     private $data;
 
     public function __construct(){
@@ -293,60 +297,12 @@ class UsersController extends Controller
         auth()->guard('api')->setUser($user);
     }
 
-    protected function verifiedResponse(User $user){
-        if(!$user->verified){
-
-            $this->data['code'] = 402;
-            $this->data['message'] = __('messages.non_verified');
-            $this->sendVerificationCode($user->id);
-            return false;
-
-        }else{
-
-            $this->data['code'] = 200;
-            $this->data['message'] = __('messages.login_success');
-            $token = $user->createToken('authToken')->accessToken;
-            $user['token'] = $token;
-            $this->data['data'] = $user;
-            return true;
-        }
-    }
-
-    protected function signupSuccessResponse($user){
-        $this->data['code'] = 200;
-        $this->data['message'] = __('messages.signup_success');
-        $this->sendVerificationCode($user->id);
-    }
-
-    protected function socialSignupSuccessResponse($user){
-
-        $this->data['code'] = 200;
-        $this->data['message'] = __('messages.social_signup_success');
-        $this->data['data'] = [
-            "image"=>$user->image,
-            "name" => $user->name,
-            "email" => $user->email
-        ];
-    }
-
     private function generateOTP($len) {
         $result = '';
         for($i = 0; $i < $len; $i++) {
             $result .= mt_rand(0, 9);
         }
         return $result;
-    }
-
-    protected function initErrorResponse(Exception $e){
-
-        report($e);
-        $traceArray = $e->getTrace();
-        $exceptionsMessage = ['message'=>$e->getMessage()];
-        array_unshift($traceArray, $exceptionsMessage);
-
-        $this->data['code'] = 500;
-        $this->data['message'] = __('messages.server_error');
-        $this->data['data'] = $traceArray;
     }
 
     function saveSocialAvatar($fileURL, $path, $user){

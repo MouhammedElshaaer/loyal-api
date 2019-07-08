@@ -23,6 +23,9 @@ return [
     'resend_code_success'=> 'تم إعادة إرسال الرمز',
     'resend_code_fail'=> 'لم يوجد مستخدم بهذه البيانات',
 
+    'uploading_success'=> 'تم رفع الصورة',
+    'uploading_failed'=> 'خطأ فى رفع الصورة',
+
     'unauthorized'=> 'طلب غير مصرح',
 
     'server_error'=> 'خطأ في الخادم الداخلي',

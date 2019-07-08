@@ -24,5 +24,8 @@ use Illuminate\Http\Request;
 
     Route::post('mobile/verify', 'Mobile\UsersController@verify');
     Route::post('mobile/resend', 'Mobile\UsersController@resendCode');
+
+
+    Route::post('store', 'Shared\ImagesController@store');
     
 // });
