@@ -17,6 +17,7 @@ class ImagesController extends Controller
 
     private $data;
     private $baseURL;
+    private $threshold;
 
     public function __construct(){
 
@@ -34,11 +35,11 @@ class ImagesController extends Controller
             $this->baseURL = "http://localhost:8000/storage/users_avatar/";
         }
 
+        $this->threshold = 1024*1000;
     }
 
     public function store(StoreImageRequest $request)
     {
-
         $this->data['code'] = 400;
         $this->data['message'] = __('messages.uploading_failed');
 
@@ -54,7 +55,10 @@ class ImagesController extends Controller
                 //file name to store
                 $uniqueFileName=$fileName.'_'.time().'.'.$extension;
 
-                $path=$request->file('image')->storeAs('public/users_avatar', $uniqueFileName);
+                // $path=$request->file('image')->storeAs('public/users_avatar', $uniqueFileName);
+                $image = Image::make($request->file('image')->getRealPath());
+                $image->save('storage/users_avatar/'.$uniqueFileName,
+                                $this->getPercentageToMaxQuality($image->filesize(), $this->threshold));
 
                 $this->data['code'] = 200;
                 $this->data['message'] = __('messages.uploading_success');
@@ -65,6 +69,16 @@ class ImagesController extends Controller
             $this->initErrorResponse($e);
         }
         return response()->json($this->data, 200);
+    }
+
+    /**
+     * This function returns the best quality percentage to get an image size <= $threshold
+     */
+    protected function getPercentageToMaxQuality($currQuality, $threshold){
+        if($currQuality>$threshold){
+            return 100-(int)((($currQuality-$threshold)/$currQuality)*100);
+        }
+        return 100;
     }
 }
 
