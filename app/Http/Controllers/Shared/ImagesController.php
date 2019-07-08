@@ -27,19 +27,13 @@ class ImagesController extends Controller
             "data" => new \stdClass()
         ];
 
-        if(env('APP_ENV')=="local"){
-            $this->baseURL = "http://localhost:8000/storage/users_avatar/";
-        }else if(env('APP_ENV')=="production"){
-            $this->baseURL = "http://dev.soleekhub.com/lolo/storage/users_avatar/";
-        }else{
-            $this->baseURL = "http://localhost:8000/storage/users_avatar/";
-        }
-
+        $this->baseURL = \URL::to('/')."/storage/users_avatar/";
         $this->threshold = 1024*1000;
     }
 
     public function store(StoreImageRequest $request)
     {
+        
         $this->data['code'] = 400;
         $this->data['message'] = __('messages.uploading_failed');
 
