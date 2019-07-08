@@ -33,7 +33,6 @@ class ImagesController extends Controller
 
     public function store(StoreImageRequest $request)
     {
-        
         $this->data['code'] = 400;
         $this->data['message'] = __('messages.uploading_failed');
 
@@ -52,7 +51,7 @@ class ImagesController extends Controller
                 // $path=$request->file('image')->storeAs('public/users_avatar', $uniqueFileName);
                 $image = Image::make($request->file('image')->getRealPath());
                 $image->save('storage/users_avatar/'.$uniqueFileName,
-                                $this->getPercentageToMaxQuality($image->filesize(), $this->threshold));
+                            $this->getPercentageToMaxQuality($image->filesize(), $this->threshold));
 
                 $this->data['code'] = 200;
                 $this->data['message'] = __('messages.uploading_success');
@@ -75,33 +74,3 @@ class ImagesController extends Controller
         return 100;
     }
 }
-
-// $before = [
-        //     'height' => $height = Image::make($request->file('image'))->height(),
-        //     'width' => $width = Image::make($request->file('image'))->width(),
-        //     'size' => $size = $request->file('image')->getSize()
-        // ];
-
-        // if($size > 1024*2*1000){
-
-        //     $image = Image::make($request->file('image')->getRealPath());  ;
-        //     // while($size > 1024*2*1000){
-
-        //         $width = $width-$width*0.5;
-        //         $height = $height-$height*0.5;
-        //         $image = $image->resize($width, $height);
-
-        //         $size = $image->filesize();
-        //     // }
-
-        //     $after = [
-        //         'height' => $height,
-        //         'width' => $width,
-        //         'size' => $image->filesize()
-        //     ];
-        // }
-        // $test = [
-        //     'before' => $before,
-        //     'after' => $after
-        // ];
-        // return response()->json($test);

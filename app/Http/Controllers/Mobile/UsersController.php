@@ -15,6 +15,9 @@ use App\Http\Requests\UserVerificationRequest;
 use App\Http\Requests\ResendCodeRequest;
 use App\Http\Requests\CompleteSignupRequest;
 use App\Http\Requests\SocialLoginRequest;
+use App\Http\Requests\VerifyPhoneRequest;
+use App\Http\Requests\ValidateUserRequest;
+use App\Http\Requests\ResetPasswordRequest;
 
 use Exception;
 
@@ -41,7 +44,7 @@ class UsersController extends Controller
 
     public function login(LoginRequest $request){
 
-        $attributes = $request->all();
+        $attributes = $request->only('country_code', 'phone', 'password');
 
         try {
             
@@ -49,17 +52,12 @@ class UsersController extends Controller
                 $this->data['code'] = 401;
                 $this->data['message'] = __('messages.login_fail');
             }else{
-
                 $user = auth()->user();
                 $this->verifiedResponse($user);
 
             }
 
-        } catch (Exception $e) {
-
-            report($e);
-            $this->initErrorResponse($e);
-        }
+        } catch (Exception $e) {$this->initErrorResponse($e);}
 
         return response()->json($this->data, 200);
     }
@@ -80,10 +78,7 @@ class UsersController extends Controller
                 $this->data['message'] = __('messages.login_fail');
             }
 
-        } catch (Exception $e) {
-            report($e);
-            $this->initErrorResponse($e);
-        }
+        } catch (Exception $e) {$this->initErrorResponse($e);}
 
         return response()->json($this->data, 200);
     }
@@ -119,12 +114,7 @@ class UsersController extends Controller
             if ($email = $providerUser->getEmail()) {
                 $user = User::where('email', $email)->first();
             }
-            if (! $user) {
-
-                // Save user linked social account avatar
-                // $file = $providerUser->getAvatar();
-                // $path = "/users_avatar";
-                // $avatarURL = $this->saveSocialAvatar($file, $path, $providerUser);
+            if (!$user) {
 
                 $user = User::create([
                     'name' => $providerUser->getName(),
@@ -151,7 +141,7 @@ class UsersController extends Controller
     
         $attributes = $request->all();
         $attributes['password'] = bcrypt($attributes['password']);
-
+        
         $this->data['code'] = 400;
         $this->data['message'] = __('messages.signup_fail');
 
@@ -193,11 +183,11 @@ class UsersController extends Controller
         return response()->json($this->data , 200);
     }
 
-    public function verify(UserVerificationRequest $request){
+    public function verifyAccount(UserVerificationRequest $request){
 
         try {
-
-            $otp = $request->code; 
+            $attributes = $request->only('country_code', 'phone', 'code');
+            $otp = $attributes['code']; 
             $user = User::where("phone", $request->phone)
                         ->where("country_code", $request->country_code)
                         ->first();
@@ -234,15 +224,101 @@ class UsersController extends Controller
             }else{
 
                 $this->data['code'] = 400;
-                $this->data['message'] = __('messages.resend_code_fail');
+                $this->data['message'] = __('messages.user_validation_fail');
 
             }
-        } catch (Exception $e) {
+        } catch (Exception $e) {$this->initErrorResponse($e);}
 
-            report($e);
-            $this->initErrorResponse($e);
+        return response()->json($this->data , 200);
+    }
 
-        }
+    public function validateUser(ValidateUserRequest $request){
+
+        try {
+            $attributes = $request->only('country_code', 'phone');
+            $user = User::where("phone", $request->phone)
+                        ->where("country_code", $request->country_code)
+                        ->first();
+
+            if($user){
+
+                $this->data['code'] = 200;
+                $this->data['message'] = __('messages.user_validation_success');
+                $this->sendVerificationCode($user->id);
+
+            }else{
+
+                $this->data['code'] = 400;
+                $this->data['message'] = __('messages.user_validation_fail');
+
+            }
+        } catch (Exception $e) {$this->initErrorResponse($e);}
+
+        return response()->json($this->data , 200);
+    }
+
+    public function verifyPhone(VerifyPhoneRequest $request){
+
+        try {
+            $attributes = $request->only('country_code', 'phone', 'code');
+            $otp = $attributes['code'];
+            $user = User::where("phone", $request->phone)
+                        ->where("country_code", $request->country_code)
+                        ->first();
+
+            if($user){
+                    
+                if($otp == $user->otp){
+
+                    //Issuing Token
+                    $token = $user->createToken('authToken')->accessToken;
+                    $user['token'] = $token;
+
+                    $this->data['code'] = 200;
+                    $this->data['message'] = __('messages.phone_verification_success');
+                    $this->data['data'] = $user;
+
+                }else{
+
+                    $this->data['code'] = 400;
+                    $this->data['message'] = __('messages.invalid_otp');
+
+                }
+            }else{
+
+                $this->data['code'] = 400;
+                $this->data['message'] = __('messages.user_validation_fail');
+
+            }
+        } catch (Exception $e) {$this->initErrorResponse($e);}
+
+        return response()->json($this->data , 200);
+    }
+
+    public function resetPassword(ResetPasswordRequest $request){
+
+        try{
+            $attributes = $request->only('password', 'code');
+
+            if(auth()->guard('api')->check() && auth()->guard('api')->user()->otp == $attributes['code']){
+
+                $user = User::where('id', auth()->guard('api')->user()->id)->first();
+                if($user){
+                    $user->password = bcrypt($attributes['password']);
+                    $user->otp = null;
+                    $user->save();
+                }else{throw new Exception('User not found');}
+
+                auth()->guard('api')->setUser($user);
+                
+                $this->data['code'] = 200;
+                $this->data['message'] = __('messages.password_reset_successfully');
+
+            }else{
+                $this->data['code'] = 400;
+                $this->data['message'] = __('messages.unauthorized');
+            }
+        } catch(Exception $e) {$this->initErrorResponse($e);}
 
         return response()->json($this->data , 200);
     }
@@ -269,32 +345,34 @@ class UsersController extends Controller
             }
             
 
-        } catch (Exception $e) {
-
-            report($e);
-            $this->initErrorResponse($e);
-
-        }
+        } catch (Exception $e) {$this->initErrorResponse($e);}
 
         return response()->json($this->data , 200);
     }
 
-
-    public function sendVerificationCode($id){
-
-        /**
-         * TODO:
-         * Actual implementation if sms verification code
-         */
+    public function logout(Request $request){
         
-        // $otp = $this->generateOTP(4);
-        $otp = "1234";
-        //Update the user instance in the DB
-        $user = User::find($id);
-        $user->otp = $otp;
-        $user->save();
-        //Refreshing the cached user
-        auth()->guard('api')->setUser($user);
+        if(auth()->guard('api')->check()){
+
+            $accessToken = auth()->guard('api')->user()->token();
+
+            \DB::table('oauth_refresh_tokens')
+            ->where('access_token_id', $accessToken->id)
+            ->update([
+                'revoked' => true
+            ]);
+
+            $accessToken->revoke();
+            return response()->json(['message'=>'hello authenticated mother fucker']);
+
+        }else{
+
+            $this->data['code'] = 400;
+            $this->data['message'] = __('messages.unauthorized');
+
+        }
+
+        return response()->json($this->data , 200);
     }
 
     private function generateOTP($len) {

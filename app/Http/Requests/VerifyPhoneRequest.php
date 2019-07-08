@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\App;
 
 use App\Http\Requests\Traits\UsesCustomErrorMessage;
 
-class LoginRequest extends FormRequest
+class VerifyPhoneRequest extends FormRequest
 {
     use UsesCustomErrorMessage;
 
@@ -29,9 +29,9 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'country_code' => 'required',
             'phone' => 'required|numeric|digits_between:8,14',
-            'password' => 'required'
+            'country_code' => 'required',
+            'code' => 'required|numeric'
         ];
     }
 
@@ -47,8 +47,4 @@ class LoginRequest extends FormRequest
         return  __('validation.custom');
     }
 
-    public function message()
-    {
-        return __('messeges.validation_error');
-    }
 }

@@ -14,9 +14,15 @@ return [
 
     'non_verified'=> 'برجاء تفعيل حسابك',
     'verification_success'=> 'تم تفعيل الحساب',
-    'verification_fail'=> 'لم يوجد مستخدم بهذه البيانات',
     'already_verified'=> 'ًلقد تم تفعيل هذا الحساب مسبقا',
     'invalid_otp'=> 'الكود غير صحيح',
+
+    'phone_verification_success'=> 'تم تأكيد الرمز',
+
+    'password_reset_successfully'=> 'تم تغيير كلمة االسر بنجاح',
+
+    'user_validation_success' =>'تم تأكيد بيانات المستخدم',
+    'user_validation_fail' =>'لم يتم العثور على مستخدم بهذه البيانات',
 
     'validation_error'=> 'نرجو التأكد من صحة البيانات',
 
@@ -25,6 +31,7 @@ return [
 
     'uploading_success'=> 'تم رفع الصورة',
     'uploading_failed'=> 'خطأ فى رفع الصورة',
+
 
     'unauthorized'=> 'طلب غير مصرح',
 

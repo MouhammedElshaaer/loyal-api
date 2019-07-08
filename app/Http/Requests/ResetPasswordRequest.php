@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\App;
 
 use App\Http\Requests\Traits\UsesCustomErrorMessage;
 
-class LoginRequest extends FormRequest
+class ResetPasswordRequest extends FormRequest
 {
     use UsesCustomErrorMessage;
 
@@ -29,26 +29,8 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'country_code' => 'required',
-            'phone' => 'required|numeric|digits_between:8,14',
-            'password' => 'required'
+            'password' => 'required|min:8',
+            'code' => 'required|numeric'
         ];
-    }
-
-    /**
-     * Get the error messages for the defined validation rules.
-     *
-     * @return array
-     */
-    public function messages()
-    {
-        $locale = $this->headers->get('locale');
-        App::setLocale($locale);
-        return  __('validation.custom');
-    }
-
-    public function message()
-    {
-        return __('messeges.validation_error');
     }
 }

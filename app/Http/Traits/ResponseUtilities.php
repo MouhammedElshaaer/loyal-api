@@ -4,6 +4,7 @@ namespace App\Http\Traits;
 
 use Illuminate\Http\Exceptions\HttpResponseException;
 
+use App\User;
 use Exception;
 
 trait ResponseUtilities
@@ -55,5 +56,22 @@ trait ResponseUtilities
         $this->data['code'] = 500;
         $this->data['message'] = __('messages.server_error');
         $this->data['data'] = $traceArray;
+    }
+
+    public function sendVerificationCode($id){
+
+        /**
+         * TODO:
+         * Actual implementation if sms verification code
+         */
+        
+        // $otp = $this->generateOTP(4);
+        $otp = "1234";
+        //Update the user instance in the DB
+        $user = User::find($id);
+        $user->otp = $otp;
+        $user->save();
+        //Refreshing the cached user
+        auth()->guard('api')->setUser($user);
     }
 }
