@@ -254,7 +254,7 @@ class UsersController extends Controller
                 }else{throw new Exception('User not found');}
 
                 auth()->guard('api')->setUser($user);
-                $this->initResponse(200, 'password_reset_successfully');
+                $this->initResponse(200, 'password_reset_success');
 
             }else{$this->initResponse(400, 'unauthorized');}
         } catch(Exception $e) {$this->initErrorResponse($e);}

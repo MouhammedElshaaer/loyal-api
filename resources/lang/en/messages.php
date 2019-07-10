@@ -20,7 +20,7 @@ return [
 
     'phone_verification_success'=> 'Verification complete',
 
-    'password_reset_successfully'=> 'Password reset successfully',
+    'password_reset_success'=> 'Password reset successfully',
 
     'user_validation_success' =>'Validation success',
     'user_validation_fail' =>'No user associated with this credentials',

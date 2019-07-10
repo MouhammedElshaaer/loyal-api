@@ -37,13 +37,14 @@ trait ResponseUtilities
 
     protected function socialSignupSuccessResponse($user){
 
-        $this->data['code'] = 400;
+        $this->data['code'] = 401;
         $this->data['message'] = __('messages.social_signup_success');
         $this->data['data'] = [
             "image"=>$user->image,
             "name" => $user->name,
             "email" => $user->email
         ];
+        // $this->initResponse(400, )
     }
     
     protected function initErrorResponse(Exception $e){
