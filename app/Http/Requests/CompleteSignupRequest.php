@@ -29,7 +29,7 @@ class CompleteSignupRequest extends FormRequest
     public function rules()
     {
         return [
-            'access_token' => 'required',
+            'social_token' => 'required',
             'provider_name' => 'required|string',
             'country_code' => 'required',
             'phone' => 'required|unique:users|numeric|digits_between:8,14'

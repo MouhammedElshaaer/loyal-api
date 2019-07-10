@@ -6,6 +6,8 @@ return [
     'login_success'=> 'Greetings our Loyal customer',
     'login_fail'=> 'Sorry, We cannot match your Loyal account credentials',
 
+    'logout_success'=> 'Your are now logged out',
+
     'signup_success'=> 'Congratulations, You are now a Loyal customer',
     'signup_fail'=> 'Sorry, something went wrong, please try again',
 

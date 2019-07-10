@@ -29,8 +29,8 @@ class SocialLoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'provider_name' => 'required|string',
-            'access_token' => 'required'
+            'social_token' => 'required',
+            'provider_name' => 'required|string'
         ];
     }
 

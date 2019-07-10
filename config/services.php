@@ -45,8 +45,8 @@ return [
     ],
 
     'google' => [
-        'client_id' => "",
-        'client_secret' => "",
+        'client_id' => '485802115186-l7hmv3ube5b7vuue8vdprdlsdt4j6htm.apps.googleusercontent.com',
+        'client_secret' => 'Gvb_ow0o26Coh4c9cOg5AopE',
         'redirect' => "",
     ],
 

@@ -37,7 +37,7 @@ trait ResponseUtilities
 
     protected function socialSignupSuccessResponse($user){
 
-        $this->data['code'] = 200;
+        $this->data['code'] = 400;
         $this->data['message'] = __('messages.social_signup_success');
         $this->data['data'] = [
             "image"=>$user->image,
@@ -56,6 +56,13 @@ trait ResponseUtilities
         $this->data['code'] = 500;
         $this->data['message'] = __('messages.server_error');
         $this->data['data'] = $traceArray;
+    }
+
+    protected function initResponse($code, $messagesArrayKey, $data=null){
+
+        $this->data['code'] = $code;
+        $this->data['message'] = __('messages.'.$messagesArrayKey);
+        $this->data['data'] = $data? $data: new \stdClass();
     }
 
     public function sendVerificationCode($id){

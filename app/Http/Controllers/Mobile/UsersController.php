@@ -20,6 +20,7 @@ use App\Http\Requests\ValidateUserRequest;
 use App\Http\Requests\ResetPasswordRequest;
 
 use Exception;
+use Google_Client;
 
 use App\Http\Traits\ResponseUtilities;
 
@@ -49,8 +50,7 @@ class UsersController extends Controller
         try {
             
             if(!auth()->attempt($attributes)){
-                $this->data['code'] = 401;
-                $this->data['message'] = __('messages.login_fail');
+                $this->initResponse(401, 'login_fail');
             }else{
                 $user = auth()->user();
                 $this->verifiedResponse($user);
@@ -65,17 +65,16 @@ class UsersController extends Controller
     public function socailLogin(SocialLoginRequest $request)
     {
         $provider =  $request->provider_name;
-        $accessToken = $request->access_token;
+        $socialToken = $request->social_token;
         $providerUser = null;
         
         try {
-            $providerUser = Socialite::driver($provider)->userFromToken($accessToken);
 
-            if ($providerUser) {
+            $providerUser = $this->socialite($provider, $socialToken);
+            if ($providerUser && $providerUser->getEmail()) {
                 $user = $this->findOrCreate($providerUser, $provider);
             }else{
-                $this->data['code'] = 401;
-                $this->data['message'] = __('messages.login_fail');
+                $this->initResponse(401, 'login_fail');
             }
 
         } catch (Exception $e) {$this->initErrorResponse($e);}
@@ -141,9 +140,7 @@ class UsersController extends Controller
     
         $attributes = $request->all();
         $attributes['password'] = bcrypt($attributes['password']);
-        
-        $this->data['code'] = 400;
-        $this->data['message'] = __('messages.signup_fail');
+        $this->initResponse(400, 'signup_fail');
 
         try {
 
@@ -158,13 +155,13 @@ class UsersController extends Controller
 
     public function completeSignup(CompleteSignupRequest $request){
         
-        $accessToken = $request->access_token;
+        $socialToken = $request->social_token;
         $provider =  $request->provider_name;
         $attributes = $request->all();
 
         try {
 
-            $providerUser = Socialite::driver($provider)->userFromToken($accessToken);
+            $providerUser = $this->socialite($provider, $socialToken);
             if ($providerUser) {
 
                 $user = $this->findOrCreate($providerUser, $provider);
@@ -173,10 +170,7 @@ class UsersController extends Controller
                 else{$user->update($attributes);}
                 $this->signupSuccessResponse($user);
 
-            }else{
-                $this->data['code'] = 400;
-                $this->data['message'] = __('messages.signup_fail');
-            }
+            }else{$this->initResponse(400, 'signup_fail');}
 
         }catch (Exception $e) {$this->initErrorResponse($e);}
 
@@ -204,31 +198,12 @@ class UsersController extends Controller
                         //Issuing Token
                         $token = $user->createToken('authToken')->accessToken;
                         $user['token'] = $token;
+                        $this->initResponse(200, 'verification_success', $user);
 
-                        $this->data['code'] = 200;
-                        $this->data['message'] = __('messages.verification_success');
-                        $this->data['data'] = $user;
-
-                    }else{
-
-                        $this->data['code'] = 400;
-                        $this->data['message'] = __('messages.invalid_otp');
-
-                    }
-                }else {
-
-                    $this->data['code'] = 400;
-                    $this->data['message'] = __('messages.already_verified');
-
-                }
-            }else{
-
-                $this->data['code'] = 400;
-                $this->data['message'] = __('messages.user_validation_fail');
-
-            }
+                    }else{$this->initResponse(400, 'invalid_otp');}
+                }else {$this->initResponse(400, 'already_verified');}
+            }else{$this->initResponse(400, 'user_validation_fail');}
         } catch (Exception $e) {$this->initErrorResponse($e);}
-
         return response()->json($this->data , 200);
     }
 
@@ -236,24 +211,12 @@ class UsersController extends Controller
 
         try {
             $attributes = $request->only('country_code', 'phone');
-            $user = User::where("phone", $request->phone)
-                        ->where("country_code", $request->country_code)
-                        ->first();
-
+            $user = User::where("phone", $request->phone)->where("country_code", $request->country_code)->first();
             if($user){
-
-                $this->data['code'] = 200;
-                $this->data['message'] = __('messages.user_validation_success');
+                $this->initResponse(200, 'user_validation_success');
                 $this->sendVerificationCode($user->id);
-
-            }else{
-
-                $this->data['code'] = 400;
-                $this->data['message'] = __('messages.user_validation_fail');
-
-            }
+            }else{$this->initResponse(400, 'user_validation_fail');}
         } catch (Exception $e) {$this->initErrorResponse($e);}
-
         return response()->json($this->data , 200);
     }
 
@@ -262,36 +225,18 @@ class UsersController extends Controller
         try {
             $attributes = $request->only('country_code', 'phone', 'code');
             $otp = $attributes['code'];
-            $user = User::where("phone", $request->phone)
-                        ->where("country_code", $request->country_code)
-                        ->first();
-
+            $user = User::where("phone", $request->phone)->where("country_code", $request->country_code)->first();
             if($user){
-                    
                 if($otp == $user->otp){
 
                     //Issuing Token
                     $token = $user->createToken('authToken')->accessToken;
                     $user['token'] = $token;
+                    $this->initResponse(200, 'phone_verification_success', $user);
 
-                    $this->data['code'] = 200;
-                    $this->data['message'] = __('messages.phone_verification_success');
-                    $this->data['data'] = $user;
-
-                }else{
-
-                    $this->data['code'] = 400;
-                    $this->data['message'] = __('messages.invalid_otp');
-
-                }
-            }else{
-
-                $this->data['code'] = 400;
-                $this->data['message'] = __('messages.user_validation_fail');
-
-            }
+                }else{$this->initResponse(400, 'invalid_otp');}
+            }else{$this->initResponse(400, 'user_validation_fail');}
         } catch (Exception $e) {$this->initErrorResponse($e);}
-
         return response()->json($this->data , 200);
     }
 
@@ -299,7 +244,6 @@ class UsersController extends Controller
 
         try{
             $attributes = $request->only('password', 'code');
-
             if(auth()->guard('api')->check() && auth()->guard('api')->user()->otp == $attributes['code']){
 
                 $user = User::where('id', auth()->guard('api')->user()->id)->first();
@@ -310,43 +254,28 @@ class UsersController extends Controller
                 }else{throw new Exception('User not found');}
 
                 auth()->guard('api')->setUser($user);
-                
-                $this->data['code'] = 200;
-                $this->data['message'] = __('messages.password_reset_successfully');
+                $this->initResponse(200, 'password_reset_successfully');
 
-            }else{
-                $this->data['code'] = 400;
-                $this->data['message'] = __('messages.unauthorized');
-            }
+            }else{$this->initResponse(400, 'unauthorized');}
         } catch(Exception $e) {$this->initErrorResponse($e);}
-
         return response()->json($this->data , 200);
     }
 
     public function resendCode(ResendCodeRequest $request){
-        try{
-            
-            $user = User::where("phone", $request->phone)
-                        ->where("country_code", $request->country_code)
-                        ->first();
 
-            if(!$user){
-                $this->data['code'] = 400;
-                $this->data['message'] = __('messages.resend_code_fail');
-            }else{
+        try{
+            $user = User::where("phone", $request->phone)->where("country_code", $request->country_code)->first();
+            if(!$user){$this->initResponse(400, 'resend_code_fail');}
+            else{
                 //Update the user instance in the DB
                 $user->otp = null;
                 $user->save();
 
                 $this->sendVerificationCode($user->id);
-
-                $this->data['code'] = 200;
-                $this->data['message'] = __('messages.resend_code_success');
+                $this->initResponse(200, 'resend_code_success');
             }
-            
 
         } catch (Exception $e) {$this->initErrorResponse($e);}
-
         return response()->json($this->data , 200);
     }
 
@@ -355,39 +284,47 @@ class UsersController extends Controller
         if(auth()->guard('api')->check()){
 
             $accessToken = auth()->guard('api')->user()->token();
-
-            \DB::table('oauth_refresh_tokens')
-            ->where('access_token_id', $accessToken->id)
-            ->update([
-                'revoked' => true
-            ]);
-
+            \DB::table('oauth_refresh_tokens')->where('access_token_id', $accessToken->id)->update(['revoked' => true]);
             $accessToken->revoke();
-            return response()->json(['message'=>'hello authenticated mother fucker']);
+            $this->initResponse(200, 'logout_success');
 
-        }else{
-
-            $this->data['code'] = 400;
-            $this->data['message'] = __('messages.unauthorized');
-
-        }
-
+        }else{$this->initResponse(400, 'unauthorized');}
         return response()->json($this->data , 200);
     }
 
-    private function generateOTP($len) {
-        $result = '';
-        for($i = 0; $i < $len; $i++) {
-            $result .= mt_rand(0, 9);
-        }
-        return $result;
+    protected function generateOTP($len) {
+        $otp = '';
+        for($i = 0; $i < $len; $i++) {$otp .= mt_rand(0, 9);}
+        return $otp;
     }
 
-    function saveSocialAvatar($fileURL, $path, $user){
+    protected function providerUserFromIdToken($idToken){
         
-        // $fileContents = file_get_contents($fileURL.hllo);
-        // $name = 'user_avatar'.$user->getId();
-        // return File::put(public_path() . $path . $user->getId() . ".jpg", $fileContents);
+        $client = new Google_Client(['client_id' => config('services.google.client_id')]);
+        $providerUser = null;
+        $payload = $client->verifyIdToken($idToken);
+
+        if($payload){
+
+            $providerUser = new ProviderUser();
+            $providerUser->id = $payload["sub"];
+            $providerUser->name = $payload["name"];
+            $providerUser->email = $payload["email"];
+            $providerUser->avatar = $payload["picture"];
+        }
+
+        return $providerUser;
     }
-    
+
+    protected function socialite($provider, $socialToken){
+
+        $providerUser = null;
+        if($provider=="google"){
+            $providerUser = $this->providerUserFromIdToken($socialToken);
+        }else{
+            $providerUser = Socialite::driver($provider)->fields(['email', 'name'])->userFromToken($socialToken);
+        }
+        return $providerUser;
+
+    }
 }
