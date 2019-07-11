@@ -41,8 +41,16 @@ return [
     'get_reports_success'=> 'success',
     'get_report_success'=> 'success',
     'get_report_fail'=> 'falied to get report',
-    'add_reports_success'=> 'report successfully sent',
+    'add_report_success'=> 'report successfully sent',
     'delete_report_success'=> 'report successfully deleted',
+
+    'update_voucher_success'=> 'voucher updated successfully',
+    'update_voucher_fail'=> 'could not find a voucher with this data',
+    'get_vouchers_success'=> 'success',
+    'get_voucher_success'=> 'success',
+    'get_voucher_fail'=> 'falied to get voucher',
+    'add_voucher_success'=> 'voucher successfully added',
+    'delete_voucher_success'=> 'voucher successfully deleted',
 
     'server_error'=> 'Internal Server Error',
     

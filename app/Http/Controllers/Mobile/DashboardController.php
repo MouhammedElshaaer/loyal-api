@@ -7,12 +7,14 @@ use App\Http\Controllers\Controller;
 
 use App\Http\Requests\UpdateReportRequest;
 use App\Http\Requests\AddReportRequest;
+use App\Http\Requests\AddUpdateVoucherRequest;
 
 use App\Http\Traits\ResponseUtilities;
 
 use Exception;
 
 use App\Models\Report;
+use App\Models\Voucher;
 use App\User;
 
 class DashboardController extends Controller
@@ -31,6 +33,10 @@ class DashboardController extends Controller
 
     }
     
+    /*******************************************************************************
+     *********************************** Reports ***********************************
+     *******************************************************************************/
+
     public function getReport(){
 
         $report = null;
@@ -62,7 +68,7 @@ class DashboardController extends Controller
 
             if( User::find($attributes['user_id']) ){
                 $report = Report::create($attributes);
-                $this->initResponse(200, 'add_reports_success');
+                $this->initResponse(200, 'add_report_success');
             }else{throw new Exception();}
 
         } catch (Exception $e) {$this->initErrorResponse($e);}
@@ -94,6 +100,76 @@ class DashboardController extends Controller
             else{
                 $report->delete();
                 $this->initResponse(200, 'delete_report_success');
+            }
+
+        } catch (Exception $e) {$this->initErrorResponse($e);}
+        return response()->json($this->data, 200);
+    }
+    
+    /*******************************************************************************
+     *********************************** Vouchers **********************************
+     *******************************************************************************/
+
+    public function getVoucher(){
+
+        $voucher = null;
+        try{
+
+            if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'get_voucher_fail');}
+            else{$this->initResponse(200, 'get_voucher_success', $voucher);}
+
+        } catch (Exception $e) {$this->initErrorResponse($e);}
+        return response()->json($this->data, 200);
+    }
+    
+    public function getVouchers(){
+
+        $vouchers = null;
+        try{
+
+            $vouchers = Voucher::all();
+            $this->initResponse(200, 'get_vouchers_success', $vouchers);
+
+        } catch (Exception $e) {$this->initErrorResponse($e);}
+        return response()->json($this->data, 200);
+    }
+
+    public function addVoucher(AddUpdateVoucherRequest $request){
+
+        $attributes = $request->only('value', 'points', 'title', 'description');
+        try{
+
+            $voucher = Voucher::create($attributes);
+            $this->initResponse(200, 'add_voucher_success');
+
+        } catch (Exception $e) {$this->initErrorResponse($e);}
+        return response()->json($this->data, 200);
+    }
+
+    public function updateVoucher(AddUpdateVoucherRequest $request, $id){
+
+        try{
+
+            $attributes = $request->only('value', 'points', 'title', 'description');
+            if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'update_voucher_fail');}
+            else{
+                $voucher->update($attributes);
+                $this->initResponse(200, 'update_voucher_success');
+            }
+
+        } catch (Exception $e) {$this->initErrorResponse($e);}
+        return response()->json($this->data, 200);
+    }
+
+    public function deleteVoucher($id){
+        
+        $voucher = null;
+        try{
+
+            if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'get_voucher_fail');}
+            else{
+                $voucher->delete();
+                $this->initResponse(200, 'delete_voucher_success');
             }
 
         } catch (Exception $e) {$this->initErrorResponse($e);}

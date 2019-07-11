@@ -39,8 +39,16 @@ return [
     'get_reports_success'=> 'تم بنجاح',
     'get_report_success'=> 'تم بنجاح',
     'get_report_fail'=> 'لا يوجد تقرير بهذه البيانات',
-    'add_reports_success'=> 'تم ارسال التقرير',
+    'add_report_success'=> 'تم ارسال التقرير',
     'delete_report_success'=> 'تم حذف التقرير بنجاح',
+    
+    'update_voucher_success'=> 'تم تعديل الكوبون',
+    'update_voucher_fail'=> 'لا يوجد كوبون بهذه البيانات',
+    'get_vouchers_success'=> 'تم بنجاح',
+    'get_voucher_success'=> 'تم بنجاح',
+    'get_voucher_fail'=> 'لا يوجد كوبون بهذه البيانات',
+    'add_voucher_success'=> 'تم إضافة كوبون',
+    'delete_voucher_success'=> 'تم حذف الكوبون بنجاح',
 
     'server_error'=> 'خطأ في الخادم الداخلي',
     
