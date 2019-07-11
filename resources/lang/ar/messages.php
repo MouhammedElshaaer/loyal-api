@@ -9,8 +9,8 @@ return [
     'signup_success'=> 'مبروك, أنت الان من مستخدمين لويال',
     'signup_fail'=> 'لم نستطع إنشاء حساب لك',
 
-    'social_signup_success'=> 'Congratulations, You are now one step away from being a loyal customer',
     'social_signup_success'=> 'مبروك، أكمل بياناتك لتصبح أحد عملاء لويال',
+    'social_signup_fail'=> 'طلب غير مصرح',
 
     'non_verified'=> 'برجاء تفعيل حسابك',
     'verification_success'=> 'تم تفعيل الحساب',
@@ -32,8 +32,14 @@ return [
     'uploading_success'=> 'تم رفع الصورة',
     'uploading_failed'=> 'خطأ فى رفع الصورة',
 
-
     'unauthorized'=> 'طلب غير مصرح',
+
+    'update_report_success'=> 'تم تعديل التقرير بنجاح',
+    'update_report_fail'=> 'لا يوجد تقرير بهذه البيانات',
+    'get_reports_success'=> 'تم بنجاح',
+    'get_report_success'=> 'تم بنجاح',
+    'get_report_fail'=> 'لا يوجد تقرير بهذه البيانات',
+    'add_reports_success'=> 'تم ارسال التقرير',
 
     'server_error'=> 'خطأ في الخادم الداخلي',
     

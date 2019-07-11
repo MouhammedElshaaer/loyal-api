@@ -74,7 +74,7 @@ class UsersController extends Controller
             if ($providerUser && $providerUser->getEmail()) {
                 $user = $this->findOrCreate($providerUser, $provider);
             }else{
-                $this->initResponse(401, 'login_fail');
+                $this->initResponse(400, 'login_fail');
             }
 
         } catch (Exception $e) {$this->initErrorResponse($e);}

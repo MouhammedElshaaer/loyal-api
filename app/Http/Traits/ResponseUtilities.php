@@ -13,38 +13,27 @@ trait ResponseUtilities
     protected function verifiedResponse(User $user){
         if(!$user->verified){
 
-            $this->data['code'] = 402;
-            $this->data['message'] = __('messages.non_verified');
+            $this->initResponse(402, 'non_verified');
             $this->sendVerificationCode($user->id);
             return false;
 
         }else{
 
-            $this->data['code'] = 200;
-            $this->data['message'] = __('messages.login_success');
             $token = $user->createToken('authToken')->accessToken;
             $user['token'] = $token;
-            $this->data['data'] = $user;
+            $this->initResponse(200, 'login_success', $user);
             return true;
         }
     }
 
     protected function signupSuccessResponse($user){
-        $this->data['code'] = 200;
-        $this->data['message'] = __('messages.signup_success');
+        $this->initResponse(201, 'signup_success');
         $this->sendVerificationCode($user->id);
     }
 
     protected function socialSignupSuccessResponse($user){
-
-        $this->data['code'] = 401;
-        $this->data['message'] = __('messages.social_signup_success');
-        $this->data['data'] = [
-            "image"=>$user->image,
-            "name" => $user->name,
-            "email" => $user->email
-        ];
-        // $this->initResponse(400, )
+        $data = ["image"=>$user->image, "name" => $user->name, "email" => $user->email];
+        $this->initResponse(401, 'social_signup_success', $data);
     }
     
     protected function initErrorResponse(Exception $e){
@@ -53,10 +42,9 @@ trait ResponseUtilities
         $traceArray = $e->getTrace();
         $exceptionsMessage = ['message'=>$e->getMessage()];
         array_unshift($traceArray, $exceptionsMessage);
-
-        $this->data['code'] = 500;
-        $this->data['message'] = __('messages.server_error');
-        $this->data['data'] = $traceArray;
+        
+        $this->initResponse(500, 'server_error', $traceArray);
+        
     }
 
     protected function initResponse($code, $messagesArrayKey, $data=null){

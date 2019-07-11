@@ -12,6 +12,7 @@ return [
     'signup_fail'=> 'Sorry, something went wrong, please try again',
 
     'social_signup_success'=> 'Congratulations, You are now one step away from being a loyal customer',
+    'social_signup_fail'=> 'Can’t grant access',
 
     'non_verified'=> 'Would you please verify your Loyal account',
     'verification_success'=> 'Verification complete',
@@ -34,6 +35,13 @@ return [
     'uploading_failed'=> 'Image uploading failed',
 
     'unauthorized'=> 'Unauthorized access',
+
+    'update_report_success'=> 'report updated successfully',
+    'update_report_fail'=> 'could not find a report with this data',
+    'get_reports_success'=> 'success',
+    'get_report_success'=> 'success',
+    'get_report_fail'=> 'falied to get report',
+    'add_reports_success'=> 'report successfully sent',
 
     'server_error'=> 'Internal Server Error',
     
