@@ -44,8 +44,14 @@ Route::group(['middleware' => ['web', 'auth:api']], function () {
 Route::get('mobile/reports', 'Mobile\DashboardController@getReports');
 Route::get('mobile/report/{id}', 'Mobile\DashboardController@getReport');
 Route::post('mobile/report', 'Mobile\DashboardController@addReport');
-Route::delete('articles/{id}', 'Mobile\DashboardController@deleteReport');
-Route::post('mobile/report/update/{id}', 'Mobile\DashboardController@updateReport');
+Route::delete('mobile/report/{id}', 'Mobile\DashboardController@deleteReport');
+Route::post('mobile/report/{id}', 'Mobile\DashboardController@updateReport');
+
+Route::get('mobile/vouchers', 'Mobile\DashboardController@getVouchers');
+Route::get('mobile/voucher/{id}', 'Mobile\DashboardController@getVoucher');
+Route::post('mobile/voucher', 'Mobile\DashboardController@addVoucher');
+Route::delete('mobile/voucher/{id}', 'Mobile\DashboardController@deleteVoucher');
+Route::post('mobile/voucher/{id}', 'Mobile\DashboardController@updateVoucher');
 
 /**
  * Web Services

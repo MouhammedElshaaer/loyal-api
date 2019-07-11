@@ -40,6 +40,7 @@ return [
     'get_report_success'=> 'تم بنجاح',
     'get_report_fail'=> 'لا يوجد تقرير بهذه البيانات',
     'add_reports_success'=> 'تم ارسال التقرير',
+    'delete_report_success'=> 'تم حذف التقرير بنجاح',
 
     'server_error'=> 'خطأ في الخادم الداخلي',
     

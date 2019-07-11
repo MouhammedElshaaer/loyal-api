@@ -42,6 +42,7 @@ return [
     'get_report_success'=> 'success',
     'get_report_fail'=> 'falied to get report',
     'add_reports_success'=> 'report successfully sent',
+    'delete_report_success'=> 'report successfully deleted',
 
     'server_error'=> 'Internal Server Error',
     

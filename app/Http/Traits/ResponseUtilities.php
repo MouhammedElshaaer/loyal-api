@@ -27,13 +27,13 @@ trait ResponseUtilities
     }
 
     protected function signupSuccessResponse($user){
-        $this->initResponse(201, 'signup_success');
+        $this->initResponse(200, 'signup_success');
         $this->sendVerificationCode($user->id);
     }
 
     protected function socialSignupSuccessResponse($user){
         $data = ["image"=>$user->image, "name" => $user->name, "email" => $user->email];
-        $this->initResponse(401, 'social_signup_success', $data);
+        $this->initResponse(201, 'social_signup_success', $data);
     }
     
     protected function initErrorResponse(Exception $e){

@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Mobile;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\Http\Requests\UpdateReportRequest;
+use App\Http\Requests\AddReportRequest;
+
 use App\Http\Traits\ResponseUtilities;
 
 use Exception;
@@ -33,12 +36,8 @@ class DashboardController extends Controller
         $report = null;
         try{
 
-            $report = Report::find($id);
-            if(!$report){$this->initResponse(400, 'get_report_fail');}
-            else{
-                $report->update[$attributes];
-                $this->initResponse(400, 'get_report_success');
-            }
+            if(!$report = Report::find($id)){$this->initResponse(400, 'get_report_fail');}
+            else{$this->initResponse(200, 'get_report_success', $report);}
 
         } catch (Exception $e) {$this->initErrorResponse($e);}
         return response()->json($this->data, 200);
@@ -56,7 +55,7 @@ class DashboardController extends Controller
         return response()->json($this->data, 200);
     }
 
-    public function addReport(Request $request){
+    public function addReport(AddReportRequest $request){
 
         $attributes = $request->only('user_id', 'message', 'attachment');
         try{
@@ -70,16 +69,31 @@ class DashboardController extends Controller
         return response()->json($this->data, 200);
     }
 
-    public function updateReport(Request $request, $id){
+    public function updateReport(UpdateReportRequest $request, $id){
 
         try{
 
-            $attributes = $request->only('message', 'attachement');
-            $report = Report::find($id);
-            if(!$report){$this->initResponse(400, 'update_report_fail');}
+            $attributes = $request->only('message', 'attachment');
+            if(!$report = Report::find($id)){$this->initResponse(400, 'update_report_fail');}
             else{
-                $report->update[$attributes];
-                $this->initResponse(400, 'update_report_success');
+                $report->update($attributes);
+                $this->initResponse(200, 'update_report_success');
+            }
+
+        } catch (Exception $e) {$this->initErrorResponse($e);}
+        return response()->json($this->data, 200);
+    }
+
+    public function deleteReport($id){
+        
+        $report = null;
+        try{
+
+            $report = Report::find($id);
+            if(!$report){$this->initResponse(400, 'get_report_fail');}
+            else{
+                $report->delete();
+                $this->initResponse(200, 'delete_report_success');
             }
 
         } catch (Exception $e) {$this->initErrorResponse($e);}
