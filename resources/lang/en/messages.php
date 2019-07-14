@@ -13,6 +13,7 @@ return [
 
     'social_signup_success'=> 'Congratulations, You are now one step away from being a loyal customer',
     'social_signup_fail'=> 'Can’t grant access',
+    'missing_associated_email'=> 'Can’t get user email',
 
     'non_verified'=> 'Would you please verify your Loyal account',
     'verification_success'=> 'Verification complete',

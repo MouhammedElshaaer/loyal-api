@@ -71,11 +71,12 @@ class UsersController extends Controller
         try {
 
             $providerUser = $this->socialite($provider, $socialToken);
-            if ($providerUser && $providerUser->getEmail()) {
-                $user = $this->findOrCreate($providerUser, $provider);
-            }else{
-                $this->initResponse(400, 'social_signup_fail');
-            }
+            if ($providerUser) {
+
+                if($providerUser->getEmail()){$user = $this->findOrCreate($providerUser, $provider);}
+                else{$this->initResponse(400, 'missing_associated_email');}
+
+            }else{$this->initResponse(400, 'social_signup_fail');}
 
         } catch (Exception $e) {$this->initErrorResponse($e);}
 
@@ -195,12 +196,13 @@ class UsersController extends Controller
                 $socialToken = $request->social_token;
                 $provider =  $request->provider_name;
                 $providerUser = $this->socialite($provider, $socialToken);
+                
                 if ($providerUser) {
 
-                    $user = $this->findOrCreate($providerUser, $provider);
-                    if(!$user){throw new Exception("User does not exist");}
+                    if($providerUser->getEmail()){$user = $this->findOrCreate($providerUser, $provider);}
+                    else{$this->initResponse(400, 'missing_associated_email');}
 
-                }else{$this->initResponse(400, 'user_validation_fail');}
+                }
             }
 
             if($user){
@@ -340,7 +342,9 @@ class UsersController extends Controller
         if($provider=="google"){
             $providerUser = $this->providerUserFromIdToken($socialToken);
         }else{
-            $providerUser = Socialite::driver($provider)->fields(['email', 'name'])->userFromToken($socialToken);
+            try{
+                $providerUser = Socialite::driver($provider)->fields(['email', 'name'])->userFromToken($socialToken);
+            }catch(Exception $e){}
         }
         return $providerUser;
 

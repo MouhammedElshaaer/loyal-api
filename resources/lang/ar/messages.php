@@ -11,6 +11,7 @@ return [
 
     'social_signup_success'=> 'مبروك، أكمل بياناتك لتصبح أحد عملاء لويال',
     'social_signup_fail'=> 'طلب غير مصرح',
+    'missing_associated_email'=> 'لا يمكن الحصول على البريد الإلكترونى',
 
     'non_verified'=> 'برجاء تفعيل حسابك',
     'verification_success'=> 'تم تفعيل الحساب',

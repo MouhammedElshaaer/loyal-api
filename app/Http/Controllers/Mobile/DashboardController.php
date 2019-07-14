@@ -187,19 +187,19 @@ class DashboardController extends Controller
                 2 => 'http://localhost:8000/api/public/ad1.jpg',
                 3 => 'http://localhost:8000/api/public/ad1.jpg'
             ];
-            $latestVouchers = [
-                0 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
-                1 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
-                2 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
-                3 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
-                4 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false]
-            ];
             $latestRewards = [
-                0 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
-                1 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
-                2 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
-                3 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
-                4 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false]
+                0 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg'],
+                1 => ['id'=>2, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg'],
+                2 => ['id'=>3, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg'],
+                3 => ['id'=>4, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg'],
+                4 => ['id'=>5, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg']
+            ];
+            $latestVouchers = [
+                0 => ['id'=>1, 'transaction_id'=>4, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"1", 'created_at'=>"Jul 14, 2019", 'expired_at'=>null, 'used_at'=>"Jul 14, 2019"],
+                1 => ['id'=>2, 'transaction_id'=>null, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"0", 'created_at'=>"Jul 14, 2019", 'expired_at'=>"Jul 14, 2019", 'used_at'=>null],
+                2 => ['id'=>3, 'transaction_id'=>2, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"1", 'created_at'=>"Jul 14, 2019", 'expired_at'=>null, 'used_at'=>"Jul 14, 2019"],
+                3 => ['id'=>4, 'transaction_id'=>3, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"1", 'created_at'=>"Jul 14, 2019", 'expired_at'=>null, 'used_at'=>"Jul 14, 2019"],
+                4 => ['id'=>5, 'transaction_id'=>null, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"0", 'created_at'=>"Jul 14, 2019", 'expired_at'=>null, 'used_at'=>null]
             ];
 
             $homeContent = [
@@ -207,8 +207,8 @@ class DashboardController extends Controller
                 'total_expire' => $user->total_expire,
                 'latest_expire' => $user->latest_expire,
                 'ads' => $ads,
-                'latestRewards' => $latestRewards,
-                'latestVouchers' => $latestVouchers
+                'latest_rewards' => $latestRewards,
+                'latest_vouchers' => $latestVouchers
             ];
 
             $this->data['data'] = $homeContent;

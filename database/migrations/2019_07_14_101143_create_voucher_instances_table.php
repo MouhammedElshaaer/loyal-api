@@ -19,9 +19,9 @@ class CreateVoucherInstancesTable extends Migration
             $table->unsignedInteger('voucher_id');
             $table->unsignedInteger('user_id');
 
-            $table->boolean('used')->default(0);
-
             $table->unsignedBigInteger('qr_code');
+
+            $table->boolean('used')->default(0);
 
             $table->boolean('deactivated')->default(0);
             $table->timestamps();
