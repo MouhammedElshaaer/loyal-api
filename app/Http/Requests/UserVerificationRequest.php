@@ -29,8 +29,8 @@ class UserVerificationRequest extends FormRequest
     public function rules()
     {
         return [
-            'phone' => 'required|numeric|digits_between:8,14',
-            'country_code' => 'required',
+            // 'phone' => 'required|numeric|digits_between:8,14',
+            // 'country_code' => 'required',
             'code' => 'required|numeric'
         ];
     }

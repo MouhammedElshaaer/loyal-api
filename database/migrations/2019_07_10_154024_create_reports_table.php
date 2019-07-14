@@ -18,6 +18,7 @@ class CreateReportsTable extends Migration
             $table->unsignedInteger('user_id');
             $table->text('message');
             $table->text('attachment');
+            $table->boolean('deactivated')->default(0);
             $table->timestamps();
         });
     }

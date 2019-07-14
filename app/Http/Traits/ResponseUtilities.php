@@ -39,11 +39,11 @@ trait ResponseUtilities
     protected function initErrorResponse(Exception $e){
 
         report($e);
-        $traceArray = $e->getTrace();
-        $exceptionsMessage = ['message'=>$e->getMessage()];
-        array_unshift($traceArray, $exceptionsMessage);
+        $error['message'] = $e->getMessage();
+        $error['trace'] = $e->getTrace();
         
-        $this->initResponse(500, 'server_error', $traceArray);
+        $this->initResponse(500, 'server_error');
+        $this->data['error'] = $error;
         
     }
 

@@ -175,4 +175,47 @@ class DashboardController extends Controller
         } catch (Exception $e) {$this->initErrorResponse($e);}
         return response()->json($this->data, 200);
     }
+
+    public function homeContent(Request $request){
+        
+        if(auth()->guard('api')->check()){
+
+            $user = auth()->guard('api')->user();
+            $ads = [
+                0 => 'http://localhost:8000/api/public/ad1.jpg',
+                1 => 'http://localhost:8000/api/public/ad1.jpg',
+                2 => 'http://localhost:8000/api/public/ad1.jpg',
+                3 => 'http://localhost:8000/api/public/ad1.jpg'
+            ];
+            $latestVouchers = [
+                0 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
+                1 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
+                2 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
+                3 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
+                4 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false]
+            ];
+            $latestRewards = [
+                0 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
+                1 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
+                2 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
+                3 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false],
+                4 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg', 'used'=>false]
+            ];
+
+            $homeContent = [
+                'total_points' => $user->total_points,
+                'total_expire' => $user->total_expire,
+                'latest_expire' => $user->latest_expire,
+                'ads' => $ads,
+                'latestRewards' => $latestRewards,
+                'latestVouchers' => $latestVouchers
+            ];
+
+            $this->data['data'] = $homeContent;
+
+        }else{$this->initResponse(400, 'unauthorized');}
+
+        return response()->json($this->data , 200);
+
+    }
 }

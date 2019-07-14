@@ -157,7 +157,7 @@ class UsersController extends Controller
         
         $socialToken = $request->social_token;
         $provider =  $request->provider_name;
-        $attributes = $request->all();
+        $attributes = $request->only('country_code', 'phone', 'name');
 
         try {
 
@@ -180,11 +180,29 @@ class UsersController extends Controller
     public function verifyAccount(UserVerificationRequest $request){
 
         try {
-            $attributes = $request->only('country_code', 'phone', 'code');
-            $otp = $attributes['code']; 
-            $user = User::where("phone", $request->phone)
-                        ->where("country_code", $request->country_code)
-                        ->first();
+
+            $user = null;
+            $otp = $request->code; 
+
+            if($request->has('phone')){
+
+                $user = User::where("phone", $request->phone)
+                            ->where("country_code", $request->country_code)
+                            ->first();
+
+            }else if($request->has('social_token')){
+
+                $socialToken = $request->social_token;
+                $provider =  $request->provider_name;
+                $providerUser = $this->socialite($provider, $socialToken);
+                if ($providerUser) {
+
+                    $user = $this->findOrCreate($providerUser, $provider);
+                    if(!$user){throw new Exception("User does not exist");}
+
+                }else{$this->initResponse(400, 'user_validation_fail');}
+            }
+
             if($user){
                 if(!$user->verified){
                     

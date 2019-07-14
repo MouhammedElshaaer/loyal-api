@@ -70,3 +70,7 @@ Route::get('mobile/voucher/{id}', 'Mobile\DashboardController@getVoucher');
 Route::post('mobile/voucher', 'Mobile\DashboardController@addVoucher');
 Route::delete('mobile/voucher/{id}', 'Mobile\DashboardController@deleteVoucher');
 Route::post('mobile/voucher/{id}', 'Mobile\DashboardController@updateVoucher');
+
+//Home api
+Route::post('mobile/home', 'Mobile\DashboardController@homeContent');
+

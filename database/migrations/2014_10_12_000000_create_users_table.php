@@ -25,6 +25,10 @@ class CreateUsersTable extends Migration
 
             $table->string('name');
             $table->boolean('verified')->default(0);
+            $table->boolean('deactivated')->default(0);
+
+            $table->string('user_verify_otp')->nullable();
+            $table->string('mobile_verify_otp')->nullable();
 
             $table->rememberToken();
             $table->timestamps();

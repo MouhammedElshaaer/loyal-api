@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 
 use App\Models\LinkedSocialAccount;
 
+use Carbon\Carbon;
+
 class User extends Authenticatable
 {
     use Notifiable, HasApiTokens;
@@ -28,7 +30,29 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token', 'verified', 'otp', 'created_at', 'updated_at'
+        'password',
+        'remember_token',
+        'verified',
+        'total_points',
+        'total_expire',
+        'latest_expire',
+        'otp',
+        'deactivated',
+        'user_verify_otp',
+        'mobile_verify_otp',
+        'created_at',
+        'updated_at'
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'total_points',
+        'total_expire',
+        'latest_expire'
     ];
 
     /**
@@ -43,5 +67,45 @@ class User extends Authenticatable
     public function linkedSocialAccounts()
     {
         return $this->hasMany(LinkedSocialAccount::class);
+    }
+
+    /**
+     * Get the voucher instance status.
+     *
+     * @return bool
+     */
+    public function getTotalPointsAttribute()
+    {
+        /**
+         * Here we should calculate all user valid points from transactions table
+         */
+
+        return 1300;
+    }
+    /**
+     * Get the voucher instance status.
+     *
+     * @return bool
+     */
+    public function getTotalExpireAttribute()
+    {
+        /**
+         * Here we should calculate all user valid points from transactions table
+         */
+
+        return 500;
+    }
+    /**
+     * Get the voucher instance status.
+     *
+     * @return bool
+     */
+    public function getLatestExpireAttribute()
+    {
+        /**
+         * Here we should calculate all user valid points from transactions table
+         */
+
+        return Carbon::now()->toFormattedDateString();
     }
 }
