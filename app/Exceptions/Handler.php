@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 
 use App\Http\Traits\ResponseUtilities;
@@ -32,16 +34,6 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
-    // public function __construct(){
-
-    //     $this->data = [
-    //         "code"=> null,
-    //         "message"=>"",
-    //         "data" => new \stdClass()
-    //     ];
-
-    // }
-
     /**
      * Report or log an exception.
      *
@@ -67,9 +59,13 @@ class Handler extends ExceptionHandler
             "message"=>"",
             "data" => new \stdClass()
         ];
-        $this->initErrorResponse($exception);
+
+        if($exception instanceof AuthenticationException){$this->initResponse(400, 'unauthorized');}
+        else if($exception instanceof AuthorizationException){$this->initResponse(400, 'invalid_setting');}
+        else{$this->initErrorResponse($exception);}
+
         return response()->json($this->data, 200);
-            
-        // return parent::render($request, $exception);
     }
+
+
 }

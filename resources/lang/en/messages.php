@@ -53,6 +53,11 @@ return [
     'add_voucher_success'=> 'voucher successfully added',
     'delete_voucher_success'=> 'Reward successfully deleted',
 
+    'add_config_success'=> 'Configuration successfully added',
+    'invalid_setting'=> 'Invalid settings',
+    'updating_settings_success'=> 'Settings updated successfully',
+    'ad_failed'=> 'Ad does not exist',
+
     'server_error'=> 'Internal Server Error',
     
 ];

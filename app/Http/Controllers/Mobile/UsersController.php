@@ -244,23 +244,19 @@ class UsersController extends Controller
     public function resetPassword(ResetPasswordRequest $request){
 
         $attributes = $request->only('password', 'code');
-        if(auth()->guard('api')->check() && auth()->guard('api')->user()->otp == $attributes['code']){
-
-            $user = User::where('id', auth()->guard('api')->user()->id)->first();
+        
+        if(auth()->user()){
+            $user = User::where('id', auth()->user()->id)->first();
             if($user){
                 $user->password = bcrypt($attributes['password']);
                 $user->otp = null;
                 $user->save();
 
-                auth()->guard('api')->setUser($user);
+                auth()->setUser($user);
                 $this->initResponse(200, 'password_reset_success');
 
             }else{$this->initResponse(400, 'user_validation_fail');}
-
-            
-
         }else{$this->initResponse(400, 'unauthorized');}
- 
         return response()->json($this->data , 200);
     }
 
@@ -282,9 +278,9 @@ class UsersController extends Controller
 
     public function logout(Request $request){
         
-        if(auth()->guard('api')->check()){
+        if(auth()->user()){
 
-            $accessToken = auth()->guard('api')->user()->token();
+            $accessToken = auth()->user()->token();
             \DB::table('oauth_refresh_tokens')->where('access_token_id', $accessToken->id)->update(['revoked' => true]);
             $accessToken->revoke();
             $this->initResponse(200, 'logout_success');
