@@ -60,16 +60,16 @@ Route::post('store', 'Shared\ImagesController@store');
 //Reports
 Route::get('mobile/reports', 'Mobile\DashboardController@getReports');
 Route::get('mobile/report/{id}', 'Mobile\DashboardController@getReport');
+Route::get('mobile/report/delete/{id}', 'Mobile\DashboardController@deleteReport');
 Route::post('mobile/report', 'Mobile\DashboardController@addReport');
-Route::delete('mobile/report/{id}', 'Mobile\DashboardController@deleteReport');
 Route::post('mobile/report/{id}', 'Mobile\DashboardController@updateReport');
 
 //Vouchers
-Route::get('mobile/vouchers', 'Mobile\DashboardController@getVouchers');
-Route::get('mobile/voucher/{id}', 'Mobile\DashboardController@getVoucher');
-Route::post('mobile/voucher', 'Mobile\DashboardController@addVoucher');
-Route::delete('mobile/voucher/{id}', 'Mobile\DashboardController@deleteVoucher');
-Route::post('mobile/voucher/{id}', 'Mobile\DashboardController@updateVoucher');
+Route::get('mobile/rewards', 'Mobile\DashboardController@getVouchers');
+Route::get('mobile/reward/{id}', 'Mobile\DashboardController@getVoucher');
+Route::get('mobile/reward/delete/{id}', 'Mobile\DashboardController@deleteVoucher');
+Route::post('mobile/reward', 'Mobile\DashboardController@addVoucher');
+Route::post('mobile/reward/{id}', 'Mobile\DashboardController@updateVoucher');
 
 //Home api
 Route::post('mobile/home', 'Mobile\DashboardController@homeContent');

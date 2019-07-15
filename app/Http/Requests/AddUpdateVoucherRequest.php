@@ -29,10 +29,10 @@ class AddUpdateVoucherRequest extends FormRequest
     public function rules()
     {
         return [
-            'value' => 'required|numeric',
             'points' => 'required|numeric',
             'title' => 'required|string',
             'description' => 'required|string',
+            'image' => 'required|string'
         ];
     }
 

@@ -25,6 +25,6 @@ class Voucher extends Model
      * @var array
      */
     protected $fillable = [
-        'value', 'points', 'title', 'description'
+        'points', 'title', 'description', 'image', 'deactivated'
     ];
 }

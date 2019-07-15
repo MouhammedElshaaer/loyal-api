@@ -38,71 +38,48 @@ class DashboardController extends Controller
      *******************************************************************************/
 
     public function getReport(){
-
-        $report = null;
-        try{
-
-            if(!$report = Report::find($id)){$this->initResponse(400, 'get_report_fail');}
-            else{$this->initResponse(200, 'get_report_success', $report);}
-
-        } catch (Exception $e) {$this->initErrorResponse($e);}
+        
+        if(!$report = Report::find($id)){$this->initResponse(400, 'get_report_fail');}
+        else{$this->initResponse(200, 'get_report_success', $report);}
         return response()->json($this->data, 200);
     }
     
     public function getReports(){
 
-        $reports = null;
-        try{
-
-            $reports = Report::all();
-            $this->initResponse(200, 'get_reports_success', $reports);
-
-        } catch (Exception $e) {$this->initErrorResponse($e);}
+        $reports = Report::all();
+        $this->initResponse(200, 'get_reports_success', $reports);
         return response()->json($this->data, 200);
     }
 
     public function addReport(AddReportRequest $request){
 
         $attributes = $request->only('user_id', 'message', 'attachment');
-        try{
+        if( User::find($attributes['user_id']) ){
+            $report = Report::create($attributes);
+            $this->initResponse(200, 'add_report_success');
+        }else{throw new Exception();}
 
-            if( User::find($attributes['user_id']) ){
-                $report = Report::create($attributes);
-                $this->initResponse(200, 'add_report_success');
-            }else{throw new Exception();}
-
-        } catch (Exception $e) {$this->initErrorResponse($e);}
         return response()->json($this->data, 200);
     }
 
     public function updateReport(UpdateReportRequest $request, $id){
-
-        try{
-
-            $attributes = $request->only('message', 'attachment');
-            if(!$report = Report::find($id)){$this->initResponse(400, 'update_report_fail');}
-            else{
-                $report->update($attributes);
-                $this->initResponse(200, 'update_report_success');
-            }
-
-        } catch (Exception $e) {$this->initErrorResponse($e);}
+        $attributes = $request->only('message', 'attachment');
+        if(!$report = Report::find($id)){$this->initResponse(400, 'update_report_fail');}
+        else{
+            $report->update($attributes);
+            $this->initResponse(200, 'update_report_success');
+        }
         return response()->json($this->data, 200);
     }
 
     public function deleteReport($id){
         
-        $report = null;
-        try{
-
-            $report = Report::find($id);
-            if(!$report){$this->initResponse(400, 'get_report_fail');}
-            else{
-                $report->delete();
-                $this->initResponse(200, 'delete_report_success');
-            }
-
-        } catch (Exception $e) {$this->initErrorResponse($e);}
+        $report = Report::find($id);
+        if(!$report){$this->initResponse(400, 'get_report_fail');}
+        else{
+            $report->delete();
+            $this->initResponse(200, 'delete_report_success');
+        }
         return response()->json($this->data, 200);
     }
     
@@ -110,69 +87,57 @@ class DashboardController extends Controller
      *********************************** Vouchers **********************************
      *******************************************************************************/
 
-    public function getVoucher(){
-
-        $voucher = null;
-        try{
-
-            if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'get_voucher_fail');}
-            else{$this->initResponse(200, 'get_voucher_success', $voucher);}
-
-        } catch (Exception $e) {$this->initErrorResponse($e);}
+    public function getVoucher($id){
+        if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'get_voucher_fail');}
+        else{$this->initResponse(200, 'get_voucher_success', $voucher);}
         return response()->json($this->data, 200);
     }
     
-    public function getVouchers(){
+    public function getVouchers(Request $request){
 
-        $vouchers = null;
-        try{
+        $query1 = Voucher::where('deactivated', false);
+        $query2 = clone $query1;
+        $query3 = clone $query1;
 
-            $vouchers = Voucher::all();
-            $this->initResponse(200, 'get_vouchers_success', $vouchers);
-
-        } catch (Exception $e) {$this->initErrorResponse($e);}
+        $items = $query1->paginate(10)->items();
+        $total_pages = $query2->paginate(10)->lastPage();
+        $total_items = $query3->paginate(10)->total();
+        $paginate_response = [
+            'vouchers' => $items? $items: [],
+            'total_pages' => $total_pages,
+            'total_items' => $total_items
+        ];
+        
+        $this->initResponse(200, 'get_vouchers_success', $paginate_response);
         return response()->json($this->data, 200);
     }
 
     public function addVoucher(AddUpdateVoucherRequest $request){
 
-        $attributes = $request->only('value', 'points', 'title', 'description');
-        try{
-
-            $voucher = Voucher::create($attributes);
-            $this->initResponse(200, 'add_voucher_success');
-
-        } catch (Exception $e) {$this->initErrorResponse($e);}
+        $attributes = $request->only('points', 'title', 'description', 'image');
+        $voucher = Voucher::create($attributes);
+        $this->initResponse(200, 'add_voucher_success');
         return response()->json($this->data, 200);
     }
 
     public function updateVoucher(AddUpdateVoucherRequest $request, $id){
 
-        try{
-
-            $attributes = $request->only('value', 'points', 'title', 'description');
-            if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'update_voucher_fail');}
-            else{
-                $voucher->update($attributes);
-                $this->initResponse(200, 'update_voucher_success');
-            }
-
-        } catch (Exception $e) {$this->initErrorResponse($e);}
+        $attributes = $request->only('value', 'points', 'title', 'description', 'deactivated');
+        if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'update_voucher_fail');}
+        else{
+            $voucher->update($attributes);
+            $this->initResponse(200, 'update_voucher_success');
+        }
         return response()->json($this->data, 200);
     }
 
     public function deleteVoucher($id){
-        
-        $voucher = null;
-        try{
-
-            if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'get_voucher_fail');}
-            else{
-                $voucher->delete();
-                $this->initResponse(200, 'delete_voucher_success');
-            }
-
-        } catch (Exception $e) {$this->initErrorResponse($e);}
+       
+        if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'get_voucher_fail');}
+        else{
+            $voucher->delete();
+            $this->initResponse(200, 'delete_voucher_success');
+        }
         return response()->json($this->data, 200);
     }
 
@@ -187,19 +152,14 @@ class DashboardController extends Controller
                 2 => 'http://localhost:8000/api/public/ad1.jpg',
                 3 => 'http://localhost:8000/api/public/ad1.jpg'
             ];
-            $latestRewards = [
-                0 => ['id'=>1, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg'],
-                1 => ['id'=>2, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg'],
-                2 => ['id'=>3, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg'],
-                3 => ['id'=>4, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg'],
-                4 => ['id'=>5, 'points'=>1300, 'title'=>"50% Discount", 'description'=>"description", 'image'=>'http://localhost:8000/api/public/ad1.jpg']
-            ];
+            $latestRewards = Voucher::where('deactivated', false)->orderBy('instances', 'desc')->take(5)->get();
+            
             $latestVouchers = [
-                0 => ['id'=>1, 'transaction_id'=>4, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"1", 'created_at'=>"Jul 14, 2019", 'expired_at'=>null, 'used_at'=>"Jul 14, 2019"],
-                1 => ['id'=>2, 'transaction_id'=>null, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"0", 'created_at'=>"Jul 14, 2019", 'expired_at'=>"Jul 14, 2019", 'used_at'=>null],
-                2 => ['id'=>3, 'transaction_id'=>2, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"1", 'created_at'=>"Jul 14, 2019", 'expired_at'=>null, 'used_at'=>"Jul 14, 2019"],
-                3 => ['id'=>4, 'transaction_id'=>3, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"1", 'created_at'=>"Jul 14, 2019", 'expired_at'=>null, 'used_at'=>"Jul 14, 2019"],
-                4 => ['id'=>5, 'transaction_id'=>null, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"0", 'created_at'=>"Jul 14, 2019", 'expired_at'=>null, 'used_at'=>null]
+                0 => ['id'=>1, 'transaction_id'=>null, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"0", 'created_at'=>"Jul 14, 2019", 'expired_at'=>'Jul 14, 2019', 'used_at'=>null],
+                1 => ['id'=>2, 'transaction_id'=>null, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"1", 'created_at'=>"Jul 14, 2019", 'expired_at'=>"Jul 14, 2019", 'used_at'=>null],
+                2 => ['id'=>3, 'transaction_id'=>2, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"2", 'created_at'=>"Jul 14, 2019", 'expired_at'=>'Jul 14, 2019', 'used_at'=>"Jul 14, 2019"],
+                3 => ['id'=>4, 'transaction_id'=>3, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"2", 'created_at'=>"Jul 14, 2019", 'expired_at'=>'Jul 14, 2019', 'used_at'=>"Jul 14, 2019"],
+                4 => ['id'=>5, 'transaction_id'=>null, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"0", 'created_at'=>"Jul 14, 2019", 'expired_at'=>'Jul 14, 2019', 'used_at'=>null]
             ];
 
             $homeContent = [

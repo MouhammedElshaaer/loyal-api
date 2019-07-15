@@ -22,9 +22,10 @@ class CreateVouchersTable extends Migration
             $table->longText('description');
             $table->longText('image');
 
+            $table->boolean('deactivated')->default(0);
+            
             $table->unsignedInteger('instances')->default(0);
 
-            $table->boolean('deactivated')->default(0);
             $table->timestamps();
         });
     }

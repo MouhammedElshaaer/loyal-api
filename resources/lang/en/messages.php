@@ -51,7 +51,7 @@ return [
     'get_voucher_success'=> 'success',
     'get_voucher_fail'=> 'falied to get voucher',
     'add_voucher_success'=> 'voucher successfully added',
-    'delete_voucher_success'=> 'voucher successfully deleted',
+    'delete_voucher_success'=> 'Reward successfully deleted',
 
     'server_error'=> 'Internal Server Error',
     
