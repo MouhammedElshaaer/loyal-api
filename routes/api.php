@@ -33,7 +33,7 @@ Route::post('mobile/validate', 'Mobile\UsersController@validateUser');
 Route::post('mobile/phone/verify', 'Mobile\UsersController@verifyPhone');
 
 
-Route::group(['middleware' => ['web', 'auth:api']], function () {
+Route::group(['middleware' => ['auth:api']], function () {
 
     Route::get('mobile/home', 'Mobile\HomeController@homeContent');
 
