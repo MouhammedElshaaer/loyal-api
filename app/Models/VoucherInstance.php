@@ -45,4 +45,12 @@ class VoucherInstance extends Model
 
         return $diffInDays > 0? "valid": "expired";
     }
+
+    /**
+     * Get the VoucherInstancePoints for the TransactionPoints.
+     */
+    public function voucherInstancePoints()
+    {
+        return $this->hasMany('App\Models\VoucherInstancePoints');
+    }
 }

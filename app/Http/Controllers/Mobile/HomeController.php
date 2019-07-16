@@ -34,7 +34,7 @@ class HomeController extends Controller
             2 => 'http://localhost:8000/api/public/ad1.jpg',
             3 => 'http://localhost:8000/api/public/ad1.jpg'
         ];
-        $latestRewards = Voucher::where('deactivated', false)->orderBy('instances', 'desc')->take(5)->get();
+        $trendingRewards = Voucher::where('deactivated', false)->orderBy('instances', 'desc')->take(5)->get();
         
         $latestVouchers = [
             0 => ['id'=>1, 'transaction_id'=>null, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"0", 'created_at'=>"Jul 14, 2019", 'expired_at'=>'Jul 14, 2019', 'used_at'=>null],
@@ -49,7 +49,7 @@ class HomeController extends Controller
             'total_expire' => $user->total_expire,
             'latest_expire' => $user->latest_expire,
             'ads' => $ads,
-            'latest_rewards' => $latestRewards,
+            'trending_rewards' => $trendingRewards,
             'latest_vouchers' => $latestVouchers
         ];
 

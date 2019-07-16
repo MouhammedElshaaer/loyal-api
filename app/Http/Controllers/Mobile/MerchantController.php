@@ -22,4 +22,26 @@ class MerchantController extends Controller
         ];
 
     }
+
+    /*******************************************************************************
+     ********************************* Transactions ********************************
+     *******************************************************************************/
+
+    public function addTransaction(Request $request){
+
+        return response()->json($this->data, 200);
+
+    }
+
+    public function checkVoucherInstance(Request $request){
+
+        return response()->json($this->data, 200);
+
+    }
+
+    public function refundTransaction(Request $request){
+
+        return response()->json($this->data, 200);
+
+    }
 }

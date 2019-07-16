@@ -108,4 +108,20 @@ class User extends Authenticatable
 
         return Carbon::now()->toFormattedDateString();
     }
+
+    /**
+     * Get the Transactions for the User.
+     */
+    public function transactions()
+    {
+        return $this->hasMany('App\Models\Transaction');
+    }
+
+    /**
+     * Get the VoucherInstances for the User.
+     */
+    public function voucherInstances()
+    {
+        return $this->hasMany('App\Models\VoucherInstance');
+    }
 }

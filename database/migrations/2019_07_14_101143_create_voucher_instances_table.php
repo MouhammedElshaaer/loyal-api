@@ -16,12 +16,15 @@ class CreateVoucherInstancesTable extends Migration
         Schema::create('voucher_instances', function (Blueprint $table) {
             $table->bigIncrements('id');
             
-            $table->unsignedInteger('voucher_id');
-            $table->unsignedInteger('user_id');
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
 
-            $table->unsignedBigInteger('qr_code');
+            $table->unsignedBigInteger('voucher_id');
+            $table->foreign('voucher_id')->references('id')->on('vouchers');
 
-            $table->boolean('used')->default(0);
+            $table->unsignedBigInteger('qr_code')->unique();
+
+            $table->date('used_at')->nullable();
 
             $table->boolean('deactivated')->default(0);
             $table->timestamps();

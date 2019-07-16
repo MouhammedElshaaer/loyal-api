@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLinkedSocialAccountsTable extends Migration
+class AddForeignKeyConstraintToVoucherInstancesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,9 @@ class CreateLinkedSocialAccountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('linked_social_accounts', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            
-            $table->unsignedInteger('user_id');
+        Schema::table('voucher_instances', function (Blueprint $table) {
             $table->foreign('user_id')->references('id')->on('users');
-
-            $table->string('provider_id');
-            $table->string('provider_name');
-            $table->timestamps();
+            $table->foreign('voucher_id')->references('id')->on('vouchers');
         });
     }
 
@@ -32,6 +26,8 @@ class CreateLinkedSocialAccountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('linked_social_accounts');
+        Schema::table('voucher_instances', function (Blueprint $table) {
+            //
+        });
     }
 }

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLinkedSocialAccountsTable extends Migration
+class CreateTransactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,15 @@ class CreateLinkedSocialAccountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('linked_social_accounts', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->bigIncrements('id');
-            
-            $table->unsignedInteger('user_id');
+
+            $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
 
-            $table->string('provider_id');
-            $table->string('provider_name');
+            $table->string('invoice_number')->unique();
+            $table->string('invoice_value');
+
             $table->timestamps();
         });
     }
@@ -32,6 +33,6 @@ class CreateLinkedSocialAccountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('linked_social_accounts');
+        Schema::dropIfExists('transactions');
     }
 }

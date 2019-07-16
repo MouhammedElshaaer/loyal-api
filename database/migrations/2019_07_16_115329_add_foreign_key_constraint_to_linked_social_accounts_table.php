@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLinkedSocialAccountsTable extends Migration
+class AddForeignKeyConstraintToLinkedSocialAccountsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,8 @@ class CreateLinkedSocialAccountsTable extends Migration
      */
     public function up()
     {
-        Schema::create('linked_social_accounts', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            
-            $table->unsignedInteger('user_id');
+        Schema::table('linked_social_accounts', function (Blueprint $table) {
             $table->foreign('user_id')->references('id')->on('users');
-
-            $table->string('provider_id');
-            $table->string('provider_name');
-            $table->timestamps();
         });
     }
 
@@ -32,6 +25,8 @@ class CreateLinkedSocialAccountsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('linked_social_accounts');
+        Schema::table('linked_social_accounts', function (Blueprint $table) {
+            //
+        });
     }
 }
