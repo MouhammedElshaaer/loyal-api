@@ -67,5 +67,6 @@ Route::post('store', 'Shared\ImagesController@store');
  * Staging Routes
  */
 
+Route::post('mobile/transaction', 'Mobile\HomeController@addTransaction');
 
 

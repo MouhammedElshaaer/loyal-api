@@ -29,6 +29,8 @@ class MerchantController extends Controller
 
     public function addTransaction(Request $request){
 
+        
+
         return response()->json($this->data, 200);
 
     }
