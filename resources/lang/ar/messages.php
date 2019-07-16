@@ -45,8 +45,6 @@ return [
     
     'update_voucher_success'=> 'تم تعديل الكوبون',
     'update_voucher_fail'=> 'لا يوجد كوبون بهذه البيانات',
-    'get_vouchers_success'=> 'تم بنجاح',
-    'get_voucher_success'=> 'تم بنجاح',
     'get_voucher_fail'=> 'لا يوجد كوبون بهذه البيانات',
     'add_voucher_success'=> 'تم إضافة كوبون',
     'delete_voucher_success'=> 'تم حذف الكوبون بنجاح',

@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Shared;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-use App\Http\Requests\AddReportRequest;
-
 use App\Http\Traits\ResponseUtilities;
+
+use App\Models\Voucher;
 
 class SharedController extends Controller
 {
@@ -24,21 +24,6 @@ class SharedController extends Controller
         ];
 
     }
-    
-    /*******************************************************************************
-     *********************************** Reports ***********************************
-     *******************************************************************************/
-
-    public function addReport(AddReportRequest $request){
-
-        $attributes = $request->only('user_id', 'message', 'attachment');
-        if( User::find($attributes['user_id']) ){
-            $report = Report::create($attributes);
-            $this->initResponse(200, 'add_report_success');
-        }else{throw new Exception();}
-
-        return response()->json($this->data, 200);
-    }
 
     /*******************************************************************************
      *********************************** Vouchers **********************************
@@ -46,7 +31,7 @@ class SharedController extends Controller
 
     public function getVoucher($id){
         if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'get_voucher_fail');}
-        else{$this->initResponse(200, 'get_voucher_success', $voucher);}
+        else{$this->initResponse(200, 'success', $voucher);}
         return response()->json($this->data, 200);
     }
     
@@ -65,7 +50,7 @@ class SharedController extends Controller
             'total_items' => $total_items
         ];
         
-        $this->initResponse(200, 'get_vouchers_success', $paginate_response);
+        $this->initResponse(200, 'success', $paginate_response);
         return response()->json($this->data, 200);
     }
 }
