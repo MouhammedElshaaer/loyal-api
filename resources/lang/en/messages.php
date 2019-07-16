@@ -47,8 +47,6 @@ return [
 
     'update_voucher_success'=> 'voucher updated successfully',
     'update_voucher_fail'=> 'could not find a voucher with this data',
-    'get_vouchers_success'=> 'success',
-    'get_voucher_success'=> 'success',
     'get_voucher_fail'=> 'falied to get voucher',
     'add_voucher_success'=> 'voucher successfully added',
     'delete_voucher_success'=> 'Reward successfully deleted',
@@ -58,6 +56,7 @@ return [
     'updating_settings_success'=> 'Settings updated successfully',
     'ad_failed'=> 'Ad does not exist',
 
+    'success'=> 'Success response',
     'server_error'=> 'Internal Server Error',
     
 ];

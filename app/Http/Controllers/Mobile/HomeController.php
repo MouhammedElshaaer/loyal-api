@@ -53,7 +53,8 @@ class HomeController extends Controller
             'latest_vouchers' => $latestVouchers
         ];
 
-        $this->data['data'] = $homeContent;
+        $this->initResponse(200, 'success', $homeContent);
+        // $this->data['data'] = ;
 
         return response()->json($this->data , 200);
 

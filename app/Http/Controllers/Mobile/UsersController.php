@@ -18,6 +18,7 @@ use App\Http\Requests\SocialLoginRequest;
 use App\Http\Requests\VerifyPhoneRequest;
 use App\Http\Requests\ValidateUserRequest;
 use App\Http\Requests\ResetPasswordRequest;
+use App\Http\Requests\AddReportRequest;
 
 use Exception;
 use Google_Client;
@@ -26,6 +27,7 @@ use App\Http\Traits\ResponseUtilities;
 
 use App\User;
 use App\Models\LinkedSocialAccount;
+use App\Models\Report;
 
 class UsersController extends Controller
 {
@@ -42,6 +44,11 @@ class UsersController extends Controller
         ];
 
     }
+
+
+    /*******************************************************************************
+     ****************************** Authentication *********************************
+     *******************************************************************************/
 
     public function login(LoginRequest $request){
 
@@ -288,6 +295,27 @@ class UsersController extends Controller
         }else{$this->initResponse(400, 'unauthorized');}
         return response()->json($this->data , 200);
     }
+
+
+    
+    /*******************************************************************************
+     *********************************** Reports ***********************************
+     *******************************************************************************/
+
+    public function addReport(AddReportRequest $request){
+
+        $attributes = $request->only('user_id', 'message', 'attachment');
+        if( User::find($attributes['user_id']) ){
+            $report = Report::create($attributes);
+            $this->initResponse(200, 'add_report_success');
+        }else{throw new Exception();}
+
+        return response()->json($this->data, 200);
+    }
+
+    /*******************************************************************************
+     ********************************* Utilities ***********************************
+     *******************************************************************************/
 
     protected function generateOTP($len) {
         $otp = '';

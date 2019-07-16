@@ -35,16 +35,17 @@ Route::post('mobile/phone/verify', 'Mobile\UsersController@verifyPhone');
 
 Route::group(['middleware' => ['web', 'auth:api']], function () {
 
+    Route::get('mobile/home', 'Mobile\HomeController@homeContent');
+
     Route::post('mobile/logout', 'Mobile\UsersController@logout');
     Route::post('mobile/reset', 'Mobile\UsersController@resetPassword');
-    Route::post('mobile/home', 'Mobile\HomeController@homeContent');
 
     //Reports
     Route::get('mobile/reports', 'Web\AdminController@getReports');
     Route::get('mobile/report/{id}', 'Web\AdminController@getReport');
     Route::get('mobile/report/delete/{id}', 'Web\AdminController@deleteReport');
     Route::post('mobile/report/{id}', 'Web\AdminController@updateReport');
-    Route::post('mobile/report', 'Shared\SharedController@addReport');
+    Route::post('mobile/report', 'Mobile\UsersController@addReport');
     //Vouchers
     Route::get('mobile/rewards', 'Shared\SharedController@getVouchers');
     Route::get('mobile/reward/{id}', 'Shared\SharedController@getVoucher');
