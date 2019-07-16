@@ -15,7 +15,11 @@ class VoucherInstance extends Model
      * @var array
      */
     protected $hidden = [
-        'used',
+        'user_id',
+        'voucher_id',
+        'qr_code',
+        'used_at',
+        'transaction_id',
         'deactivated',
         'created_at',
         'updated_at'

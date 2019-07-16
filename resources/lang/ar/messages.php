@@ -51,6 +51,11 @@ return [
     'add_voucher_success'=> 'تم إضافة كوبون',
     'delete_voucher_success'=> 'تم حذف الكوبون بنجاح',
 
+    'add_transactions_success'=> 'تم إضافة الفاتورة',
+    'invalid_invoice_number'=> 'رقم الفاتورة غير صحيح',
+    'refund_success'=> 'تم استرجاع الفاتورة',
+    'already_refunded'=> 'لقد تم إسترجاع الفاتورة مسبقا',
+
     'server_error'=> 'خطأ في الخادم الداخلي',
     
 ];

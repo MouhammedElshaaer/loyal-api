@@ -20,7 +20,7 @@ class CreateTransactionPointsTable extends Migration
             $table->foreign('transaction_id')->references('id')->on('transactions');
 
             $table->unsignedBigInteger('original');
-            $table->unsignedBigInteger('redeemed');
+            $table->unsignedBigInteger('redeemed')->default(0);
 
             $table->date('used_at')->nullable();
             $table->date('refunded_at')->nullable();

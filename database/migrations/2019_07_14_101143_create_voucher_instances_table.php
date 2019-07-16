@@ -22,6 +22,9 @@ class CreateVoucherInstancesTable extends Migration
             $table->unsignedBigInteger('voucher_id');
             $table->foreign('voucher_id')->references('id')->on('vouchers');
 
+            $table->unsignedBigInteger('transaction_id')->nullable();
+            $table->foreign('transaction_id')->references('id')->on('transactions');
+
             $table->unsignedBigInteger('qr_code')->unique();
 
             $table->date('used_at')->nullable();

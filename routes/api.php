@@ -67,6 +67,7 @@ Route::post('store', 'Shared\ImagesController@store');
  * Staging Routes
  */
 
-Route::post('mobile/transaction', 'Mobile\HomeController@addTransaction');
+Route::post('mobile/transaction', 'Mobile\MerchantController@addTransaction');
+Route::post('mobile/refund', 'Mobile\MerchantController@refundTransaction');
 
 

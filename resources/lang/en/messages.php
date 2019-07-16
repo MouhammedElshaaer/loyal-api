@@ -53,6 +53,11 @@ return [
     'add_voucher_success'=> 'voucher successfully added',
     'delete_voucher_success'=> 'Reward successfully deleted',
 
+    'add_transactions_success'=> 'Transaction added successfully',
+    'invalid_invoice_number'=> 'Invalid invoice number',
+    'refund_success'=> 'Transaction refunded successfully',
+    'already_refunded'=> 'This transaction already refunded',
+
     'add_config_success'=> 'Configuration successfully added',
     'invalid_setting'=> 'Invalid settings',
     'updating_settings_success'=> 'Settings updated successfully',
