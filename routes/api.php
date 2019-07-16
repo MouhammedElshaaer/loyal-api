@@ -13,13 +13,47 @@ use Illuminate\Http\Request;
 |
 */
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
 
 /**
- * Mobile Services
+ * Shared and Mobile Authorized Services
+ */
+Route::group(['middleware' => ['auth:api']], function () {
+
+    /**Shared */
+    Route::post('logout', 'Mobile\UsersController@logout');
+    Route::get('rewards', 'Shared\SharedController@getVouchers');
+    Route::get('reward/{id}', 'Shared\SharedController@getVoucher');
+
+    /**Mobile */
+    Route::get('mobile/home', 'Mobile\HomeController@homeContent');
+    Route::post('mobile/reset', 'Mobile\UsersController@resetPassword');
+    Route::post('mobile/report', 'Mobile\UsersController@addReport');
+    
+});
+
+/**
+ * Web Authorized Services
+ * TODO: add admin middleware
+ */
+Route::group(['middleware' => ['auth:api']], function () {
+     
+    //Reports
+    Route::get('web/reports', 'Web\AdminController@getReports');
+    Route::get('web/report/{id}', 'Web\AdminController@getReport');
+    Route::get('web/report/delete/{id}', 'Web\AdminController@deleteReport');
+    Route::post('web/report/{id}', 'Web\AdminController@updateReport');
+    //Vouchers
+    Route::get('web/reward/delete/{id}', 'Web\AdminController@deleteVoucher');
+    Route::post('web/reward', 'Web\AdminController@addVoucher');
+    Route::post('web/reward/{id}', 'Web\AdminController@updateVoucher');
+    //Settings
+    Route::post('web/settings/fetch', 'Web\AdminController@fetchSettings');
+    Route::post('web/configuration', 'Web\AdminController@addConfiguration');
+
+});
+
+/**
+ * Mobile Unauthorized Services
  */
 Route::post('mobile/login', 'Mobile\UsersController@login');
 Route::post('mobile/register', 'Mobile\UsersController@register');
@@ -32,34 +66,13 @@ Route::post('mobile/resend', 'Mobile\UsersController@resendCode');
 Route::post('mobile/validate', 'Mobile\UsersController@validateUser');
 Route::post('mobile/phone/verify', 'Mobile\UsersController@verifyPhone');
 
+/**
+ * Web Unauthorized Services
+ */
 
-Route::group(['middleware' => ['auth:api']], function () {
-
-    Route::get('mobile/home', 'Mobile\HomeController@homeContent');
-
-    Route::post('mobile/logout', 'Mobile\UsersController@logout');
-    Route::post('mobile/reset', 'Mobile\UsersController@resetPassword');
-
-    //Reports
-    Route::get('mobile/reports', 'Web\AdminController@getReports');
-    Route::get('mobile/report/{id}', 'Web\AdminController@getReport');
-    Route::get('mobile/report/delete/{id}', 'Web\AdminController@deleteReport');
-    Route::post('mobile/report/{id}', 'Web\AdminController@updateReport');
-    Route::post('mobile/report', 'Mobile\UsersController@addReport');
-    //Vouchers
-    Route::get('mobile/rewards', 'Shared\SharedController@getVouchers');
-    Route::get('mobile/reward/{id}', 'Shared\SharedController@getVoucher');
-    Route::get('mobile/reward/delete/{id}', 'Web\AdminController@deleteVoucher');
-    Route::post('mobile/reward', 'Web\AdminController@addVoucher');
-    Route::post('mobile/reward/{id}', 'Web\AdminController@updateVoucher');
-    //Settings
-    Route::post('mobile/settings/fetch', 'Web\AdminController@fetchSettings');
-    Route::post('/web/configuration', 'Web\AdminController@addConfiguration');
-    
-});
 
 /**
- * Shared Services
+ * Shared Unauthorized Services
  */
 Route::post('store', 'Shared\ImagesController@store');
 

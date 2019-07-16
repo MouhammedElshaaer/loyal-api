@@ -29,10 +29,10 @@ class HomeController extends Controller
     
         $user = auth()->guard('api')->user();
         $ads = [
-            0 => 'http://localhost:8000/api/public/ad1.jpg',
-            1 => 'http://localhost:8000/api/public/ad1.jpg',
-            2 => 'http://localhost:8000/api/public/ad1.jpg',
-            3 => 'http://localhost:8000/api/public/ad1.jpg'
+            0 => 'https://designshack.net/wp-content/uploads/background-design-trends.jpg',
+            1 => 'https://designshack.net/wp-content/uploads/background-design-trends.jpg',
+            2 => 'https://designshack.net/wp-content/uploads/background-design-trends.jpg',
+            3 => 'https://designshack.net/wp-content/uploads/background-design-trends.jpg'
         ];
         $latestRewards = Voucher::where('deactivated', false)->orderBy('instances', 'desc')->take(5)->get();
         
