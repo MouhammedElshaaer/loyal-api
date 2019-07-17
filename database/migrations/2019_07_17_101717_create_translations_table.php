@@ -17,6 +17,7 @@ class CreateTranslationsTable extends Migration
             $table->bigIncrements('id');
 
             $table->unsignedBigInteger('data_item_field_id');
+            $table->foreign('data_item_field_id')->references('id')->on('data_item_fields');
 
             $table->string('locale');
             $table->longText('value');
