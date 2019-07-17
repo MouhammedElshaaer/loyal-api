@@ -37,7 +37,8 @@ class SharedController extends Controller
         $locale = $request->headers->get('locale');
         App::setLocale($locale);
         
-        if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'get_voucher_fail');}
+        $voucher = Voucher::find($id);
+        if(!$voucher || $voucher->deactivated){$this->initResponse(400, 'get_voucher_fail');}
         else{$this->initResponse(200, 'success', __('constants.default_locale')!=App::getLocale()? new VoucherResource($voucher): $voucher);}
         return response()->json($this->data, 200);
     }

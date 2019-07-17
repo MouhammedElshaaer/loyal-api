@@ -41,7 +41,7 @@ class AdminController extends Controller
      *******************************************************************************/
     public function fetchSettings(FetchSettingsRequest $request){
 
-        foreach($request->data["settings"] as $settingName=>$settingValue){
+        foreach($request->settings as $settingName=>$settingValue){
             $configuration = Configuration::where('category', $settingName)->first();
             if(!$setting = Setting::where('configuration_id', $configuration->id)->first()){
                 $setting = Setting::create(['configuration_id'=>$configuration->id]);
@@ -52,19 +52,19 @@ class AdminController extends Controller
 
         $failed = false;
         $adsConfig = Configuration::where('category', 'ADS')->first();
-        foreach ($request->data["ads"] as $ad)
+        foreach ($request->ads as $ad)
         {
             if($ad["new_ad"]){
                 $this->insertAd($ad, $adsConfig->id);
             }
             else if ($ad["deleted"]){
                 if($failed = !$this->deleteAd($ad["id"])){
-                    $this->initResponse(200, 'ad_failed');
+                    $this->initResponse(400, 'ad_failed');
                 }
             }
             else if ($ad["updated"]){
                 if($failed = !$this->updateAd($ad)){
-                    $this->initResponse(200, 'ad_failed');
+                    $this->initResponse(400, 'ad_failed');
                 }
             }
         }

@@ -11,11 +11,14 @@ use App\Models\Translation;
 trait LocaleUtilities
 {
     public function locale($locale){
-        return $this->locales->where('locale', $locale);
+        return count($this->locales)>0 ? $this->locales->where('locale', $locale) :null;
     }
 
     public function value($locale, $field){
-        return $this->locale($locale)->where('data_field', $field)->first()->value;
+        if($locale = $this->locale($locale)){
+            if($field = $locale->where('data_field', $field)->first()){return $field->value;}
+        }
+        return null;
     }
 
     public function storeLocales($locales, $data_row_id, $data_type_path){
@@ -62,7 +65,7 @@ trait LocaleUtilities
     }
 
     public function deleteLocales($data_row_id, $data_type_path){
-        try{$dataTypeRow = ($data_type_path)::find($data_row_id)->locales()->delete();}
+        try{($data_type_path)::find($data_row_id)->locales()->delete();}
         catch(Exception $e){return false;}
         return true;
     }
@@ -72,9 +75,9 @@ trait LocaleUtilities
             $newDataRow = new Translation;
             $newDataRow->data_row_id = $data_row_id;
             $newDataRow->data_type = $data_type_path;
-            $newDataRow->locale = $locale;
             $newDataRow->data_field = $field;
             $newDataRow->value = $value;
+            $newDataRow->locale = $locale;
             $newDataRow->save();
         }
         catch(Exception $e){return false;}

@@ -19,7 +19,7 @@ class FetchSettingsRequest extends FormRequest
      */
     public function authorize()
     {
-        foreach($this->data['settings'] as $config=>$value){
+        foreach($this->settings as $config=>$value){
             //We use raw() here as we want a case sensitive comparison
             if(!Configuration::where(\DB::raw("BINARY `category`"), $config)->first()){return false;}
         }
