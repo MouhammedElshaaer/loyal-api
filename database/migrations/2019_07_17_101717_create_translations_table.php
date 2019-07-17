@@ -16,8 +16,9 @@ class CreateTranslationsTable extends Migration
         Schema::create('translations', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->unsignedBigInteger('data_item_field_id');
-            $table->foreign('data_item_field_id')->references('id')->on('data_item_fields');
+            $table->unsignedBigInteger('data_row_id');
+            $table->text('data_row_name');
+            $table->text('data_row_field');
 
             $table->string('locale');
             $table->longText('value');
