@@ -61,6 +61,10 @@ return [
     'updating_settings_success'=> 'Settings updated successfully',
     'ad_failed'=> 'Ad does not exist',
 
+    'store_locales_fail'=> 'Failed to store locales',
+    'update_locales_fail'=> 'Failed to update locales',
+    'delete_locales_fail'=> 'Failed to delete locales',
+
     'success'=> 'Success response',
     'server_error'=> 'Internal Server Error',
     

@@ -54,6 +54,10 @@ return [
     'refund_success'=> 'تم استرجاع الفاتورة',
     'already_refunded'=> 'لقد تم إسترجاع الفاتورة مسبقا',
 
+    'store_locales_fail'=> 'لم يتم حفظ اللغات الأخرى',
+    'update_locales_fail'=> 'لم يتم تعديل اللغات الأخرى',
+    'delete_locales_fail'=> 'لم يتم حذف اللغات الأخرى',
+
     'server_error'=> 'خطأ في الخادم الداخلي',
     
 ];

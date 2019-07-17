@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Mobile;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\App;
 
 use App\Http\Traits\ResponseUtilities;
 
 use App\Models\Voucher;
+
+use App\Http\Resources\Voucher as VoucherResource;
 
 class HomeController extends Controller
 {
@@ -27,6 +30,9 @@ class HomeController extends Controller
     
     public function homeContent(Request $request){
     
+        $locale = $request->headers->get('locale');
+        App::setLocale($locale);
+
         $user = auth()->guard('api')->user();
         $ads = [
             0 => 'https://designshack.net/wp-content/uploads/background-design-trends.jpg',
@@ -44,6 +50,10 @@ class HomeController extends Controller
             4 => ['id'=>5, 'transaction_id'=>null, 'qr_code'=>"858165981658713", 'title'=>"50% Discount", 'status'=>"0", 'created_at'=>"Jul 14, 2019", 'expired_at'=>'Jul 14, 2019', 'used_at'=>null]
         ];
 
+        if(__('constants.default_locale')!=$request->headers->get('locale')){
+            $trendingRewards = VoucherResource::collection($trendingRewards);
+        }
+
         $homeContent = [
             'total_points' => $user->total_points,
             'total_expire' => $user->total_expire,
@@ -54,7 +64,6 @@ class HomeController extends Controller
         ];
 
         $this->initResponse(200, 'success', $homeContent);
-        // $this->data['data'] = ;
 
         return response()->json($this->data , 200);
 

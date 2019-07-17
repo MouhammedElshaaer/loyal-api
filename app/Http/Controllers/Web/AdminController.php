@@ -15,6 +15,9 @@ use App\Models\Report;
 use App\Models\Voucher;
 use App\Models\Configuration;
 use App\Models\Setting;
+use App\Models\Translation;
+
+use Exception;
 
 class AdminController extends Controller
 {
@@ -149,28 +152,112 @@ class AdminController extends Controller
         $attributes = $request->only('points', 'title', 'description', 'image');
         $voucher = Voucher::create($attributes);
         $this->initResponse(200, 'add_voucher_success');
+
+        if($locales=$request->locales){
+            if(!$this->storeLocales($locales, $voucher->id, Voucher::class)){
+                $this->initResponse(400, 'store_locales_fail');
+            }
+        }
+
         return response()->json($this->data, 200);
     }
 
     public function updateVoucher(AddUpdateVoucherRequest $request, $id){
-
+        
         $attributes = $request->only('value', 'points', 'title', 'description', 'deactivated');
+        
         if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'update_voucher_fail');}
         else{
             $voucher->update($attributes);
             $this->initResponse(200, 'update_voucher_success');
+
+            if($locales=$request->locales){
+                if(!$this->updateLocales($locales, $voucher->id, Voucher::class)){
+                    $this->initResponse(400, 'update_locales_fail');
+                }
+            }
+
         }
         return response()->json($this->data, 200);
     }
 
     public function deleteVoucher($id){
-       
+        
         if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'get_voucher_fail');}
         else{
+            if(!$this->deleteLocales($voucher->id, Voucher::class)){
+                $this->initResponse(400, 'delete_locales_fail');
+            }
             $voucher->delete();
             $this->initResponse(200, 'delete_voucher_success');
         }
         return response()->json($this->data, 200);
     }
 
+    /*******************************************************************************
+     ********************************** Utilities **********************************
+     *******************************************************************************/
+
+    protected function storeLocales($locales, $data_row_id, $data_type_path){
+
+        try{
+            foreach($locales as $dataRow){
+
+                $locale = $dataRow['locale'];
+                unset($dataRow['locale']);
+
+                foreach($dataRow as $field=>$value){
+                    $this->createLocaleInstance($data_row_id, $data_type_path, $locale, $field, $value);
+                }
+            }
+        }catch(Exception $e){return false;}
+        return true;
+    }
+
+    protected function updateLocales($locales, $data_row_id, $data_type_path){
+
+        try{
+            $dataTypeRow = ($data_type_path)::find($data_row_id);
+            $query = $dataTypeRow->locales();
+            foreach($locales as $updatedDataRow){
+
+                $locale = $updatedDataRow['locale'];
+                unset($updatedDataRow['locale']);
+
+                $queryCopy = clone $query;
+                $localeFilteredQuery = $queryCopy->where('locale', $locale);
+
+                foreach($updatedDataRow as $field=>$value){
+                    $localeFilteredQueryCopy = clone $localeFilteredQuery;
+                    $dataRow = $localeFilteredQueryCopy->where('data_field', $field)->first();
+                    if(!$dataRow){$this->createLocaleInstance($data_row_id, $data_type_path, $locale, $field, $value);}
+                    else{
+                        $dataRow->value = $value;
+                        $dataRow->save();
+                    }
+                }
+            }
+        }catch(Exception $e){return false;}
+        return true;
+    }
+
+    protected function deleteLocales($data_row_id, $data_type_path){
+        try{$dataTypeRow = ($data_type_path)::find($data_row_id)->locales()->delete();}
+        catch(Exception $e){return false;}
+        return true;
+    }
+
+    protected function createLocaleInstance($data_row_id, $data_type_path, $locale, $field, $value){
+        try{
+            $newDataRow = new Translation;
+            $newDataRow->data_row_id = $data_row_id;
+            $newDataRow->data_type = $data_type_path;
+            $newDataRow->locale = $locale;
+            $newDataRow->data_field = $field;
+            $newDataRow->value = $value;
+            $newDataRow->save();
+        }
+        catch(Exception $e){return false;}
+        return true;
+    }
 }
