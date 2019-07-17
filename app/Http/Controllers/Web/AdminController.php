@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateReportRequest;
 use App\Http\Requests\AddUpdateVoucherRequest;
 
 use App\Http\Traits\ResponseUtilities;
+use App\Http\Traits\LocaleUtilities;
 
 use App\Models\Report;
 use App\Models\Voucher;
@@ -21,7 +22,7 @@ use Exception;
 
 class AdminController extends Controller
 {
-    use ResponseUtilities;
+    use ResponseUtilities, LocaleUtilities;
 
     private $data;
 
@@ -194,70 +195,4 @@ class AdminController extends Controller
         return response()->json($this->data, 200);
     }
 
-    /*******************************************************************************
-     ********************************** Utilities **********************************
-     *******************************************************************************/
-
-    protected function storeLocales($locales, $data_row_id, $data_type_path){
-
-        try{
-            foreach($locales as $dataRow){
-
-                $locale = $dataRow['locale'];
-                unset($dataRow['locale']);
-
-                foreach($dataRow as $field=>$value){
-                    $this->createLocaleInstance($data_row_id, $data_type_path, $locale, $field, $value);
-                }
-            }
-        }catch(Exception $e){return false;}
-        return true;
-    }
-
-    protected function updateLocales($locales, $data_row_id, $data_type_path){
-
-        try{
-            $dataTypeRow = ($data_type_path)::find($data_row_id);
-            $query = $dataTypeRow->locales();
-            foreach($locales as $updatedDataRow){
-
-                $locale = $updatedDataRow['locale'];
-                unset($updatedDataRow['locale']);
-
-                $queryCopy = clone $query;
-                $localeFilteredQuery = $queryCopy->where('locale', $locale);
-
-                foreach($updatedDataRow as $field=>$value){
-                    $localeFilteredQueryCopy = clone $localeFilteredQuery;
-                    $dataRow = $localeFilteredQueryCopy->where('data_field', $field)->first();
-                    if(!$dataRow){$this->createLocaleInstance($data_row_id, $data_type_path, $locale, $field, $value);}
-                    else{
-                        $dataRow->value = $value;
-                        $dataRow->save();
-                    }
-                }
-            }
-        }catch(Exception $e){return false;}
-        return true;
-    }
-
-    protected function deleteLocales($data_row_id, $data_type_path){
-        try{$dataTypeRow = ($data_type_path)::find($data_row_id)->locales()->delete();}
-        catch(Exception $e){return false;}
-        return true;
-    }
-
-    protected function createLocaleInstance($data_row_id, $data_type_path, $locale, $field, $value){
-        try{
-            $newDataRow = new Translation;
-            $newDataRow->data_row_id = $data_row_id;
-            $newDataRow->data_type = $data_type_path;
-            $newDataRow->locale = $locale;
-            $newDataRow->data_field = $field;
-            $newDataRow->value = $value;
-            $newDataRow->save();
-        }
-        catch(Exception $e){return false;}
-        return true;
-    }
 }

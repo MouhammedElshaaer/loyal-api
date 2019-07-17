@@ -4,8 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use App\Http\Traits\LocaleUtilities;
+
 class Voucher extends Model
 {
+    use LocaleUtilities;
 
     /**
      * The attributes that should be hidden for arrays.
@@ -32,11 +35,4 @@ class Voucher extends Model
         return $this->morphMany('App\Models\Translation', 'dataRow', 'data_type', 'data_row_id');
     }
 
-    public function locale($locale){
-        return $this->locales->where('locale', $locale);
-    }
-
-    public function value($locale, $field){
-        return $this->locale($locale)->where('data_field', $field)->first()->value;
-    }
 }
