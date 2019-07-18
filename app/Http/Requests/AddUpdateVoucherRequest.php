@@ -18,6 +18,8 @@ class AddUpdateVoucherRequest extends FormRequest
      */
     public function authorize()
     {
+        $locale = $this->headers->get('locale');
+        App::setLocale($locale);
         return true;
     }
 
@@ -43,8 +45,6 @@ class AddUpdateVoucherRequest extends FormRequest
      */
     public function messages()
     {
-        $locale = $this->headers->get('locale');
-        App::setLocale($locale);
         return  __('validation.custom');
     }
 }

@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\App;
 
+use App\Http\Requests\HomeContentRequest;
+use App\Http\Requests\RedeemVoucherRequest;
+
 use App\Http\Traits\ResponseUtilities;
 
 use App\Models\Voucher;
@@ -28,10 +31,11 @@ class HomeController extends Controller
 
     }
     
-    public function homeContent(Request $request){
     
-        $locale = $request->headers->get('locale');
-        App::setLocale($locale);
+    public function homeContent(HomeContentRequest $request){
+    
+        // $locale = $request->headers->get('locale');
+        // App::setLocale($locale);
 
         $user = auth()->guard('api')->user();
         $ads = [
@@ -67,5 +71,14 @@ class HomeController extends Controller
 
         return response()->json($this->data , 200);
 
+    }
+
+    public function redeemVoucher(RedeemVoucherRequest $request){
+
+        $userPoints = 1000;
+        if(!$voucher = Voucher::find($request->voucher_id)){$this->initResponse(400, 'get_voucher_fail');}
+        else if($userPoints < $voucher->points){$this->initResponse(400, 'no_enough_points');}
+        else{$this->initResponse(200, 'redeem_success');}
+        return response()->json($this->data , 200);
     }
 }

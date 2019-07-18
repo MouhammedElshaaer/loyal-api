@@ -48,6 +48,7 @@ class AdminController extends Controller
             }
             $setting->value = $settingValue;
             $setting->save();
+            /**TODO: storing settings locals */
         }
 
         $failed = false;

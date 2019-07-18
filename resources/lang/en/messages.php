@@ -47,9 +47,11 @@ return [
 
     'update_voucher_success'=> 'voucher updated successfully',
     'update_voucher_fail'=> 'could not find a voucher with this data',
-    'get_voucher_fail'=> 'falied to get voucher',
+    'get_voucher_fail'=> 'voucher not found',
     'add_voucher_success'=> 'voucher successfully added',
     'delete_voucher_success'=> 'Reward successfully deleted',
+    'no_enough_points'=> 'User has no enough points',
+    'redeem_success'=> 'You can use this voucher now',
 
     'add_transactions_success'=> 'Transaction added successfully',
     'invalid_invoice_number'=> 'Invalid invoice number',

@@ -18,6 +18,8 @@ class ValidateUserRequest extends FormRequest
      */
     public function authorize()
     {
+        $locale = $this->headers->get('locale');
+        App::setLocale($locale);
         return true;
     }
 
@@ -41,8 +43,6 @@ class ValidateUserRequest extends FormRequest
      */
     public function messages()
     {
-        $locale = $this->headers->get('locale');
-        App::setLocale($locale);
         return  __('validation.custom');
     }
 }

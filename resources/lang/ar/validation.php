@@ -139,6 +139,9 @@ return [
         'attachment' => [
             'required' => 'يجب إرفاق صورة مع التقرير'
         ],
+        'voucher_id' => [
+            'required' => 'يجب تحديد رقم الكوبون'
+        ],
         
     ],
 

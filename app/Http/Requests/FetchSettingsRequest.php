@@ -23,6 +23,8 @@ class FetchSettingsRequest extends FormRequest
             //We use raw() here as we want a case sensitive comparison
             if(!Configuration::where(\DB::raw("BINARY `category`"), $config)->first()){return false;}
         }
+        $locale = $this->headers->get('locale');
+        App::setLocale($locale);
         return true;
     }
     
@@ -50,8 +52,6 @@ class FetchSettingsRequest extends FormRequest
      */
     public function messages()
     {
-        $locale = $this->headers->get('locale');
-        App::setLocale($locale);
         return  __('validation.custom');
     }
 

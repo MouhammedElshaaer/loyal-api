@@ -48,6 +48,8 @@ return [
     'get_voucher_fail'=> 'لا يوجد كوبون بهذه البيانات',
     'add_voucher_success'=> 'تم إضافة كوبون',
     'delete_voucher_success'=> 'تم حذف الكوبون بنجاح',
+    'no_enough_points'=> 'لا تملك نقاط كافية',
+    'redeem_success'=> 'تستطيع استخدام الكوبون الان',
 
     'add_transactions_success'=> 'تم إضافة الفاتورة',
     'invalid_invoice_number'=> 'رقم الفاتورة غير صحيح',

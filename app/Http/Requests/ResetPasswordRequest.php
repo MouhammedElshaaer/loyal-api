@@ -18,6 +18,8 @@ class ResetPasswordRequest extends FormRequest
      */
     public function authorize()
     {
+        $locale = $this->headers->get('locale');
+        App::setLocale($locale);
         return true;
     }
 
@@ -33,4 +35,15 @@ class ResetPasswordRequest extends FormRequest
             'code' => 'required|numeric'
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return  __('validation.custom');
+    }
+
 }
