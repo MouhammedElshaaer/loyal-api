@@ -17,6 +17,11 @@ return [
     'policies' => 'POLICIES',
     'ads' => 'ADS',
 
+    'admin' => 'admin',
+    'customer' => 'customer',
+    'cashier' => 'cashier',
+    'premium' => 'premium',
+
     'valid_status' => '100',
     'used_status' => '110',
     'refunded_status' => '111',

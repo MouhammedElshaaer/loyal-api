@@ -24,15 +24,17 @@ use Exception;
 use Google_Client;
 
 use App\Http\Traits\ResponseUtilities;
+use App\Http\Traits\CRUDUtilities;
 use App\Http\Traits\CodeGenerationUtilities;
 
 use App\User;
 use App\Models\LinkedSocialAccount;
 use App\Models\Report;
+use App\Models\Role;
 
 class UsersController extends Controller
 {
-    use ResponseUtilities, CodeGenerationUtilities;
+    use ResponseUtilities, CRUDUtilities, CodeGenerationUtilities;
 
     private $data;
 
@@ -120,6 +122,10 @@ class UsersController extends Controller
                     'image' => $providerUser->getAvatar(),
                 ]);
 
+                if (!$role = $this->getDataRow(Role::class, 'name', 'customer')){
+                    $user->roles()->attach($role);
+                }
+                
                 $this->socialSignupSuccessResponse($user);
 
             }else{
@@ -137,12 +143,21 @@ class UsersController extends Controller
 
     public function register(CreateUserRequest $request){
     
+        // $role = $this->getDataRow(Role::class, 'name', 'customer');
+        // return response()->json(['role'=>$role]);
+
         $attributes = $request->all();
         $attributes['password'] = bcrypt($attributes['password']);
         $this->initResponse(400, 'signup_fail');
 
-        $user = User::create($attributes);
-        if($user){$this->signupSuccessResponse($user);}
+        $user = $this->createUpdateDataRow(User::class, $attributes);
+        if($user){
+
+            if ($role = $this->getDataRow(Role::class, 'name', 'customer')){
+                $user->roles()->attach($role);
+            }
+            $this->signupSuccessResponse($user);
+        }
 
         return response()->json($this->data , 200);
     }

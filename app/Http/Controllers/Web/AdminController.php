@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateReportRequest;
 use App\Http\Requests\AddUpdateVoucherRequest;
 
 use App\Http\Traits\ResponseUtilities;
+use App\Http\Traits\CRUDUtilities;
 use App\Http\Traits\LocaleUtilities;
 use App\Http\Traits\SettingUtilities;
 
@@ -23,7 +24,7 @@ use Exception;
 
 class AdminController extends Controller
 {
-    use ResponseUtilities, LocaleUtilities, SettingUtilities;
+    use ResponseUtilities, CRUDUtilities, LocaleUtilities, SettingUtilities;
 
     private $data;
 

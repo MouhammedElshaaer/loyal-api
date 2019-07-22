@@ -13,9 +13,16 @@ class AddRolesToRolesTable extends Migration
      */
     public function up()
     {
-        Schema::table('roles', function (Blueprint $table) {
-            //
-        });
+        $attributesArray = [
+            ['name' => "admin"],
+            ['name' => "customer"],
+            ['name' => "cashier"],
+            ['name' => "premium"]
+        ];
+
+        foreach($attributesArray as $attributes){
+            \DB::table('roles')->insert($attributes);
+        }
     }
 
     /**
@@ -25,8 +32,6 @@ class AddRolesToRolesTable extends Migration
      */
     public function down()
     {
-        Schema::table('roles', function (Blueprint $table) {
-            //
-        });
+        \DB::table('roles')->truncate();
     }
 }

@@ -19,4 +19,14 @@ trait CRUDUtilities
         
         return $dataRow;
     }
+
+    public function getDataRow($dataTypePath, $key, $value){
+
+        return ($dataTypePath)::where($key, $value)->first();
+    }
+
+    public function getDataRows($dataTypePath, $key, $value){
+
+        return ($dataTypePath)::where($key, $value)->get();
+    }
 }

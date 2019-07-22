@@ -58,7 +58,7 @@ class TransactionPoints extends Model
     }
 
     public function getAvailablePointsAttribute(){
-        return (int) $this->original - (int) $this->redeemed;
+        return $this->attributes['original'] - $this->attributes['redeemed'];
     }
 
     public function getIsValidAttribute(){
