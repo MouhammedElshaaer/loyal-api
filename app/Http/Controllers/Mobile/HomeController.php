@@ -20,6 +20,7 @@ use App\Models\VoucherInstance;
 use App\User;
 
 use App\Http\Resources\Voucher as VoucherResource;
+use App\Http\Resources\VoucherInstance as VoucherInstanceResource;
 use App\Http\Resources\Setting as SettingResource;
 use App\Http\Resources\TransactionPoints as TransactionPointsResource;
 
