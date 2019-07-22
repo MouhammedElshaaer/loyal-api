@@ -18,8 +18,7 @@ class AddReportRequest extends FormRequest
      */
     public function authorize()
     {
-        $locale = $this->headers->get('locale');
-        App::setLocale($locale);
+        App::setLocale($this->headers->get('locale'));
         return true;
     }
 

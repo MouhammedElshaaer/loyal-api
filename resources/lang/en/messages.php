@@ -48,15 +48,24 @@ return [
     'update_voucher_success'=> 'voucher updated successfully',
     'update_voucher_fail'=> 'could not find a voucher with this data',
     'get_voucher_fail'=> 'voucher not found',
+    'valid_voucher'=> 'Valid voucher',
     'add_voucher_success'=> 'voucher successfully added',
     'delete_voucher_success'=> 'Reward successfully deleted',
     'no_enough_points'=> 'User has no enough points',
     'redeem_success'=> 'You can use this voucher now',
 
     'add_transactions_success'=> 'Transaction added successfully',
+    'voucher_used_success'=> 'Voucher discount applied',
     'invalid_invoice_number'=> 'Invalid invoice number',
     'refund_success'=> 'Transaction refunded successfully',
     'already_refunded'=> 'This transaction already refunded',
+
+    '100' => 'valid',
+    '110' => 'used',
+    '111' => 'refunded',
+    '10' => 'pending',
+    '11' => 'expired',
+    '0' => 'status error',
 
     'add_config_success'=> 'Configuration successfully added',
     'invalid_setting'=> 'Invalid settings',
@@ -69,5 +78,6 @@ return [
 
     'success'=> 'Success response',
     'server_error'=> 'Internal Server Error',
+    'custom_message'=> ':message',
     
 ];

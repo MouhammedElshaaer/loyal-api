@@ -11,13 +11,13 @@ trait ResponseUtilities
 {
 
     protected function verifiedResponse(User $user){
-        if(!$user->verified){
+        if (!$user->verified) {
 
             $this->initResponse(402, 'non_verified');
             $this->sendVerificationCode($user->id);
             return false;
 
-        }else{
+        } else {
 
             $token = $user->createToken('authToken')->accessToken;
             $user['token'] = $token;
@@ -39,18 +39,20 @@ trait ResponseUtilities
     protected function initErrorResponse(Exception $e){
 
         report($e);
-        $error['message'] = $e->getMessage();
-        $error['trace'] = $e->getTrace();
-        
+        $error = [
+            'message' => $e->getMessage(),
+            'trace' => $e->getTrace()
+        ];
+
         $this->initResponse(500, 'server_error');
         $this->data['error'] = $error;
         
     }
 
-    protected function initResponse($code, $messagesArrayKey, $data=null){
+    protected function initResponse($code, $messagesArrayKey, $data=null, $params=[]){
 
         $this->data['code'] = $code;
-        $this->data['message'] = __('messages.'.$messagesArrayKey);
+        $this->data['message'] = __('messages.'.$messagesArrayKey, $params);
         $this->data['data'] = $data? $data: new \stdClass();
     }
 

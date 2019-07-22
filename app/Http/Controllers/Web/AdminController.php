@@ -11,6 +11,7 @@ use App\Http\Requests\AddUpdateVoucherRequest;
 
 use App\Http\Traits\ResponseUtilities;
 use App\Http\Traits\LocaleUtilities;
+use App\Http\Traits\SettingUtilities;
 
 use App\Models\Report;
 use App\Models\Voucher;
@@ -22,7 +23,7 @@ use Exception;
 
 class AdminController extends Controller
 {
-    use ResponseUtilities, LocaleUtilities;
+    use ResponseUtilities, LocaleUtilities, SettingUtilities;
 
     private $data;
 
@@ -42,65 +43,39 @@ class AdminController extends Controller
     public function fetchSettings(FetchSettingsRequest $request){
 
         foreach($request->settings as $settingName=>$settingValue){
-            $configuration = Configuration::where('category', $settingName)->first();
-            if(!$setting = Setting::where('configuration_id', $configuration->id)->first()){
-                $setting = Setting::create(['configuration_id'=>$configuration->id]);
-            }
+            
+            $configuration = $this->getConfiguration(__('constants.'.$settingName));
+            $setting = $this->getSetting(__('constants.'.$settingName));
+
+            if (!$setting) { $setting = $this->createSetting(['configuration_id'=>$configuration->id]); }
+
             $setting->value = $settingValue;
             $setting->save();
             /**TODO: storing settings locals */
         }
 
         $failed = false;
-        $adsConfig = Configuration::where('category', 'ADS')->first();
+        $adsConfig = $this->getConfiguration(__('constants.ads'));
         foreach ($request->ads as $ad)
         {
-            if($ad["new_ad"]){
-                $this->insertAd($ad, $adsConfig->id);
-            }
-            else if ($ad["deleted"]){
-                if($failed = !$this->deleteAd($ad["id"])){
-                    $this->initResponse(400, 'ad_failed');
-                }
-            }
-            else if ($ad["updated"]){
-                if($failed = !$this->updateAd($ad)){
-                    $this->initResponse(400, 'ad_failed');
-                }
+            if ($ad["new_ad"]) {
+                $this->createSetting(['configuration_id'=>$adsConfig->id, 'value'=>$ad['url']]);
+            } else if ($ad["deleted"]) {
+                if ($failed = !$this->deleteSetting($ad["id"])) { $this->initResponse(400, 'ad_failed'); }
+            } else if ($ad["updated"]) {
+                if ($failed = !$this->updateSetting($ad)) { $this->initResponse(400, 'ad_failed'); }
             }
         }
 
-        if(!$failed){$this->initResponse(200, 'updating_settings_success');}
+        if (!$failed) { $this->initResponse(200, 'updating_settings_success'); }
         return response()->json($this->data, 200);
 
-    }
-
-    public function insertAd($ad, $configuration_id){
-        $newAd = new Setting;
-        $newAd->configuration_id = $configuration_id;
-        $newAd->value = $ad['url'];
-        $newAd->save();
-    }
-
-    public function deleteAd($adId){
-        $ad = Setting::find($adId);
-        if(!$ad){return false;}
-        $ad->delete();
-        return true;
-    }
-
-    public function updateAd($ad){
-        $updatedAd = Setting::find($ad['id']);
-        if(!$updatedAd){return false;}
-        $updatedAd->value = $ad['url'];
-        $updatedAd->save();
-        return true;
     }
 
     public function addConfiguration(Request $request){
 
         $attributes = $request->only('category');
-        Configuration::create($attributes);
+        $this->createConfiguration($attributes);
         $this->initResponse(200, 'add_config_success');
         return response()->json($this->data, 200);
     }
@@ -112,8 +87,8 @@ class AdminController extends Controller
 
     public function getReport(){
         
-        if(!$report = Report::find($id)){$this->initResponse(400, 'get_report_fail');}
-        else{$this->initResponse(200, 'get_report_success', $report);}
+        if (!$report = Report::find($id)) { $this->initResponse(400, 'get_report_fail'); }
+        else { $this->initResponse(200, 'get_report_success', $report); }
         return response()->json($this->data, 200);
     }
     
@@ -126,8 +101,8 @@ class AdminController extends Controller
 
     public function updateReport(UpdateReportRequest $request, $id){
         $attributes = $request->only('message', 'attachment');
-        if(!$report = Report::find($id)){$this->initResponse(400, 'update_report_fail');}
-        else{
+        if (!$report = Report::find($id)) { $this->initResponse(400, 'update_report_fail'); }
+        else {
             $report->update($attributes);
             $this->initResponse(200, 'update_report_success');
         }
@@ -137,8 +112,8 @@ class AdminController extends Controller
     public function deleteReport($id){
         
         $report = Report::find($id);
-        if(!$report){$this->initResponse(400, 'get_report_fail');}
-        else{
+        if (!$report) { $this->initResponse(400, 'get_report_fail'); }
+        else {
             $report->delete();
             $this->initResponse(200, 'delete_report_success');
         }
@@ -155,8 +130,8 @@ class AdminController extends Controller
         $voucher = Voucher::create($attributes);
         $this->initResponse(200, 'add_voucher_success');
 
-        if($locales=$request->locales){
-            if(!$this->storeLocales($locales, $voucher->id, Voucher::class)){
+        if ($locales=$request->locales) {
+            if (!$this->storeLocales($locales, $voucher->id, Voucher::class)) {
                 $this->initResponse(400, 'store_locales_fail');
             }
         }
@@ -168,8 +143,8 @@ class AdminController extends Controller
         
         $attributes = $request->only('value', 'points', 'title', 'description', 'deactivated');
         
-        if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'update_voucher_fail');}
-        else{
+        if (!$voucher = Voucher::find($id)) { $this->initResponse(400, 'update_voucher_fail'); }
+        else {
             $voucher->update($attributes);
             $this->initResponse(200, 'update_voucher_success');
 
@@ -185,9 +160,9 @@ class AdminController extends Controller
 
     public function deleteVoucher($id){
         
-        if(!$voucher = Voucher::find($id)){$this->initResponse(400, 'get_voucher_fail');}
-        else{
-            if(!$this->deleteLocales($voucher->id, Voucher::class)){
+        if (!$voucher = Voucher::find($id)) { $this->initResponse(400, 'get_voucher_fail'); }
+        else {
+            if (!$this->deleteLocales($voucher->id, Voucher::class)) {
                 $this->initResponse(400, 'delete_locales_fail');
             }
             $voucher->delete();

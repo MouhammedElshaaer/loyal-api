@@ -24,6 +24,7 @@ use Exception;
 use Google_Client;
 
 use App\Http\Traits\ResponseUtilities;
+use App\Http\Traits\CodeGenerationUtilities;
 
 use App\User;
 use App\Models\LinkedSocialAccount;
@@ -31,7 +32,7 @@ use App\Models\Report;
 
 class UsersController extends Controller
 {
-    use ResponseUtilities;
+    use ResponseUtilities, CodeGenerationUtilities;
 
     private $data;
 
@@ -316,12 +317,6 @@ class UsersController extends Controller
     /*******************************************************************************
      ********************************* Utilities ***********************************
      *******************************************************************************/
-
-    protected function generateOTP($len) {
-        $otp = '';
-        for($i = 0; $i < $len; $i++) {$otp .= mt_rand(0, 9);}
-        return $otp;
-    }
 
     protected function providerUserFromIdToken($idToken){
         

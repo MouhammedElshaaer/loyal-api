@@ -19,7 +19,7 @@ class CreateTransactionsTable extends Migration
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users');
 
-            $table->string('invoice_number')->unique();
+            $table->unsignedBigInteger('invoice_number')->unique();
             $table->string('invoice_value');
 
             $table->timestamps();

@@ -76,12 +76,16 @@ class User extends Authenticatable
      */
     public function getTotalPointsAttribute()
     {
-        /**
-         * Here we should calculate all user valid points from transactions table
-         */
+        $totalValid = 0;
+        foreach ($this->transactions as $transaction) {
 
-        return 1300;
+            $transactionPoints = $transaction->transactionPoints;
+            if ($transactionPoints->is_valid) { $totalValid += $transactionPoints->available_points; }
+
+        }
+        return $totalValid;
     }
+
     /**
      * Get the voucher instance status.
      *
@@ -93,8 +97,16 @@ class User extends Authenticatable
          * Here we should calculate all user valid points from transactions table
          */
 
-        return 500;
+        $totalExpire = 0;
+        foreach ($this->transactions as $transaction) {
+            
+            $transactionPoints = $transaction->transactionPoints;
+            if ($transactionPoints->is_expired) { $totalExpire += $transactionPoints->available_points; }
+
+        }
+        return $totalExpire;
     }
+
     /**
      * Get the voucher instance status.
      *
@@ -102,11 +114,15 @@ class User extends Authenticatable
      */
     public function getLatestExpireAttribute()
     {
-        /**
-         * Here we should calculate all user valid points from transactions table
-         */
+        $latestExpire = [];
+        $transactions = $this->transactions()->orderBy('created_at')->get();
+        foreach ($transactions as $transaction) {
 
-        return Carbon::now()->toFormattedDateString();
+            $transactionPoints = $transaction->transactionPoints;
+            if ($transactionPoints->is_valid) { array_push($latestExpire, $transactionPoints); }
+
+        }
+        return collect($latestExpire);
     }
 
     /**

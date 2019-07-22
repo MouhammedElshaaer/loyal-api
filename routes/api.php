@@ -23,12 +23,17 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('logout', 'Mobile\UsersController@logout');
     Route::get('rewards', 'Shared\SharedController@getVouchers');
     Route::get('reward/{id}', 'Shared\SharedController@getVoucher');
+    Route::get('vouchers', 'Shared\SharedController@getVoucherInstances');
+    Route::get('voucher/{id}', 'Shared\SharedController@getVoucherInstance');
 
-    /**Mobile */
+    /**Mobile Customer*/
     Route::get('mobile/home', 'Mobile\HomeController@homeContent');
     Route::post('mobile/reset', 'Mobile\UsersController@resetPassword');
     Route::post('mobile/report', 'Mobile\UsersController@addReport');
     Route::post('mobile/redeem', 'Mobile\HomeController@redeemVoucher');
+
+    /**Mobile Merchant*/
+
     
 });
 
@@ -84,5 +89,6 @@ Route::post('store', 'Shared\ImagesController@store');
 
 Route::post('mobile/transaction', 'Mobile\MerchantController@addTransaction');
 Route::post('mobile/refund', 'Mobile\MerchantController@refundTransaction');
+Route::post('mobile/voucher/check', 'Mobile\MerchantController@checkVoucherInstance');
 
 

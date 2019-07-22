@@ -9,8 +9,10 @@ use Illuminate\Support\Facades\App;
 use App\Http\Traits\ResponseUtilities;
 
 use App\Models\Voucher;
+use App\Models\VoucherInstance;
 
 use App\Http\Resources\Voucher as VoucherResource;
+use App\Http\Resources\VoucherInstance as VoucherInstanceResource;
 
 class SharedController extends Controller
 {
@@ -62,6 +64,35 @@ class SharedController extends Controller
         ];
         
         $this->initResponse(200, 'success', $paginate_response);
+        return response()->json($this->data, 200);
+    }
+
+    /*******************************************************************************
+     ****************************** VoucherIntances *******************************
+     *******************************************************************************/
+
+    public function getVoucherInstance(Request $request, $id){
+
+        $locale = $request->headers->get('locale');
+        App::setLocale($locale);
+
+        $user = auth()->user();
+        $voucherInstance = VoucherInstance::find($id);
+        
+        if(!$voucherInstance | $voucherInstance->deactivated){$this->initResponse(400, 'get_voucher_fail');}
+        else { $this->initResponse(200, 'success', new VoucherInstanceResource($voucherInstance)); }
+        return response()->json($this->data, 200);
+    }
+
+    public function getVoucherInstances(Request $request){
+
+        $locale = $request->headers->get('locale');
+        App::setLocale($locale);
+
+        $user = auth()->user();
+        $voucherInstances = VoucherInstance::where('user_id', $user->id)->where('deactivated', false)->get();
+        
+        $this->initResponse(200, 'success', VoucherInstanceResource::collection($voucherInstances));
         return response()->json($this->data, 200);
     }
 }

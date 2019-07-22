@@ -2,16 +2,15 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\App;
 
 use App\Http\Requests\Traits\UsesCustomErrorMessage;
 
-use App\Models\Configuration;
-
-class FetchSettingsRequest extends FormRequest
+class AddTransactionRequest extends FormRequest
 {
+    use UsesCustomErrorMessage;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -19,18 +18,8 @@ class FetchSettingsRequest extends FormRequest
      */
     public function authorize()
     {
-        foreach($this->settings as $config=>$value){
-            //We use raw() here as we want a case sensitive comparison
-            if(!Configuration::where(\DB::raw("BINARY `category`"), __('constants.'.$config))->first()){return false;}
-        }
-        $locale = $this->headers->get('locale');
-        App::setLocale($locale);
+        App::setLocale($this->headers->get('locale'));
         return true;
-    }
-    
-    protected function failedAuthorization()
-    {
-        throw new AuthorizationException();
     }
 
     /**
@@ -41,7 +30,10 @@ class FetchSettingsRequest extends FormRequest
     public function rules()
     {
         return [
-            
+            'user_id' => 'required|numeric',
+            'invoice_number' => 'required|numeric|unique:transactions',
+            'invoice_value' => 'required|numeric',
+            'voucher_id' => 'numeric',
         ];
     }
 
@@ -53,10 +45,5 @@ class FetchSettingsRequest extends FormRequest
     public function messages()
     {
         return  __('validation.custom');
-    }
-
-    public function message()
-    {
-        return __('messages.validation_error');
     }
 }
