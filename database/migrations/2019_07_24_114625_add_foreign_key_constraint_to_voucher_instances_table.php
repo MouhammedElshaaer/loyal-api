@@ -14,7 +14,9 @@ class AddForeignKeyConstraintToVoucherInstancesTable extends Migration
     public function up()
     {
         Schema::table('voucher_instances', function (Blueprint $table) {
+
             $table->foreign('transaction_id')->references('id')->on('transactions');
+            
         });
     }
 
@@ -26,7 +28,9 @@ class AddForeignKeyConstraintToVoucherInstancesTable extends Migration
     public function down()
     {
         Schema::table('voucher_instances', function (Blueprint $table) {
+
             $table->dropForeign('voucher_instances_transaction_id_foreign');
+
         });
     }
 }
