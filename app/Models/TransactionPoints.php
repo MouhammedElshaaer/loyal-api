@@ -80,7 +80,7 @@ class TransactionPoints extends Model
 
         $status = __('constants.status.status_error');
 
-        if ($this->used) { $status = __('constants.status.used_status'); }
+        if ($this->is_used) { $status = __('constants.status.used_status'); }
         else if ($this->refunded) { $status = __('constants.status.refunded_status'); }
         else {
 

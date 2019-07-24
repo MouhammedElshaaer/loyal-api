@@ -105,11 +105,11 @@ class VoucherInstance extends Model
      *
      * @return int
      */
-    public function getStatusAttribute(){   
+    public function getStatusAttribute(){
 
         $status = __('constants.status.status_error');
 
-        if ($this->used) { $status = __('constants.status.used_status'); }
+        if ($this->is_used) { $status = __('constants.status.used_status'); }
         else {
             $validDuration = $this->getSetting(__('constants.settings.valid_duration'))->value;
             if ($validDuration) {
