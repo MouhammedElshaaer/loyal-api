@@ -131,4 +131,12 @@ class VoucherInstance extends Model
     {
         return $this->belongsTo('App\Models\Voucher');
     }
+
+    /**
+     * Get the Transaction that owns the used VoucherInstance.
+     */
+    public function transaction()
+    {
+        return $this->belongsTo('App\Models\Transaction');
+    }
 }

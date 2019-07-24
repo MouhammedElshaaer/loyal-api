@@ -14,14 +14,13 @@ class VoucherInstance extends JsonResource
      */
     public function toArray($request)
     {  
-        $voucher = $this->voucher; 
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
             'qr_code' => $this->qr_code,
-            'title' => $voucher->title,
+            'title' => $this->voucher->title,
             'used_at' => $this->used_at,
-            'transaction_id' => $this->transaction_id,
+            'invoice_number' => $this->transaction_id? $this->transaction->invoice_number: null,
             'status' => $this->status,
             'is_used' => $this->is_used,
             'is_valid' => $this->is_valid,
