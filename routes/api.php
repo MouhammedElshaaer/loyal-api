@@ -17,8 +17,7 @@ use Illuminate\Http\Request;
 /**
  * Shared and Customer Mobile Authorized Services
  */
-// Route::group(['middleware' => ['auth:api', 'canAccess:admin,customer']], function () {
-Route::group(['middleware' => ['auth:api']], function () {
+Route::group(['middleware' => ['auth:api', 'canAccess:admin,customer']], function () {
 
     /**Shared */
     Route::post('logout', 'Mobile\UsersController@logout');
