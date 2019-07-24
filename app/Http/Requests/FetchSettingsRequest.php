@@ -21,7 +21,7 @@ class FetchSettingsRequest extends FormRequest
     {
         foreach($this->settings as $config=>$value){
             //We use raw() here as we want a case sensitive comparison
-            if(!Configuration::where(\DB::raw("BINARY `category`"), __('constants.settings.'.$config))->first()){return false;}
+            if(!Configuration::where(\DB::raw("BINARY `category`"), config('constants.settings.'.$config))->first()){return false;}
         }
         $locale = $this->headers->get('locale');
         App::setLocale($locale);

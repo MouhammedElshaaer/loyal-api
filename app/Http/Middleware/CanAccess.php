@@ -34,7 +34,7 @@ class CanAccess
         $authorize = false;
         foreach (auth()->user()->roles as $userRole) {
             foreach ($roles as $role) {
-                if ($userRole->name == __('constants.roles.'.$role)) { $authorize=true; }
+                if ($userRole->name == config('constants.roles.'.$role)) { $authorize=true; }
             }
         }
 

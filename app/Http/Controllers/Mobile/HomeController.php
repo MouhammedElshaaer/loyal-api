@@ -57,7 +57,7 @@ class HomeController extends Controller
             $latestExpire = Carbon::parse($latest_expire_points[0]->valid_end_date)->toFormattedDateString();
         }
 
-        if (__('constants.default_locale')!=$request->headers->get('locale')) {
+        if (config('constants.default_locale')!=$request->headers->get('locale')) {
             $trendingRewards = VoucherResource::collection($trendingRewards);
         }
 

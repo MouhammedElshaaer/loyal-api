@@ -39,7 +39,7 @@ trait SettingUtilities
 
     public function getAds(){
         $setting = null;
-        if ($configuration = $this->getConfiguration(__('constants.settings.ads'))) {
+        if ($configuration = $this->getConfiguration(config('constants.settings.ads'))) {
             $setting = Setting::where('configuration_id', $configuration->id)->get();
         }
         return $setting;

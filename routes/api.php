@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,9 +16,21 @@ use Illuminate\Http\Request;
 
 
 /**
+ * Variables used in canAccess middleware
+ */
+$admin_customer_privileged = config('constants.roles.admin').','.config('constants.roles.customer');
+$admin_privileged = config('constants.roles.admin');
+$cashier_privileged = config('constants.roles.cashier');
+
+/**
  * Shared and Customer Mobile Authorized Services
  */
-Route::group(['middleware' => ['auth:api', 'canAccess:admin,customer']], function () {
+Route::group([
+    'middleware' =>[
+            'auth:api',
+            'canAccess:'.$admin_customer_privileged
+        ]
+    ], function () {
 
     /**Shared */
     Route::post('logout', 'Mobile\UsersController@logout');
@@ -36,9 +49,20 @@ Route::group(['middleware' => ['auth:api', 'canAccess:admin,customer']], functio
 });
 
 /**
+ * Merchant Mobile Authorized Services
+ */
+Route::group(['middleware' => ['auth:api', 'canAccess:'.$cashier_privileged]], function () {
+
+    /**Merchant*/
+    Route::post('mobile/transaction', 'Mobile\MerchantController@addTransaction');
+    Route::post('mobile/refund', 'Mobile\MerchantController@refundTransaction');
+    Route::post('mobile/voucher/check', 'Mobile\MerchantController@checkVoucherInstance');
+});
+
+/**
  * Web Authorized Services
  */
-// Route::group(['middleware' => ['auth:api', 'canAccess:admin']], function () {
+// Route::group(['middleware' => ['auth:api', 'canAccess:'.$admin_privileged]], function () {
 Route::group(['middleware' => ['auth:api']], function () {
     
     //Dashboard
@@ -61,13 +85,14 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('web/cashier/delete/{id}', 'Web\AdminController@deleteUser');
     //Users + Cashier
     Route::post('web/user/update', 'Web\AdminController@updateUser');
+    //Action Logs
+    Route::get('web/actions', 'Web\AdminController@getActionLogs');
 
 });
 
 /**
  * Mobile Unauthorized Services
  */
-Route::post('mobile/login', 'Mobile\UsersController@login');
 Route::post('mobile/register', 'Mobile\UsersController@register');
 Route::post('mobile/login/social', 'Mobile\UsersController@socailLogin');
 Route::post('mobile/signup/complete', 'Mobile\UsersController@completeSignup');
@@ -86,6 +111,7 @@ Route::post('mobile/phone/verify', 'Mobile\UsersController@verifyPhone');
 /**
  * Shared Unauthorized Services
  */
+Route::post('mobile/login', 'Mobile\UsersController@login');
 Route::post('store', 'Shared\ImagesController@store');
 
 
@@ -93,8 +119,5 @@ Route::post('store', 'Shared\ImagesController@store');
  * Staging Routes
  */
 
-Route::post('mobile/transaction', 'Mobile\MerchantController@addTransaction');
-Route::post('mobile/refund', 'Mobile\MerchantController@refundTransaction');
-Route::post('mobile/voucher/check', 'Mobile\MerchantController@checkVoucherInstance');
 
 

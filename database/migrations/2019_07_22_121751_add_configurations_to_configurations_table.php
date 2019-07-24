@@ -18,7 +18,7 @@ class AddConfigurationsToConfigurationsTable extends Migration
     public function up()
     {
 
-        $settings = __('constants.settings');
+        $settings = config('constants.settings');
 
         foreach($settings as $setting){
             \DB::table('configurations')->insert(['category' => $setting]);
@@ -26,12 +26,12 @@ class AddConfigurationsToConfigurationsTable extends Migration
 
         /**Adding basic settings defaults*/
 
-        $defaultSettings = __('constants.default_settings');
+        $defaultSettings = config('constants.default_settings');
 
         foreach($defaultSettings as $settingName=>$settingValue){
             
-            $configuration = $this->getConfiguration(__('constants.'.$settingName));
-            $setting = $this->getSetting(__('constants.'.$settingName));
+            $configuration = $this->getConfiguration(config('constants.'.$settingName));
+            $setting = $this->getSetting(config('constants.'.$settingName));
 
             if (!$setting) { $setting = $this->createSetting(['configuration_id'=>$configuration->id]); }
 

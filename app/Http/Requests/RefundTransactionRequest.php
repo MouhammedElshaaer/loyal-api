@@ -30,7 +30,7 @@ class RefundTransactionRequest extends FormRequest
     public function rules()
     {
         return [
-            'transaction_id' => 'required|numeric'
+            'invoice_number' => 'required|numeric'
         ];
     }
 

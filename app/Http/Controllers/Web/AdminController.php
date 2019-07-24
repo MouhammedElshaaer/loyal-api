@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\FetchSettingsRequest;
 use App\Http\Requests\UpdateReportRequest;
 use App\Http\Requests\AddUpdateVoucherRequest;
@@ -21,7 +22,7 @@ use App\Models\Setting;
 use App\Models\Translation;
 use App\Models\VoucherInstance;
 use App\Models\Role;
-use App\Models\User;
+use App\User;
 
 use App\Http\Resources\Setting as SettingResource;
 
@@ -50,8 +51,8 @@ class AdminController extends Controller
 
         foreach($request->settings as $settingName=>$settingValue){
             
-            $configuration = $this->getConfiguration(__('constants.settings.'.$settingName));
-            $setting = $this->getSetting(__('constants.settings.'.$settingName));
+            $configuration = $this->getConfiguration(config('constants.settings.'.$settingName));
+            $setting = $this->getSetting(config('constants.settings.'.$settingName));
 
             if (!$setting) { $setting = $this->createSetting(['configuration_id'=>$configuration->id]); }
 
@@ -61,7 +62,7 @@ class AdminController extends Controller
         }
 
         $failed = false;
-        $adsConfig = $this->getConfiguration(__('constants.settings.ads'));
+        $adsConfig = $this->getConfiguration(config('constants.settings.ads'));
         foreach ($request->ads as $ad)
         {
             if ($ad["new_ad"]) {
@@ -80,7 +81,7 @@ class AdminController extends Controller
 
     public function settings(Request $request){
 
-        $configs = __('constants.settings');
+        $configs = config('constants.settings');
         unset($configs['ads']);
 
         $settings = $this->getSettings($configs);
@@ -232,13 +233,18 @@ class AdminController extends Controller
      ************************************ Users ************************************
      *******************************************************************************/
 
-    public function createCashier(Request $request){
+    public function createCashier(CreateUserRequest $request){
 
-        $attributes = $request->all();
+        $attributes = $request->only('country_code', 'phone', 'name', 'email', 'password', 'image');
+        $attributes['password'] = bcrypt($attributes['password']);
         $user = $this->createUpdateDataRow(User::class, $attributes);
 
         if (!$user) { $this->initResponse(500, 'server_error'); }
         else {
+
+            $user->verified = true;
+            $user->save();
+
             if ($role = $this->getDataRowByKey(Role::class, 'name', 'cashier')) {
                 $user->roles()->attach($role);
             }
@@ -265,5 +271,15 @@ class AdminController extends Controller
         if (!$this->deleteDataRow(User::class, $id)) { $this->initResponse(500, 'server_error'); }
         $this->initResponse(200, 'success');
         return response()->json($this->data, 200);
+    }
+
+    /*******************************************************************************
+     ********************************* Action Logs *********************************
+     *******************************************************************************/
+
+    public function getActionLogs(Request $request){
+
+
+
     }
 }

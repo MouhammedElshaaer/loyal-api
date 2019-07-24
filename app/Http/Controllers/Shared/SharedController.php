@@ -42,7 +42,7 @@ class SharedController extends Controller
         
         $voucher = Voucher::find($id);
         if(!$voucher || $voucher->deactivated){$this->initResponse(400, 'get_voucher_fail');}
-        else{$this->initResponse(200, 'success', __('constants.default_locale')!=App::getLocale()? new VoucherResource($voucher): $voucher);}
+        else{$this->initResponse(200, 'success', config('constants.default_locale')!=App::getLocale()? new VoucherResource($voucher): $voucher);}
         return response()->json($this->data, 200);
     }
     
@@ -55,7 +55,7 @@ class SharedController extends Controller
         $query2 = clone $query1;
         $query3 = clone $query1;
 
-        $items = __('constants.default_locale')!=App::getLocale()? VoucherResource::collection($query1->paginate(10)): $query1->paginate(10)->items();
+        $items = config('constants.default_locale')!=App::getLocale()? VoucherResource::collection($query1->paginate(10)): $query1->paginate(10)->items();
         $total_pages = $query2->paginate(10)->lastPage();
         $total_items = $query3->paginate(10)->total();
         $paginate_response = [

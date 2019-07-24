@@ -12,6 +12,7 @@ use App\Http\Requests\RefundTransactionRequest;
 use App\Http\Traits\ResponseUtilities;
 use App\Http\Traits\SettingUtilities;
 use App\Http\Traits\CRUDUtilities;
+use App\Http\Traits\LogUtilities;
 
 use Exception;
 use Carbon\Carbon;
@@ -19,10 +20,11 @@ use Carbon\Carbon;
 use App\Models\Transaction;
 use App\Models\TransactionPoints;
 use App\Models\VoucherInstance;
+use App\Models\ActionLog;
 
 class MerchantController extends Controller
 {
-    use ResponseUtilities, CRUDUtilities, SettingUtilities;
+    use ResponseUtilities, CRUDUtilities, SettingUtilities, LogUtilities;
 
     private $data;
 
@@ -34,6 +36,23 @@ class MerchantController extends Controller
             "data" => new \stdClass()
         ];
 
+    }
+
+    /*******************************************************************************
+     ****************************** Authentication *********************************
+     *******************************************************************************/
+
+    public function login(LoginRequest $request){
+
+        $attributes = $request->only('country_code', 'phone', 'password');
+
+        if(!auth()->attempt($attributes)){
+            $this->initResponse(401, 'login_fail');
+        }else{
+            $user = auth()->user();
+            $this->verifiedResponse($user);
+        }
+        return response()->json($this->data, 200);
     }
 
     /*******************************************************************************
@@ -53,11 +72,13 @@ class MerchantController extends Controller
 
             $points = $this->resolvePoints($request->invoice_value);
             $transactionAttributes = $request->only('user_id', 'invoice_number', 'invoice_value');
-            $newTransaction = $this->createUpdateDataRow(Transaction::class, $transactionAttributes);
+            $transaction = $this->createUpdateDataRow(Transaction::class, $transactionAttributes);
 
-            $transactionPointsAttributes = ['transaction_id' => $newTransaction->id, 'original' => $points];
-            $newTransactionPoints = $this->createUpdateDataRow(TransactionPoints::class, $transactionPointsAttributes);
+            $transactionPointsAttributes = ['transaction_id' => $transaction->id, 'original' => $points];
+            $transactionPoints = $this->createUpdateDataRow(TransactionPoints::class, $transactionPointsAttributes);
             $this->initResponse(200, 'add_transactions_success');
+
+            $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $transaction->id, Transaction::class, 'cashier', 'add');
 
             if ($request->has('voucher_id')) {
                 $voucherInstance = VoucherInstance::find($request->voucher_id);
@@ -67,14 +88,21 @@ class MerchantController extends Controller
     
                     $voucherInstanceAttributes = [
                         'id' => $voucherInstance->id,
-                        'transaction_id' => $newTransaction->id,
+                        'transaction_id' => $transaction->id,
                         'used_at' => Carbon::now()
                     ];
                     if (!$this->createUpdateDataRow(VoucherInstance::class, $voucherInstanceAttributes)) {
                         throw new Exception("Failed to use this voucher");    
-                    } else { $this->initResponse(200, 'voucher_used_success'); }
+                    } else {
+                        $this->initResponse(200, 'voucher_used_success');
+
+                        $newAttributes = ['action_id' => config('constants.actions.add_with_voucher')];
+                        $actionLogAttributes = $this->updateLogAttributes($actionLogAttributes, $newAttributes);
+                    }
                 }
             }
+
+            $this->createUpdateDataRow(ActionLog::class, $actionLogAttributes);
 
             /**Commiting Transaction */
             \DB::commit();
@@ -112,6 +140,9 @@ class MerchantController extends Controller
                 $transaction->transactionPoints->update(['refunded_at' => Carbon::now()]);
                 $this->initResponse(200, 'refund_success');
 
+                $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $transaction->id, Transaction::class, 'cashier', 'add');
+                $this->createUpdateDataRow(ActionLog::class, $actionLogAttributes);
+
             } else { $this->initResponse(400, 'already_refunded'); }
 
         } else{ $this->initResponse(400, 'invalid_invoice_number'); }
@@ -126,8 +157,8 @@ class MerchantController extends Controller
 
     protected function resolvePoints($invoice_value){
 
-        $points_per_currency_unit = $this->getSetting(__('constants.settings.points_per_currency_unit'))->value;
-        $currency_unit = $this->getSetting(__('constants.settings.currency_unit'))->value;
+        $points_per_currency_unit = $this->getSetting(config('constants.settings.points_per_currency_unit'))->value;
+        $currency_unit = $this->getSetting(config('constants.settings.currency_unit'))->value;
 
         if ($currency_unit > 0 && $points_per_currency_unit > 0){
             return (int) (($invoice_value/$currency_unit) * $points_per_currency_unit);

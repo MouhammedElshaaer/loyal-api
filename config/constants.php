@@ -1,4 +1,3 @@
-
 <?php
 
 return [
@@ -49,5 +48,20 @@ return [
         'expired_status' => '11',
         'status_error' => '0',
     ],
-    
+
+    'scopes' =>[
+        'customer' => 'CUSTOMER',
+        'cashier' => 'CASHIER',
+        'admin' => 'ADMIN',
+        'system' => 'SYSTEM',
+    ],
+
+    'actions' =>[
+        'refund' => 'REFUND',
+        'add' => 'ADD',
+        'add_with_voucher' => 'ADD_WITH_VOUCHER',
+        'check_voucher' => 'CHECK_VOUCHER',
+        'redeem' => 'REDEEM',
+    ],
+
 ];

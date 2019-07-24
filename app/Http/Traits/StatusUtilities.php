@@ -17,6 +17,6 @@ trait StatusUtilities
     }
 
     public function getValidityStatus($isValid){
-        return $isValid? __('constants.status.valid_status'): __('constants.status.expired_status');
+        return $isValid? config('constants.status.valid_status'): config('constants.status.expired_status');
     }
 }

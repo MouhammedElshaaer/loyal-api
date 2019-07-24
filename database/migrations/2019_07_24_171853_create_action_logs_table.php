@@ -16,6 +16,9 @@ class CreateActionLogsTable extends Migration
         Schema::create('action_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
 
+            $table->unsignedBigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users');
+
             $table->unsignedBigInteger('data_row_id');
             $table->text('data_type');
 

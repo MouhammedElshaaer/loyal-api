@@ -140,7 +140,7 @@ class UsersController extends Controller
 
     public function register(CreateUserRequest $request){
 
-        $attributes = $request->all();
+        $attributes = $request->only('country_code', 'phone', 'name', 'email', 'password', 'image');
         $attributes['password'] = bcrypt($attributes['password']);
         $this->initResponse(400, 'signup_fail');
 
