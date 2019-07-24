@@ -63,35 +63,35 @@ class TransactionPoints extends Model
 
     public function getIsValidAttribute(){
         if (!$status = $this->status) { throw new Exception("cannot determine transaction points status"); }
-        else { return $status==__('constants.valid_status'); }
+        else { return $status==__('constants.status.valid_status'); }
     }
 
     public function getIsPendingAttribute(){
         if (!$status = $this->status) { throw new Exception("cannot determine transaction points status"); }
-        else { return $status==__('constants.pending_status'); }
+        else { return $status==__('constants.status.pending_status'); }
     }
 
     public function getIsExpiredAttribute(){
         if (!$status = $this->status) { throw new Exception("cannot determine transaction points status"); }
-        else { return $status==__('constants.expired_status'); }
+        else { return $status==__('constants.status.expired_status'); }
     }
 
     public function getStatusAttribute(){
 
-        $status = __('constants.status_error');
+        $status = __('constants.status.status_error');
 
-        if ($this->used) { $status = __('constants.used_status'); }
-        else if ($this->refunded) { $status = __('constants.refunded_status'); }
+        if ($this->used) { $status = __('constants.status.used_status'); }
+        else if ($this->refunded) { $status = __('constants.status.refunded_status'); }
         else {
 
-            $pendingDuration = $this->getSetting(__('constants.pending_duration'))->value;
-            $validDuration = $this->getSetting(__('constants.valid_duration'))->value;
+            $pendingDuration = $this->getSetting(__('constants.settings.pending_duration'))->value;
+            $validDuration = $this->getSetting(__('constants.settings.valid_duration'))->value;
             if ($pendingDuration && $validDuration) {
 
                 $pendingDurationEndDate = $this->created_at->addDays($pendingDuration);
                 $validDurationEndDate = $pendingDurationEndDate->copy()->addDays($validDuration);
 
-                if ($this->isPending($pendingDurationEndDate)) { $status = __('constants.pending_status'); }
+                if ($this->isPending($pendingDurationEndDate)) { $status = __('constants.status.pending_status'); }
                 else { $status = $this->getValidityStatus($this->isValid($validDurationEndDate)); }
             }
         }
@@ -107,14 +107,14 @@ class TransactionPoints extends Model
     }
 
     public function getPendingEndDateAttribute(){
-        $pendingDuration = $this->getSetting(__('constants.pending_duration'))->value;
+        $pendingDuration = $this->getSetting(__('constants.settings.pending_duration'))->value;
         return $this->created_at->addDays($pendingDuration)->toDateTimeString();
          
     }
 
     public function getValidEndDateAttribute(){
-        $pendingDuration = $this->getSetting(__('constants.pending_duration'))->value;
-        $validDuration = $this->getSetting(__('constants.valid_duration'))->value;
+        $pendingDuration = $this->getSetting(__('constants.settings.pending_duration'))->value;
+        $validDuration = $this->getSetting(__('constants.settings.valid_duration'))->value;
         $pendingDurationEndDate = $this->created_at->addDays($pendingDuration);
         return $pendingDurationEndDate->addDays($validDuration)->toDateTimeString();    
     }

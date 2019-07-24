@@ -126,8 +126,8 @@ class MerchantController extends Controller
 
     protected function resolvePoints($invoice_value){
 
-        $points_per_currency_unit = $this->getSetting(__('constants.points_per_currency_unit'))->value;
-        $currency_unit = $this->getSetting(__('constants.currency_unit'))->value;
+        $points_per_currency_unit = $this->getSetting(__('constants.settings.points_per_currency_unit'))->value;
+        $currency_unit = $this->getSetting(__('constants.settings.currency_unit'))->value;
 
         if ($currency_unit > 0 && $points_per_currency_unit > 0){
             return (int) (($invoice_value/$currency_unit) * $points_per_currency_unit);

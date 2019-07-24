@@ -122,10 +122,7 @@ class UsersController extends Controller
                     'image' => $providerUser->getAvatar(),
                 ]);
 
-                if (!$role = $this->getDataRow(Role::class, 'name', 'customer')){
-                    $user->roles()->attach($role);
-                }
-                
+                if (!$role = $this->getDataRowByKey(Role::class, 'name', 'customer')) { $user->roles()->attach($role); }
                 $this->socialSignupSuccessResponse($user);
 
             }else{
@@ -142,9 +139,6 @@ class UsersController extends Controller
     }
 
     public function register(CreateUserRequest $request){
-    
-        // $role = $this->getDataRow(Role::class, 'name', 'customer');
-        // return response()->json(['role'=>$role]);
 
         $attributes = $request->all();
         $attributes['password'] = bcrypt($attributes['password']);
@@ -153,9 +147,7 @@ class UsersController extends Controller
         $user = $this->createUpdateDataRow(User::class, $attributes);
         if($user){
 
-            if ($role = $this->getDataRow(Role::class, 'name', 'customer')){
-                $user->roles()->attach($role);
-            }
+            if ($role = $this->getDataRowByKey(Role::class, 'name', 'customer')) { $user->roles()->attach($role); }
             $this->signupSuccessResponse($user);
         }
 

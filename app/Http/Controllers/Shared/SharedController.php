@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\App;
 
 use App\Http\Traits\ResponseUtilities;
+use App\Http\Traits\CRUDUtilities;
 
 use App\Models\Voucher;
 use App\Models\VoucherInstance;
@@ -16,7 +17,7 @@ use App\Http\Resources\VoucherInstance as VoucherInstanceResource;
 
 class SharedController extends Controller
 {
-    use ResponseUtilities;
+    use ResponseUtilities, CRUDUtilities;
 
     private $data;
 
@@ -94,5 +95,13 @@ class SharedController extends Controller
         
         $this->initResponse(200, 'success', VoucherInstanceResource::collection($voucherInstances));
         return response()->json($this->data, 200);
+    }
+
+    public function getUser(Request $request, $id){
+        
+        if (!$user = getDataRowByPrimaryKey(User::class, $id)) { $this->initResponse(500, 'server_error'); }
+        $this->initResponse(200, 'success', $user);
+        return response()->json($this->data, 200);
+
     }
 }

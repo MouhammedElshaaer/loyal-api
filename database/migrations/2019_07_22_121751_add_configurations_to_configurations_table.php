@@ -18,40 +18,17 @@ class AddConfigurationsToConfigurationsTable extends Migration
     public function up()
     {
 
-        $attributesArray = [
-            ['category' => __('constants.pending_duration')],
-            ['category' => __('constants.premium_pending_duration')],
-            ['category' => __('constants.valid_duration')],
-            ['category' => __('constants.premium_valid_duration')],
-            ['category' => __('constants.points_per_currency_unit')],
-            ['category' => __('constants.premium_points_per_currency_unit')],
-            ['category' => __('constants.currency_unit')],
-            ['category' => __('constants.premium_currency_unit')],
-            ['category' => __('constants.premium_threshold')],
-            ['category' => __('constants.policies')],
-            ['category' => __('constants.ads')]
-        ];
+        $settings = __('constants.settings');
 
-        foreach($attributesArray as $attributes){
-            \DB::table('configurations')->insert($attributes);
+        foreach($settings as $setting){
+            \DB::table('configurations')->insert(['category' => $setting]);
         }
 
         /**Adding basic settings defaults*/
 
-        $settings = [
-            "valid_duration" => "5",
-            "premium_valid_duration" => "7",
-            "pending_duration" => "1",
-            "premium_pending_duration" => "0",
-            "points_per_currency_unit" => "4",
-            "premium_points_per_currency_unit" => "8",
-            "currency_unit" => "1",
-            "premium_currency_unit" => "1",
-            "premium_threshold" => "1000",
-            "policies" => "new may be simple text or html markup"
-        ];
+        $defaultSettings = __('constants.default_settings');
 
-        foreach($settings as $settingName=>$settingValue){
+        foreach($defaultSettings as $settingName=>$settingValue){
             
             $configuration = $this->getConfiguration(__('constants.'.$settingName));
             $setting = $this->getSetting(__('constants.'.$settingName));

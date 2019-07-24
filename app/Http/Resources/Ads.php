@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class Setting extends JsonResource
+class Ads extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,9 +14,6 @@ class Setting extends JsonResource
      */
     public function toArray($request)
     {
-
-        return [
-            $this->configuration->category => $this->value
-        ];
+        return $this->value;
     }
 }
