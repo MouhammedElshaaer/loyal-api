@@ -15,6 +15,16 @@ class CreateActionLogsTable extends Migration
     {
         Schema::create('action_logs', function (Blueprint $table) {
             $table->bigIncrements('id');
+
+            $table->unsignedBigInteger('data_row_id');
+            $table->text('data_type');
+
+            $table->unsignedBigInteger('scope_id');
+            $table->foreign('scope_id')->references('id')->on('scopes');
+
+            $table->unsignedBigInteger('action_id');
+            $table->foreign('action_id')->references('id')->on('actions');
+
             $table->timestamps();
         });
     }
