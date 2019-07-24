@@ -19,4 +19,27 @@ trait CRUDUtilities
         
         return $dataRow;
     }
+
+    public function getDataRowByKey($dataTypePath, $key, $value){
+
+        return ($dataTypePath)::where($key, $value)->first();
+    }
+
+    public function getDataRowByPrimaryKey($dataTypePath, $PrimaryKey){
+
+        return ($dataTypePath)::find($PrimaryKey);
+    }
+
+    public function getDataRows($dataTypePath, $key, $value){
+
+        return ($dataTypePath)::where($key, $value)->get();
+    }
+
+    public function deleteDataRow($dataTypePath, $dataTypeId){
+
+        $dataType = ($dataTypePath)::find($dataTypeId);
+        if (!$dataType){return false;}
+        $dataType->delete();
+        return true;
+    }
 }

@@ -29,4 +29,12 @@ class Setting extends Model
      * @var array
      */
     protected $appends = [];
+
+    /**
+     * Get the post that owns the comment.
+     */
+    public function configuration(){
+        return $this->belongsTo('App\Models\Configuration');
+    }
+
 }

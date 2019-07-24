@@ -15,9 +15,9 @@ use Illuminate\Http\Request;
 
 
 /**
- * Shared and Mobile Authorized Services
+ * Shared and Customer Mobile Authorized Services
  */
-Route::group(['middleware' => ['auth:api']], function () {
+Route::group(['middleware' => ['auth:api', 'canAccess:admin,customer']], function () {
 
     /**Shared */
     Route::post('logout', 'Mobile\UsersController@logout');
@@ -25,6 +25,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::get('reward/{id}', 'Shared\SharedController@getVoucher');
     Route::get('vouchers', 'Shared\SharedController@getVoucherInstances');
     Route::get('voucher/{id}', 'Shared\SharedController@getVoucherInstance');
+    Route::get('user/{id}', 'Shared\SharedController@getUser');
 
     /**Mobile Customer*/
     Route::get('mobile/home', 'Mobile\HomeController@homeContent');
@@ -32,29 +33,34 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('mobile/report', 'Mobile\UsersController@addReport');
     Route::post('mobile/redeem', 'Mobile\HomeController@redeemVoucher');
 
-    /**Mobile Merchant*/
-
-    
 });
 
 /**
  * Web Authorized Services
- * TODO: add admin middleware
  */
+// Route::group(['middleware' => ['auth:api', 'canAccess:admin']], function () {
 Route::group(['middleware' => ['auth:api']], function () {
-     
+    
+    //Dashboard
+    Route::get('admin/dashboard', 'Web\AdminController@dashboard');
     //Reports
     Route::get('web/reports', 'Web\AdminController@getReports');
     Route::get('web/report/{id}', 'Web\AdminController@getReport');
     Route::get('web/report/delete/{id}', 'Web\AdminController@deleteReport');
     Route::post('web/report/{id}', 'Web\AdminController@updateReport');
-    //Vouchers
+    //Rewards
     Route::get('web/reward/delete/{id}', 'Web\AdminController@deleteVoucher');
     Route::post('web/reward', 'Web\AdminController@addVoucher');
     Route::post('web/reward/{id}', 'Web\AdminController@updateVoucher');
     //Settings
+    Route::get('web/settings', 'Web\AdminController@settings');
     Route::post('web/settings/fetch', 'Web\AdminController@fetchSettings');
     Route::post('web/configuration', 'Web\AdminController@addConfiguration');
+    //Cashier
+    Route::post('web/cashier/create', 'Web\AdminController@createCashier');
+    Route::post('web/cashier/delete/{id}', 'Web\AdminController@deleteUser');
+    //Users + Cashier
+    Route::post('web/user/update', 'Web\AdminController@updateUser');
 
 });
 

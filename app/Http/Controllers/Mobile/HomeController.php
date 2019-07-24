@@ -20,7 +20,8 @@ use App\Models\VoucherInstance;
 use App\User;
 
 use App\Http\Resources\Voucher as VoucherResource;
-use App\Http\Resources\Setting as SettingResource;
+use App\Http\Resources\VoucherInstance as VoucherInstanceResource;
+use App\Http\Resources\Ads as AdsResource;
 use App\Http\Resources\TransactionPoints as TransactionPointsResource;
 
 class HomeController extends Controller
@@ -42,10 +43,8 @@ class HomeController extends Controller
     
     public function homeContent(HomeContentRequest $request){
         
-        // return \Carbon\Carbon::parse("2019-08-03 14:23:52")->toFormattedDateString();
-
         $user = auth()->user();
-        $ads = $this->getSettings(__('constants.ads'));
+        $ads = $this->getAds();
 
         $latest_expire_points = $user->latest_expire;
         $trendingRewards = Voucher::where('deactivated', false)->orderBy('instances', 'desc')->take(5)->get();
@@ -53,6 +52,10 @@ class HomeController extends Controller
                                                     ->where('deactivated', false)
                                                     ->take(5)
                                                     ->get();
+        $latestExpire = null;
+        if(count($latest_expire_points) > 0){
+            $latestExpire = Carbon::parse($latest_expire_points[0]->valid_end_date)->toFormattedDateString();
+        }
 
         if (__('constants.default_locale')!=$request->headers->get('locale')) {
             $trendingRewards = VoucherResource::collection($trendingRewards);
@@ -62,9 +65,9 @@ class HomeController extends Controller
         $homeContent = [
             'total_points' => $user->total_points,
             'total_expire' => $user->total_expire,
-            'latest_expire' => Carbon::parse($latest_expire_points[0]->valid_end_date)->toFormattedDateString(),
+            'latest_expire' => $latestExpire,
             'latest_expire_points' => TransactionPointsResource::collection($latest_expire_points),
-            'ads' => SettingResource::collection($ads),
+            'ads' => AdsResource::collection($ads),
             'trending_rewards' => $trendingRewards,
             'latest_vouchers' => VoucherInstanceResource::collection($latestVoucherInstances)
         ];
@@ -87,8 +90,9 @@ class HomeController extends Controller
                 'qr_code'=>$this->idstamping($this->timestamping($this->generateCode(5)), auth()->user()->id, true)
             ];
             $newVoucherInstance = VoucherInstance::create($attributes);
-
-            $this->initResponse(200, 'redeem_success');
+            
+            $data = ['total_points'=>$user->total_points];
+            $this->initResponse(200, 'redeem_success', $data);
         }
         return response()->json($this->data , 200);
     }

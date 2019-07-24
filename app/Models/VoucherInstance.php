@@ -92,12 +92,12 @@ class VoucherInstance extends Model
 
     public function getIsValidAttribute(){
         if (!$status = $this->status) { throw new Exception("cannot determine voucher instance status"); }
-        else { return $status==__('constants.valid_status'); }
+        else { return $status==__('constants.status.valid_status'); }
     }
 
     public function getIsExpiredAttribute(){
         if (!$status = $this->status) { throw new Exception("cannot determine transaction points status"); }
-        else { return $status==__('constants.expired_status'); }
+        else { return $status==__('constants.status.expired_status'); }
     }
 
     /**
@@ -105,13 +105,13 @@ class VoucherInstance extends Model
      *
      * @return int
      */
-    public function getStatusAttribute(){   
+    public function getStatusAttribute(){
 
-        $status = __('constants.status_error');
+        $status = __('constants.status.status_error');
 
-        if ($this->used) { $status = __('constants.used_status'); }
+        if ($this->is_used) { $status = __('constants.status.used_status'); }
         else {
-            $validDuration = $this->getSetting(__('constants.valid_duration'))->value;
+            $validDuration = $this->getSetting(__('constants.settings.valid_duration'))->value;
             if ($validDuration) {
                 $validDurationEndDate = $this->created_at->addDays($validDuration);
                 $status = $this->getValidityStatus($this->isValid($validDurationEndDate));
@@ -130,5 +130,13 @@ class VoucherInstance extends Model
     public function voucher()
     {
         return $this->belongsTo('App\Models\Voucher');
+    }
+
+    /**
+     * Get the Transaction that owns the used VoucherInstance.
+     */
+    public function transaction()
+    {
+        return $this->belongsTo('App\Models\Transaction');
     }
 }

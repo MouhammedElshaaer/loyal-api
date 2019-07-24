@@ -22,9 +22,24 @@ trait SettingUtilities
         return $setting;
     }
 
-    public function getSettings($configName){
+    public function getSettings($configNames){
+
+        $settings = [];
+        foreach ($configNames as $configName){
+
+            if ($configuration = $this->getConfiguration($configName)) {
+                $setting = Setting::where('configuration_id', $configuration->id)->first();
+                // array_push($settings, $setting);
+                $settings[$configuration->category] = $setting->value;
+            }
+        }
+
+        return collect($settings);
+    }
+
+    public function getAds(){
         $setting = null;
-        if ($configuration = $this->getConfiguration($configName)) {
+        if ($configuration = $this->getConfiguration(__('constants.settings.ads'))) {
             $setting = Setting::where('configuration_id', $configuration->id)->get();
         }
         return $setting;
