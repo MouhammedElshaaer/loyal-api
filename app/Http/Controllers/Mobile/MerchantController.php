@@ -75,7 +75,8 @@ class MerchantController extends Controller
 
             $points = $this->resolvePoints($request->invoice_value);
             $user = $this->getDataRowByKey(User::class, 'phone', $request->user_phone);
-
+            if (!$user->verified) { throw new Exception('user not verified'); }
+            
             $transactionAttributes = $request->only('invoice_number', 'invoice_value');
             $transactionAttributes['user_id'] = $user->id;
             $transaction = $this->createUpdateDataRow(Transaction::class, $transactionAttributes);
@@ -95,6 +96,7 @@ class MerchantController extends Controller
                 $voucherInstance = VoucherInstance::find($request->voucher_id);
                 if (!$voucherInstance){ throw new Exception("Voucher not found"); }
                 else if ($voucherInstance->deactivated){ throw new Exception("Voucher deactivated"); }
+                else if ($voucherInstance->user_id != $user->id) { throw new Exception("User unauthorized to use this voucher"); }
                 else {
     
                     $voucherInstanceAttributes = [
