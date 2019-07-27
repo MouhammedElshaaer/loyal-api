@@ -34,4 +34,20 @@ class ActionLog extends Model
     protected $appends = [
         
     ];
+
+    /**
+     * Get the Scope that owns the ActionLog.
+     */
+    public function scope()
+    {
+        return $this->belongsTo('App\Models\Scope');
+    }
+
+    /**
+     * Get the Action that owns the ActionLog.
+     */
+    public function action()
+    {
+        return $this->belongsTo('App\Models\Action');
+    }
 }

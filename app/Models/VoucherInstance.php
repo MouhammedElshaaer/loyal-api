@@ -63,23 +63,28 @@ class VoucherInstance extends Model
             if ($voucherPoints > 0 && $transactionPoints->is_valid) {
 
                 $availablePoints = $transactionPoints->available_points;
-                $neededPoints = $voucherPoints<$availablePoints?
-                                    $voucherPoints:
-                                    $availablePoints;
+                $neededPoints = null;
 
-                $voucherPoints -= $neededPoints;
-                $transactionPoints->redeemed += $neededPoints;
-                $transactionPoints->save();
-                $viPointsAttributes = [
-                    'voucher_instance_id' => $model->id,
-                    'transaction_points_id' => $transactionPoints->id,
-                    'amount' => $neededPoints,
-                ];
-                $voucherInstancePoints = VoucherInstancePoints::create($viPointsAttributes);
+                if ($voucherPoints<$availablePoints) { $neededPoints = $voucherPoints; }
+                else {
+                    $neededPoints = $availablePoints;
+                    $transactionPoints->used_at = \Carbon\Carbon::now();
+                }
+
+                if ($neededPoints) {
+                    $voucherPoints -= $neededPoints;
+                    $transactionPoints->redeemed += $neededPoints;
+                    $transactionPoints->save();
+                    $viPointsAttributes = [
+                        'voucher_instance_id' => $model->id,
+                        'transaction_points_id' => $transactionPoints->id,
+                        'amount' => $neededPoints,
+                    ];
+                    $voucherInstancePoints = VoucherInstancePoints::create($viPointsAttributes);
+                } else { throw new Exception('Failed create voucherInstancePoints'); }
             }
 
         }
-
         return $model;
     }
 
@@ -92,12 +97,12 @@ class VoucherInstance extends Model
 
     public function getIsValidAttribute(){
         if (!$status = $this->status) { throw new Exception("cannot determine voucher instance status"); }
-        else { return $status==config('constants.status.valid_status'); }
+        else { return $status==config('constants.status_codes.valid_status'); }
     }
 
     public function getIsExpiredAttribute(){
         if (!$status = $this->status) { throw new Exception("cannot determine transaction points status"); }
-        else { return $status==config('constants.status.expired_status'); }
+        else { return $status==config('constants.status_codes.expired_status'); }
     }
 
     /**
@@ -107,9 +112,9 @@ class VoucherInstance extends Model
      */
     public function getStatusAttribute(){
 
-        $status = config('constants.status.status_error');
+        $status = config('constants.status_codes.status_error');
 
-        if ($this->is_used) { $status = config('constants.status.used_status'); }
+        if ($this->is_used) { $status = config('constants.status_codes.used_status'); }
         else {
             $validDuration = $this->getSetting(config('constants.settings.valid_duration'))->value;
             if ($validDuration) {

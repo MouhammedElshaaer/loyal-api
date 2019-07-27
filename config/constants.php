@@ -40,13 +40,22 @@ return [
         'premium' => 'premium',
     ],
 
-    'status' =>[
+    'status_codes' =>[
         'valid_status' => '100',
         'used_status' => '110',
         'refunded_status' => '111',
         'pending_status' => '10',
         'expired_status' => '11',
         'status_error' => '0',
+    ],
+
+    'status' =>[
+        '100' => 'valid',
+        '110' => 'used',
+        '111' => 'refunded',
+        '10' => 'pending',
+        '11' => 'expired',
+        '0' => 'status error',
     ],
 
     'scopes' =>[
@@ -57,11 +66,13 @@ return [
     ],
 
     'actions' =>[
-        'refund' => 'REFUND',
-        'add' => 'ADD',
-        'add_with_voucher' => 'ADD_WITH_VOUCHER',
-        'check_voucher' => 'CHECK_VOUCHER',
-        'redeem' => 'REDEEM',
+        'transaction_refund_success' => 'TRANSACTION_REFUND',
+        'transaction_add_transaction_success' => 'TRANSACTION_ADD',
+        'transaction_voucher_used_success' => 'TRANSACTION_ADD_WITH_VOUCHER',
+        'voucher_instance_check_valid' => 'VOUCHER_CHECK_VALID',
+        'voucher_instance_check_used' => 'VOUCHER_CHECK_USED',
+        'voucher_instance_check_expired' => 'VOUCHER_CHECK_EXPIRED',
+        'voucher_redeem_success' => 'REDEEM',
     ],
 
 ];

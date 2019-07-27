@@ -10,13 +10,16 @@ use App\Http\Requests\HomeContentRequest;
 use App\Http\Requests\RedeemVoucherRequest;
 
 use App\Http\Traits\ResponseUtilities;
+use App\Http\Traits\CRUDUtilities;
 use App\Http\Traits\SettingUtilities;
 use App\Http\Traits\CodeGenerationUtilities;
+use App\Http\Traits\LogUtilities;
 
 use Carbon\Carbon;
 
 use App\Models\Voucher;
 use App\Models\VoucherInstance;
+use App\Models\ActionLog;
 use App\User;
 
 use App\Http\Resources\Voucher as VoucherResource;
@@ -26,7 +29,7 @@ use App\Http\Resources\TransactionPoints as TransactionPointsResource;
 
 class HomeController extends Controller
 {
-    use ResponseUtilities, SettingUtilities, CodeGenerationUtilities;
+    use ResponseUtilities, CRUDUtilities, SettingUtilities, CodeGenerationUtilities, LogUtilities;
 
     private $data;
 
@@ -89,10 +92,47 @@ class HomeController extends Controller
                 'voucher_id'=>$voucher->id,
                 'qr_code'=>$this->idstamping($this->timestamping($this->generateCode(5)), auth()->user()->id, true)
             ];
-            $newVoucherInstance = VoucherInstance::create($attributes);
-            
-            $data = ['total_points'=>$user->total_points];
-            $this->initResponse(200, 'redeem_success', $data);
+
+            /**Starting Transaction */
+            \DB::beginTransaction();
+
+            try {
+
+                $voucherInstance = VoucherInstance::create($attributes);
+                $voucher->instances += 1;
+                $voucher->save();
+                
+                $status = 'redeem_success';
+                $actionScope = 'voucher';
+                $actionType = $this->resolveActionFromStatus($actionScope, $status);
+
+                $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $voucherInstance->id, VoucherInstance::class, 'customer', $actionType);
+                $this->createUpdateDataRow(ActionLog::class, $actionLogAttributes);
+
+                /**
+                 * Note the next commented lines query the database to get the user model 
+                 */
+                // $totalPoints = $this->getDataRowByPrimaryKey(User::class, $user->id)->total_points;
+                // $data = ['total_points' => $totalPoints];
+
+                /**
+                 * Note that the query used to calculate the total_points attribute is cached
+                 * in the $user model instance, so updates on tables related to this query won't
+                 * be reflected in the attribute value. So, I subtract the voucher points from the
+                 * total_points attribute to make use of the cached query result in $user model
+                 */
+                $data = ['total_points' => $user->total_points - $voucher->points];
+
+                /**Commiting Transaction */
+                \DB::commit();
+
+                $this->initResponse(200, $status, $data);
+
+            } catch (Exception $e) {
+                /**Rollback Transaction */
+                \DB::rollBack();
+                $this->initResponse(400, 'custom_message', null, ['message'=>$e->getMessage()]);
+            }
         }
         return response()->json($this->data , 200);
     }

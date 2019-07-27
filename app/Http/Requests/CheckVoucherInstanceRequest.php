@@ -30,7 +30,7 @@ class CheckVoucherInstanceRequest extends FormRequest
     public function rules()
     {
         return [
-            'voucher_id' => 'required|numeric'
+            'qr_code' => 'required|numeric'
         ];
     }
 

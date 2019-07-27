@@ -33,11 +33,19 @@ class Transaction extends Model
     protected $appends = [];
 
     /**
-     * Get the TransactionPoints that owns the TransactionPointsVoucherInstance.
+     * Get the user that owns the transaction.
      */
     public function user()
     {
         return $this->belongsTo('App\User');
+    }
+
+    /**
+     * Get the VoucherInstance that used in the transaction.
+     */
+    public function voucherInstance()
+    {
+        return $this->hasOne('App\Models\VoucherInstance');
     }
 
     /**

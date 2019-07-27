@@ -52,11 +52,18 @@ return [
     'no_enough_points'=> 'لا تملك نقاط كافية',
     'redeem_success'=> 'تستطيع استخدام الكوبون الان',
 
-    'add_transactions_success'=> 'تم إضافة الفاتورة',
+    'add_transaction_success'=> 'تم إضافة الفاتورة',
     'voucher_used_success'=> 'تم خصم قيمة الكوبون من قيمة الفاتورة',
     'invalid_invoice_number'=> 'رقم الفاتورة غير صحيح',
     'refund_success'=> 'تم استرجاع الفاتورة',
     'already_refunded'=> 'لقد تم إسترجاع الفاتورة مسبقا',
+
+    '100' => 'سارية',
+    '110' => 'مستخدم',
+    '111' => 'مسترجع',
+    '10' => 'معلق',
+    '11' => 'منتهى',
+    '0' => 'خظأ',
 
     'store_locales_fail'=> 'لم يتم حفظ اللغات الأخرى',
     'update_locales_fail'=> 'لم يتم تعديل اللغات الأخرى',

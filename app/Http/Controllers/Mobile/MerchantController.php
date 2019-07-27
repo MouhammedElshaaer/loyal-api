@@ -13,6 +13,7 @@ use App\Http\Traits\ResponseUtilities;
 use App\Http\Traits\SettingUtilities;
 use App\Http\Traits\CRUDUtilities;
 use App\Http\Traits\LogUtilities;
+use App\Http\Traits\StatusUtilities;
 
 use Exception;
 use Carbon\Carbon;
@@ -24,7 +25,7 @@ use App\Models\ActionLog;
 
 class MerchantController extends Controller
 {
-    use ResponseUtilities, CRUDUtilities, SettingUtilities, LogUtilities;
+    use ResponseUtilities, CRUDUtilities, SettingUtilities, LogUtilities, StatusUtilities;
 
     private $data;
 
@@ -76,29 +77,37 @@ class MerchantController extends Controller
 
             $transactionPointsAttributes = ['transaction_id' => $transaction->id, 'original' => $points];
             $transactionPoints = $this->createUpdateDataRow(TransactionPoints::class, $transactionPointsAttributes);
-            $this->initResponse(200, 'add_transactions_success');
 
-            $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $transaction->id, Transaction::class, 'cashier', 'add');
+            $status = 'add_transaction_success';
+            $actionScope = 'transaction';
+            $actionType = $this->resolveActionFromStatus($actionScope, $status);
+
+            $this->initResponse(200, $status);
+            $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $transaction->id, Transaction::class, 'cashier', $actionType);
 
             if ($request->has('voucher_id')) {
+
                 $voucherInstance = VoucherInstance::find($request->voucher_id);
                 if (!$voucherInstance){ throw new Exception("Voucher not found"); }
                 else if ($voucherInstance->deactivated){ throw new Exception("Voucher deactivated"); }
-                if ($voucherInstance) {
+                else {
     
                     $voucherInstanceAttributes = [
                         'id' => $voucherInstance->id,
                         'transaction_id' => $transaction->id,
                         'used_at' => Carbon::now()
                     ];
-                    if (!$this->createUpdateDataRow(VoucherInstance::class, $voucherInstanceAttributes)) {
-                        throw new Exception("Failed to use this voucher");    
-                    } else {
-                        $this->initResponse(200, 'voucher_used_success');
 
-                        $newAttributes = ['action_id' => config('constants.actions.add_with_voucher')];
-                        $actionLogAttributes = $this->updateLogAttributes($actionLogAttributes, $newAttributes);
-                    }
+                    if ($this->createUpdateDataRow(VoucherInstance::class, $voucherInstanceAttributes)) {
+                      
+                        $status = 'voucher_used_success';
+                        $actionType = $this->resolveActionFromStatus($actionScope, $status);
+                        $newAttributes = ['action_id' => $this->getAction($actionType)->id];
+                        
+                        $this->initResponse(200, $status);
+                        $actionLogAttributes = $this->updateLogAttributes($actionLogAttributes, $newAttributes);  
+
+                    } else { throw new Exception("Failed to use this voucher"); }
                 }
             }
 
@@ -108,6 +117,7 @@ class MerchantController extends Controller
             \DB::commit();
 
         } catch (Exception $e) {
+            /**Rollback Transaction */
             \DB::rollBack();
             $this->initResponse(400, 'custom_message', null, ['message'=>$e->getMessage()]);
         }
@@ -119,13 +129,31 @@ class MerchantController extends Controller
 
     public function checkVoucherInstance(CheckVoucherInstanceRequest $request){
 
-        if ($voucherInstance = VoucherInstance::find($request->voucher_id)) {
+        $actionLogAttributes = null;
+        if ($voucherInstance = VoucherInstance::where('qr_code', $request->qr_code)->first()) {
 
-            if ($voucherInstance->is_valid) { $this->initResponse(200, 'valid_voucher'); }
-            else { $this->initResponse(400, strval($voucherInstance->status)); }
+            $statusCode = strval($voucherInstance->status);
+            $status = $this->resolveStatusFromStatusCode($statusCode);
+            $actionScope = 'voucher_instance_check';
+
+            if ($voucherInstance->is_valid) {
+
+                $this->initResponse(200, $statusCode);
+                $actionType = $this->resolveActionFromStatus($actionScope, $status);
+                $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $voucherInstance->id, VoucherInstance::class, 'cashier', $actionType);
+
+            }
+            else {
+                $this->initResponse(400, $statusCode);
+                $actionType = $this->resolveActionFromStatus($actionScope, $status);                
+                $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $voucherInstance->id, VoucherInstance::class, 'cashier', $actionType);
+
+            }
             
         }
         else { $this->initResponse(400, 'get_voucher_fail'); }
+
+        if ($actionLogAttributes) { $this->createUpdateDataRow(ActionLog::class, $actionLogAttributes); }
 
         return response()->json($this->data, 200);
 
@@ -137,10 +165,14 @@ class MerchantController extends Controller
 
             if(!$transaction->transactionPoints->refunded_at){
 
-                $transaction->transactionPoints->update(['refunded_at' => Carbon::now()]);
-                $this->initResponse(200, 'refund_success');
+                $status = 'refund_success';
+                $actionScope = 'transaction';
+                $actionType = $this->resolveActionFromStatus($actionScope, $status);
 
-                $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $transaction->id, Transaction::class, 'cashier', 'add');
+                $transaction->transactionPoints->update(['refunded_at' => Carbon::now()]);
+                $this->initResponse(200, $status);
+
+                $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $transaction->id, Transaction::class, 'cashier', $actionType);
                 $this->createUpdateDataRow(ActionLog::class, $actionLogAttributes);
 
             } else { $this->initResponse(400, 'already_refunded'); }

@@ -22,9 +22,11 @@ use App\Models\Setting;
 use App\Models\Translation;
 use App\Models\VoucherInstance;
 use App\Models\Role;
+use App\Models\ActionLog;
 use App\User;
 
 use App\Http\Resources\Setting as SettingResource;
+use App\Http\Resources\ActionLog as ActionLogResource;
 
 use Exception;
 
@@ -279,7 +281,10 @@ class AdminController extends Controller
 
     public function getActionLogs(Request $request){
 
+        // $attributes = [];
+        // return response()->json(['check' => array_key_exists('invoice_number', $attributes)]);
 
+        return ActionLogResource::collection($this->getAllDataRows(ActionLog::class));
 
     }
 }

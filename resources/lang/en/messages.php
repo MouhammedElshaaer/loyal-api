@@ -54,7 +54,7 @@ return [
     'no_enough_points'=> 'User has no enough points',
     'redeem_success'=> 'You can use this voucher now',
 
-    'add_transactions_success'=> 'Transaction added successfully',
+    'add_transaction_success'=> 'Transaction added successfully',
     'voucher_used_success'=> 'Voucher discount applied',
     'invalid_invoice_number'=> 'Invalid invoice number',
     'refund_success'=> 'Transaction refunded successfully',

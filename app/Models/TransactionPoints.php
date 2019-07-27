@@ -63,25 +63,25 @@ class TransactionPoints extends Model
 
     public function getIsValidAttribute(){
         if (!$status = $this->status) { throw new Exception("cannot determine transaction points status"); }
-        else { return $status==config('constants.status.valid_status'); }
+        else { return $status==config('constants.status_codes.valid_status'); }
     }
 
     public function getIsPendingAttribute(){
         if (!$status = $this->status) { throw new Exception("cannot determine transaction points status"); }
-        else { return $status==config('constants.status.pending_status'); }
+        else { return $status==config('constants.status_codes.pending_status'); }
     }
 
     public function getIsExpiredAttribute(){
         if (!$status = $this->status) { throw new Exception("cannot determine transaction points status"); }
-        else { return $status==config('constants.status.expired_status'); }
+        else { return $status==config('constants.status_codes.expired_status'); }
     }
 
     public function getStatusAttribute(){
 
-        $status = config('constants.status.status_error');
+        $status = config('constants.status_codes.status_error');
 
-        if ($this->is_used) { $status = config('constants.status.used_status'); }
-        else if ($this->refunded) { $status = config('constants.status.refunded_status'); }
+        if ($this->is_used) { $status = config('constants.status_codes.used_status'); }
+        else if ($this->refunded) { $status = config('constants.status_codes.refunded_status'); }
         else {
 
             $pendingDuration = $this->getSetting(config('constants.settings.pending_duration'))->value;
@@ -91,7 +91,7 @@ class TransactionPoints extends Model
                 $pendingDurationEndDate = $this->created_at->addDays($pendingDuration);
                 $validDurationEndDate = $pendingDurationEndDate->copy()->addDays($validDuration);
 
-                if ($this->isPending($pendingDurationEndDate)) { $status = config('constants.status.pending_status'); }
+                if ($this->isPending($pendingDurationEndDate)) { $status = config('constants.status_codes.pending_status'); }
                 else { $status = $this->getValidityStatus($this->isValid($validDurationEndDate)); }
             }
         }

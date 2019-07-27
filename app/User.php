@@ -83,6 +83,7 @@ class User extends Authenticatable
             if ($transactionPoints->is_valid) { $totalValid += $transactionPoints->available_points; }
 
         }
+        // dump($totalValid);
         return $totalValid;
     }
 
