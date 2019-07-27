@@ -18,6 +18,8 @@ use App\Http\Traits\StatusUtilities;
 use Exception;
 use Carbon\Carbon;
 
+use App\User;
+
 use App\Models\Transaction;
 use App\Models\TransactionPoints;
 use App\Models\VoucherInstance;
@@ -72,7 +74,10 @@ class MerchantController extends Controller
         try {
 
             $points = $this->resolvePoints($request->invoice_value);
-            $transactionAttributes = $request->only('user_id', 'invoice_number', 'invoice_value');
+            $user = $this->getDataRowByKey(User::class, 'phone', $request->user_phone);
+
+            $transactionAttributes = $request->only('invoice_number', 'invoice_value');
+            $transactionAttributes['user_id'] = $user->id;
             $transaction = $this->createUpdateDataRow(Transaction::class, $transactionAttributes);
 
             $transactionPointsAttributes = ['transaction_id' => $transaction->id, 'original' => $points];
@@ -138,7 +143,8 @@ class MerchantController extends Controller
 
             if ($voucherInstance->is_valid) {
 
-                $this->initResponse(200, $statusCode);
+                $data = ['voucher_id'=>$voucherInstance->id];
+                $this->initResponse(200, $statusCode, $data);
                 $actionType = $this->resolveActionFromStatus($actionScope, $status);
                 $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $voucherInstance->id, VoucherInstance::class, 'cashier', $actionType);
 
