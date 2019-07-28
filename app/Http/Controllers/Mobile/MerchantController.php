@@ -95,6 +95,7 @@ class MerchantController extends Controller
 
                 $voucherInstance = $this->getDataRowByKey(VoucherInstance::class, 'qr_code', $request->voucher_qr_code);
                 if (!$voucherInstance){ throw new Exception("Voucher not found"); }
+                else if ($voucherInstance->is_used){ throw new Exception("Voucher already used"); }
                 else if ($voucherInstance->deactivated){ throw new Exception("Voucher deactivated"); }
                 else if ($voucherInstance->user_id != $user->id) { throw new Exception("User unauthorized to use this voucher"); }
                 else {
