@@ -145,8 +145,7 @@ class MerchantController extends Controller
 
             if ($voucherInstance->is_valid) {
 
-                $data = ['voucher_id'=>$voucherInstance->id];
-                $this->initResponse(200, $statusCode, $data);
+                $this->initResponse(200, $statusCode);
                 $actionType = $this->resolveActionFromStatus($actionScope, $status);
                 $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $voucherInstance->id, VoucherInstance::class, 'cashier', $actionType);
 
