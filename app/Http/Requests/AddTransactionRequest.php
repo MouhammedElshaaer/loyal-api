@@ -30,10 +30,10 @@ class AddTransactionRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_phone' => 'required|numeric',
+            'user_qr_code' => 'required|numeric',
             'invoice_number' => 'required|numeric|unique:transactions',
             'invoice_value' => 'required|numeric',
-            'voucher_id' => 'numeric',
+            'voucher_qr_code' => 'numeric',
         ];
     }
 

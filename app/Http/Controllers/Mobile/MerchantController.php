@@ -74,7 +74,7 @@ class MerchantController extends Controller
         try {
 
             $points = $this->resolvePoints($request->invoice_value);
-            $user = $this->getDataRowByKey(User::class, 'phone', $request->user_phone);
+            $user = $this->getDataRowByKey(User::class, 'qr_code', $request->user_qr_code);
             if (!$user->verified) { throw new Exception('user not verified'); }
             
             $transactionAttributes = $request->only('invoice_number', 'invoice_value');
@@ -91,9 +91,9 @@ class MerchantController extends Controller
             $this->initResponse(200, $status);
             $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $transaction->id, Transaction::class, 'cashier', $actionType);
 
-            if ($request->has('voucher_id')) {
+            if ($request->has('voucher_qr_code')) {
 
-                $voucherInstance = VoucherInstance::find($request->voucher_id);
+                $voucherInstance = $this->getDataRowByKey(VoucherInstance::class, 'qr_code', $request->voucher_qr_code);
                 if (!$voucherInstance){ throw new Exception("Voucher not found"); }
                 else if ($voucherInstance->deactivated){ throw new Exception("Voucher deactivated"); }
                 else if ($voucherInstance->user_id != $user->id) { throw new Exception("User unauthorized to use this voucher"); }
