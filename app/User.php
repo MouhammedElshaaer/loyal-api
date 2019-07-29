@@ -149,6 +149,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the devices for the user.
+     */
+    public function devices()
+    {
+        return $this->hasMany('App\Models\Device');
+    }
+
+    /**
      * Get the Transactions for the User.
      */
     public function transactions()

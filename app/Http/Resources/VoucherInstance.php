@@ -21,6 +21,7 @@ class VoucherInstance extends JsonResource
             'title' => $this->voucher->title,
             'used_at' => $this->used_at,
             'invoice_number' => $this->transaction_id? $this->transaction->invoice_number: null,
+            'valid_end_date' => $this->valid_end_date,
             'status' => $this->status,
             'is_used' => $this->is_used,
             'is_valid' => $this->is_valid,

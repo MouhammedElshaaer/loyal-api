@@ -19,18 +19,14 @@ use Illuminate\Http\Request;
  * Variables used in canAccess middleware
  */
 $admin_customer_privileged = config('constants.roles.admin').','.config('constants.roles.customer');
+$cashier_customer_privileged = config('constants.roles.cashier').','.config('constants.roles.customer');
 $admin_privileged = config('constants.roles.admin');
 $cashier_privileged = config('constants.roles.cashier');
 
 /**
  * Shared and Customer Mobile Authorized Services
  */
-Route::group([
-    'middleware' =>[
-            'auth:api',
-            'canAccess:'.$admin_customer_privileged
-        ]
-    ], function () {
+Route::group(['middleware' =>['auth:api', 'canAccess:'.$admin_customer_privileged]], function () {
 
     /**Shared */
     Route::post('logout', 'Mobile\UsersController@logout');
@@ -45,6 +41,15 @@ Route::group([
     Route::post('mobile/reset', 'Mobile\UsersController@resetPassword');
     Route::post('mobile/report', 'Mobile\UsersController@addReport');
     Route::post('mobile/redeem', 'Mobile\HomeController@redeemVoucher');
+
+});
+
+/**
+ * Merchant and Customer Mobile Authorized Services
+ */
+Route::group(['middleware' =>['auth:api', 'canAccess:'.$cashier_customer_privileged]], function () {
+
+    Route::post('device', 'Shared\SharedController@bindDevice');
 
 });
 
@@ -87,6 +92,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('web/user/update', 'Web\AdminController@updateUser');
     //Action Logs
     Route::get('web/actions', 'Web\AdminController@getActionLogs');
+    //Notifications
+    Route::post('web/notify', 'Web\AdminController@notify');
 
 });
 

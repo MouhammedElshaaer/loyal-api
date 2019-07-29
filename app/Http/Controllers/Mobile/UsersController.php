@@ -23,10 +23,6 @@ use App\Http\Requests\AddReportRequest;
 use Exception;
 use Google_Client;
 
-use App\Http\Traits\ResponseUtilities;
-use App\Http\Traits\CRUDUtilities;
-use App\Http\Traits\CodeGenerationUtilities;
-
 use App\User;
 use App\Models\LinkedSocialAccount;
 use App\Models\Report;
@@ -34,20 +30,6 @@ use App\Models\Role;
 
 class UsersController extends Controller
 {
-    use ResponseUtilities, CRUDUtilities, CodeGenerationUtilities;
-
-    private $data;
-
-    public function __construct(){
-
-        $this->data = [
-            "code"=> null,
-            "message"=>"",
-            "data" => new \stdClass()
-        ];
-
-    }
-
 
     /*******************************************************************************
      ****************************** Authentication *********************************

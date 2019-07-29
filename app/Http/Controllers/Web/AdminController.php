@@ -23,6 +23,7 @@ use App\Models\Translation;
 use App\Models\VoucherInstance;
 use App\Models\Role;
 use App\Models\ActionLog;
+use App\Models\Device;
 use App\User;
 
 use App\Http\Resources\Setting as SettingResource;
@@ -32,20 +33,7 @@ use Exception;
 
 class AdminController extends Controller
 {
-    use ResponseUtilities, CRUDUtilities, LocaleUtilities, SettingUtilities;
 
-    private $data;
-
-    public function __construct(){
-
-        $this->data = [
-            "code"=> null,
-            "message"=>"",
-            "data" => new \stdClass()
-        ];
-
-    }
-    
     /*******************************************************************************
      ********************************** Settings ***********************************
      *******************************************************************************/
@@ -280,11 +268,50 @@ class AdminController extends Controller
      *******************************************************************************/
 
     public function getActionLogs(Request $request){
-
-        // $attributes = [];
-        // return response()->json(['check' => array_key_exists('invoice_number', $attributes)]);
-
         return ActionLogResource::collection($this->getAllDataRows(ActionLog::class));
+    }
+
+    /*******************************************************************************
+     ********************************* Action Logs *********************************
+     *******************************************************************************/
+
+    public function notify(Request $request){
+
+        $tokens = [];
+
+        if ($request->has('users_id') && $request->users_id && count($request->users_id)>0){
+
+            $tokens = [];
+            foreach($request->users_id as $user_id){
+
+                $userDevices = $this->getDataRows(Device::class, 'user_id', $user_id)
+                                    ->map(function ($device) { return $device->token; })
+                                    ->toArray();
+
+                $tokens = array_merge($tokens, $userDevices);
+            }
+
+        } else {
+
+            $tokens = $this->getAllDataRows(Device::class)
+                            ->map(function ($device) { return $device->token; })
+                            ->toArray();
+
+        }
+
+        if ($tokens && count($tokens)>0) {
+
+            $this->notificationsService->notify(
+                $tokens,
+                $request->title,
+                $request->body,
+                $request->has('data')? $request->data: null
+            );
+
+        }
+
+        $this->initResponse(200, 'success');
+        return response()->json($this->data, 200);
 
     }
 }

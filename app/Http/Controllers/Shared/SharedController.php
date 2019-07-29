@@ -6,39 +6,27 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\App;
 
-use App\Http\Traits\ResponseUtilities;
-use App\Http\Traits\CRUDUtilities;
+use App\Http\Requests\GetVoucherRequest;
+use App\Http\Requests\GetVouchersRequest;
+use App\Http\Requests\GetVoucherInstanceRequest;
+use App\Http\Requests\GetVoucherInstancesRequest;
+use App\Http\Requests\BindDeviceRequest;
 
 use App\Models\Voucher;
 use App\Models\VoucherInstance;
+use App\Models\Device;
 
 use App\Http\Resources\Voucher as VoucherResource;
 use App\Http\Resources\VoucherInstance as VoucherInstanceResource;
 
 class SharedController extends Controller
 {
-    use ResponseUtilities, CRUDUtilities;
-
-    private $data;
-
-    public function __construct(){
-
-        $this->data = [
-            "code"=> null,
-            "message"=>"",
-            "data" => new \stdClass()
-        ];
-
-    }
 
     /*******************************************************************************
      *********************************** Vouchers **********************************
      *******************************************************************************/
 
-    public function getVoucher(Request $request, $id){
-
-        $locale = $request->headers->get('locale');
-        App::setLocale($locale);
+    public function getVoucher(GetVoucherRequest $request, $id){
         
         $voucher = Voucher::find($id);
         if(!$voucher || $voucher->deactivated){$this->initResponse(400, 'get_voucher_fail');}
@@ -46,10 +34,7 @@ class SharedController extends Controller
         return response()->json($this->data, 200);
     }
     
-    public function getVouchers(Request $request){
-
-        $locale = $request->headers->get('locale');
-        App::setLocale($locale);
+    public function getVouchers(GetVouchersRequest $request){
         
         $query1 = Voucher::where('deactivated', false);
         $query2 = clone $query1;
@@ -72,10 +57,7 @@ class SharedController extends Controller
      ****************************** VoucherIntances *******************************
      *******************************************************************************/
 
-    public function getVoucherInstance(Request $request, $id){
-
-        $locale = $request->headers->get('locale');
-        App::setLocale($locale);
+    public function getVoucherInstance(GetVoucherInstanceRequest $request, $id){
 
         $user = auth()->user();
         $voucherInstance = VoucherInstance::find($id);
@@ -85,10 +67,7 @@ class SharedController extends Controller
         return response()->json($this->data, 200);
     }
 
-    public function getVoucherInstances(Request $request){
-
-        $locale = $request->headers->get('locale');
-        App::setLocale($locale);
+    public function getVoucherInstances(GetVoucherInstancesRequest $request){
 
         $user = auth()->user();
         $voucherInstances = VoucherInstance::where('user_id', $user->id)->where('deactivated', false)->get();
@@ -97,10 +76,32 @@ class SharedController extends Controller
         return response()->json($this->data, 200);
     }
 
+    /*******************************************************************************
+     ************************************ Users ************************************
+     *******************************************************************************/
+
     public function getUser(Request $request, $id){
         
         if (!$user = getDataRowByPrimaryKey(User::class, $id)) { $this->initResponse(500, 'server_error'); }
         $this->initResponse(200, 'success', $user);
+        return response()->json($this->data, 200);
+
+    }
+
+    /*******************************************************************************
+     ******************************** Notifications ********************************
+     *******************************************************************************/
+
+    public function bindDevice(BindDeviceRequest $request){
+        
+        $user = auth()->user();
+        $attributes = $request->only('token', 'type');
+        $attributes['user_id'] = $user->id;
+        $device = $this->createUpdateDataRow(Device::class, $attributes);
+
+        $this->initResponse(200, 'success');
+        if (!$device) { initResponse(500, 'server_error'); }
+
         return response()->json($this->data, 200);
 
     }

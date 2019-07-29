@@ -9,12 +9,6 @@ use Illuminate\Support\Facades\App;
 use App\Http\Requests\HomeContentRequest;
 use App\Http\Requests\RedeemVoucherRequest;
 
-use App\Http\Traits\ResponseUtilities;
-use App\Http\Traits\CRUDUtilities;
-use App\Http\Traits\SettingUtilities;
-use App\Http\Traits\CodeGenerationUtilities;
-use App\Http\Traits\LogUtilities;
-
 use Carbon\Carbon;
 
 use App\Models\Voucher;
@@ -29,20 +23,6 @@ use App\Http\Resources\TransactionPoints as TransactionPointsResource;
 
 class HomeController extends Controller
 {
-    use ResponseUtilities, CRUDUtilities, SettingUtilities, CodeGenerationUtilities, LogUtilities;
-
-    private $data;
-
-    public function __construct(){
-
-        $this->data = [
-            "code"=> null,
-            "message"=>"",
-            "data" => new \stdClass()
-        ];
-
-    }
-    
     
     public function homeContent(HomeContentRequest $request){
         

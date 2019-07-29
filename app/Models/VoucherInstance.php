@@ -44,6 +44,7 @@ class VoucherInstance extends Model
      * @var array
      */
     protected $appends = [
+        'valid_end_date',
         'status',
         'is_used',
         'is_valid',
@@ -127,6 +128,12 @@ class VoucherInstance extends Model
 
     public function getIsUsedAttribute(){
         return $this->used_at? true: false;
+    }
+
+    public function getValidEndDateAttribute(){
+        $validDuration = $this->getSetting(config('constants.settings.valid_duration'))->value;
+        return $this->created_at->addDays($validDuration)->toDateTimeString();
+         
     }
 
     /**
