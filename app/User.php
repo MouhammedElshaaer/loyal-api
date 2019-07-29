@@ -149,6 +149,14 @@ class User extends Authenticatable
     }
 
     /**
+     * The notifications that belong to the user.
+     */
+    public function notifications()
+    {
+        return $this->belongsToMany('App\Models\Notification');
+    }
+
+    /**
      * Get the devices for the user.
      */
     public function devices()

@@ -93,6 +93,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     //Action Logs
     Route::get('web/actions', 'Web\AdminController@getActionLogs');
     //Notifications
+    Route::get('web/notifications', 'Web\AdminController@getNotifications');
     Route::post('web/notify', 'Web\AdminController@notify');
 
 });

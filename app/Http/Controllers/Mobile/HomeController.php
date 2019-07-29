@@ -44,7 +44,6 @@ class HomeController extends Controller
             $trendingRewards = VoucherResource::collection($trendingRewards);
         }
 
-
         $homeContent = [
             'total_points' => $user->total_points,
             'total_expire' => $user->total_expire,

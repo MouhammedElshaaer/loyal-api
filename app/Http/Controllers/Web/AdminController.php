@@ -9,6 +9,8 @@ use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\FetchSettingsRequest;
 use App\Http\Requests\UpdateReportRequest;
 use App\Http\Requests\AddUpdateVoucherRequest;
+use App\Http\Requests\NotifyRequest;
+use App\Http\Requests\NotificationRequest;
 
 use App\Http\Traits\ResponseUtilities;
 use App\Http\Traits\CRUDUtilities;
@@ -24,6 +26,7 @@ use App\Models\VoucherInstance;
 use App\Models\Role;
 use App\Models\ActionLog;
 use App\Models\Device;
+use App\Models\Notification;
 use App\User;
 
 use App\Http\Resources\Setting as SettingResource;
@@ -275,43 +278,62 @@ class AdminController extends Controller
      ********************************* Action Logs *********************************
      *******************************************************************************/
 
-    public function notify(Request $request){
+    public function notify(NotifyRequest $request){
 
-        $tokens = [];
-
-        if ($request->has('users_id') && $request->users_id && count($request->users_id)>0){
-
-            $tokens = [];
-            foreach($request->users_id as $user_id){
-
-                $userDevices = $this->getDataRows(Device::class, 'user_id', $user_id)
-                                    ->map(function ($device) { return $device->token; })
-                                    ->toArray();
-
-                $tokens = array_merge($tokens, $userDevices);
-            }
-
+        $attributes = $request->only('title', 'body');
+        if (!$notification = $this->createUpdateDataRow(Notification::class, $attributes)) {
+            $this->initResponse(500, 'server_error');
         } else {
 
-            $tokens = $this->getAllDataRows(Device::class)
-                            ->map(function ($device) { return $device->token; })
-                            ->toArray();
+            $tokens = [];
+            $usersId = [];
+            if ($request->has('users_id') && $request->users_id && count($request->users_id)>0){
+    
+                $tokens = [];
+                $usersId = $request->users_id;
+                foreach($usersId as $user_id){
+    
+                    $userDevices = $this->getDataRows(Device::class, 'user_id', $user_id)
+                                        ->map(function ($device) { return $device->token; })
+                                        ->toArray();
+    
+                    $tokens = array_merge($tokens, $userDevices);
+                }
+    
+            } else {
+    
+                $tokens = $this->getAllDataRows(Device::class)
+                                ->map(function ($device) { return $device->token; })
+                                ->toArray();
 
+                $usersId = $this->getAllDataRows(Device::class)
+                                ->map(function ($device) { return $device->user_id; })
+                                ->toArray();
+    
+            }
+            $notification->users()->attach($usersId);
+    
+            if ($tokens && count($tokens)>0) {
+    
+                $this->notificationsService->notify(
+                    $tokens,
+                    $request->title,
+                    $request->body,
+                    $request->has('data')? $request->data: null
+                );
+    
+            }
+    
+            $this->initResponse(200, 'success');
         }
 
-        if ($tokens && count($tokens)>0) {
-
-            $this->notificationsService->notify(
-                $tokens,
-                $request->title,
-                $request->body,
-                $request->has('data')? $request->data: null
-            );
-
-        }
-
-        $this->initResponse(200, 'success');
         return response()->json($this->data, 200);
+
+    }
+
+    public function getNotifications(NotificationRequest $request){
+
+        return auth()->user()->notifications;
 
     }
 }
