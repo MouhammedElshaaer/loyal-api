@@ -15,24 +15,24 @@ class ImagesController extends Controller
 {
     use ResponseUtilities;
 
-    private $data;
     private $baseURL;
+    private $path;
     private $threshold;
+    private $thumbnailWidt;
 
     public function __construct(){
-
-        $this->data = [
-            "code"=> null,
-            "message"=>"",
-            "data" => new \stdClass()
-        ];
-
-        $this->baseURL = \URL::to('/')."/storage/users_avatar/";
-        $this->threshold = 1024*1000;
+        
+        $this->baseURL = \URL::to('/') . '/' .config('constants.file_uploading.image_storage_path');
+        $this->path = public_path() . '/' .config('constants.file_uploading.image_storage_path');
+        $this->threshold = 1024 * (int) config('constants.file_uploading.image_size_threshold_mb') * 1000;
+        $this->thumbnailWidt = (int) config('constants.file_uploading.image_thumbnail_width_px');
     }
 
     public function store(StoreImageRequest $request)
     {
+
+        if (!file_exists($this->path)) { mkdir($this->path); }
+
         $this->data['code'] = 400;
         $this->data['message'] = __('messages.uploading_failed');
 
@@ -46,16 +46,32 @@ class ImagesController extends Controller
                 //Get just extension
                 $extension=$request->file('image')->getClientOriginalExtension();
                 //file name to store
-                $uniqueFileName=$fileName.'_'.time().'.'.$extension;
+                $uniqueFileNameWithoutExt = $fileName.'_'.time();
+                $thumbnailWithExt = $uniqueFileNameWithoutExt.'_'.config('constants.file_uploading.image_thumbnail_suffix').'.'.$extension;
+                $uniqueFileNameWithExt = $uniqueFileNameWithoutExt.'.'.$extension;
 
-                // $path=$request->file('image')->storeAs('public/users_avatar', $uniqueFileName);
                 $image = Image::make($request->file('image')->getRealPath());
-                $image->save('storage/users_avatar/'.$uniqueFileName,
-                            $this->getPercentageToMaxQuality($image->filesize(), $this->threshold));
+                $image->save(
+                    config('constants.file_uploading.image_storage_path').$uniqueFileNameWithExt,
+                    $this->getPercentageToMaxQuality($image->filesize(), $this->threshold)
+                );
 
-                $this->data['code'] = 200;
-                $this->data['message'] = __('messages.uploading_success');
-                $this->data['data'] = ['image'=>$this->baseURL.$uniqueFileName];
+                $thumbnail = Image::make($request->file('image')->getRealPath());
+                $thumbnail->resize($this->thumbnailWidt, null, function ($constraint) {
+                    $constraint->aspectRatio();
+                    $constraint->upsize();
+                });
+                $thumbnail->save(
+                    config('constants.file_uploading.image_storage_path') . $thumbnailWithExt,
+                    $this->getPercentageToMaxQuality($thumbnail->filesize(), $this->threshold)
+                );
+
+
+                $data= [
+                    'image'=>$this->baseURL.$uniqueFileNameWithExt,
+                    'thumbnail'=>$this->baseURL.$thumbnailWithExt
+                ];
+                $this->initResponse(200, 'uploading_success', $data);
 
             }
         }catch(Exception $e){
@@ -69,8 +85,8 @@ class ImagesController extends Controller
      */
     protected function getPercentageToMaxQuality($currQuality, $threshold){
         if($currQuality>$threshold){
-            return 100-(int)((($currQuality-$threshold)/$currQuality)*100);
+            return 100 - (int)((($currQuality-$threshold)/$currQuality)*100);
         }
-        return 100;
+        return 89;
     }
 }

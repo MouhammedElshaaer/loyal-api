@@ -75,4 +75,11 @@ return [
         'voucher_redeem_success' => 'REDEEM',
     ],
 
+    'file_uploading' =>[
+        'image_size_threshold_mb' => '1',
+        'image_thumbnail_suffix' => 'thumbnail',
+        'image_thumbnail_width_px' => '512',
+        'image_storage_path' => 'storage/images/',
+    ],
+
 ];
