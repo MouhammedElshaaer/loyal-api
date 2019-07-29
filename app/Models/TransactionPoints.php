@@ -108,7 +108,7 @@ class TransactionPoints extends Model
 
     public function getPendingEndDateAttribute(){
         $pendingDuration = $this->getSetting(config('constants.settings.pending_duration'))->value;
-        return $this->created_at->addDays($pendingDuration)->toDateTimeString();
+        return $this->created_at->addDays($pendingDuration)->toFormattedDateString();
          
     }
 
@@ -116,7 +116,7 @@ class TransactionPoints extends Model
         $pendingDuration = $this->getSetting(config('constants.settings.pending_duration'))->value;
         $validDuration = $this->getSetting(config('constants.settings.valid_duration'))->value;
         $pendingDurationEndDate = $this->created_at->addDays($pendingDuration);
-        return $pendingDurationEndDate->addDays($validDuration)->toDateTimeString();    
+        return $pendingDurationEndDate->addDays($validDuration)->toFormattedDateString();
     }
 
 }

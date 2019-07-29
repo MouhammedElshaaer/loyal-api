@@ -25,7 +25,8 @@ class VoucherInstance extends JsonResource
             'status' => $this->status,
             'is_used' => $this->is_used,
             'is_valid' => $this->is_valid,
-            'is_expired' => $this->is_expired
+            'is_expired' => $this->is_expired,
+            'created_at' => $this->created_at->toFormattedDateString(),
         ];
     }
 }

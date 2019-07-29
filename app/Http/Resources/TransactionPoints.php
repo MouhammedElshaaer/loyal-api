@@ -29,7 +29,7 @@ class TransactionPoints extends JsonResource
             'valid_end_date' => $this->valid_end_date,
             'used_at' => $this->used_at,
             'refunded_at' => $this->refunded_at,
-            'created_at' => $this->created_at,
+            'created_at' => $this->created_at->toFormattedDateString(),
         ];
     }
 }
