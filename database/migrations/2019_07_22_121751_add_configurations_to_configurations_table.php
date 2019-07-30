@@ -30,8 +30,8 @@ class AddConfigurationsToConfigurationsTable extends Migration
 
         foreach($defaultSettings as $settingName=>$settingValue){
             
-            $configuration = $this->getConfiguration(config('constants.'.$settingName));
-            $setting = $this->getSetting(config('constants.'.$settingName));
+            $configuration = $this->getConfiguration(config('constants.settings.'.$settingName));
+            $setting = $this->getSetting(config('constants.settings.'.$settingName));
 
             if (!$setting) { $setting = $this->createSetting(['configuration_id'=>$configuration->id]); }
 
