@@ -46,9 +46,6 @@ class NotificationsService
 
 	protected function push($tokens){
 
-		dump($this->notification);
-		return true; 
-
 		$optionBuilder = new OptionsBuilder();
 		$optionBuilder->setTimeToLive(60*20);
 
