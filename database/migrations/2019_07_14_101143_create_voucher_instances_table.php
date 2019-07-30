@@ -24,8 +24,7 @@ class CreateVoucherInstancesTable extends Migration
 
             //Transaction id where the voucher is used
             $table->unsignedBigInteger('transaction_id')->nullable();
-            $table->foreign('transaction_id')->references('id')->on('transactions');
-
+            
             $table->unsignedBigInteger('qr_code')->unique();
 
             $table->date('used_at')->nullable();
