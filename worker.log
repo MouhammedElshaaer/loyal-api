@@ -5,3 +5,7 @@ array:3 [
   "data" => null
 ]
 [2019-07-30 15:08:11][5] Processed:  App\Jobs\SendNotification
+[2019-07-30 16:56:00][6] Processing: App\Jobs\SendNotification
+[2019-07-30 16:56:05][6] Processed:  App\Jobs\SendNotification
+[2019-07-30 16:57:29][7] Processing: App\Jobs\SendNotification
+[2019-07-30 16:57:30][7] Processed:  App\Jobs\SendNotification
