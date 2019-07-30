@@ -9,6 +9,8 @@ use App\Http\Requests\AddTransactionRequest;
 use App\Http\Requests\CheckVoucherInstanceRequest;
 use App\Http\Requests\RefundTransactionRequest;
 
+use App\Jobs\SendNotification;
+
 use App\User;
 
 use App\Models\Transaction;
@@ -101,11 +103,12 @@ class MerchantController extends Controller
 
             if (count($tokens)) {
 
-                $this->notificationsService->notify(
+                dispatch(new SendNotification(
+                    $this->notificationsService,
                     $tokens, //device tokens that will be notified
-                    ucfirst(explode("_", $status)), //notification title
+                    ucfirst(str_replace("_", " ", $status)), //notification title
                     __('messages.'.$status) //notification body
-                );
+                ));
 
             }
 
@@ -155,10 +158,11 @@ class MerchantController extends Controller
             
             if (count($tokens)) {
 
-                $this->notificationsService->notify(
+                dispatch(new SendNotification(
+                    $this->notificationsService,
                     $tokens, //device tokens that will be notified
-                    explode("_", $actionType), //notification title
-                );
+                    ucfirst(strtolower(str_replace("_", " ", $status))), //notification title
+                ));
 
             }
             
@@ -194,11 +198,12 @@ class MerchantController extends Controller
                             
                 if (count($tokens)) {
 
-                    $this->notificationsService->notify(
+                    dispatch(new SendNotification(
+                        $this->notificationsService,
                         $tokens, //device tokens that will be notified
-                        ucfirst(explode("_", $status)), //notification title
+                        ucfirst(str_replace("_", " ", $status)), //notification title
                         __('messages.'.$status) //notification body
-                    );
+                    ));
 
                 }
 

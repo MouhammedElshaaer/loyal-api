@@ -1,0 +1,7 @@
+[2019-07-30 15:08:10][5] Processing: App\Jobs\SendNotification
+array:3 [
+  "title" => "Add transaction success"
+  "body" => "Transaction added successfully"
+  "data" => null
+]
+[2019-07-30 15:08:11][5] Processed:  App\Jobs\SendNotification
