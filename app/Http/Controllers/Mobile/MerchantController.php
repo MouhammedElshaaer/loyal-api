@@ -56,7 +56,8 @@ class MerchantController extends Controller
 
             $points = $this->resolvePoints($request->invoice_value);
             $user = $this->getDataRowByKey(User::class, 'qr_code', $request->user_qr_code);
-            if (!$user->verified) { throw new Exception('user not verified'); }
+            if (!$user) { throw new Exception('User not found'); }
+            else if (!$user->verified) { throw new Exception('User not verified'); }
             
             $transactionAttributes = $request->only('invoice_number', 'invoice_value');
             $transactionAttributes['user_id'] = $user->id;
@@ -161,7 +162,7 @@ class MerchantController extends Controller
                 dispatch(new SendNotification(
                     $this->notificationsService,
                     $tokens, //device tokens that will be notified
-                    ucfirst(strtolower(str_replace("_", " ", $status))), //notification title
+                    ucfirst(strtolower(str_replace("_", " ", $status))) //notification title
                 ));
 
             }
