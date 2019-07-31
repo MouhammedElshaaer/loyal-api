@@ -276,7 +276,7 @@ class AdminController extends Controller
         return response()->json($this->data, 200)
                         ->header('Access-Control-Allow-Origin', "*")
                         ->header('Vary', 'Origin')
-                        ->header('Access-Control-Allow-Credentials', 'true')
+                        ->header('Access-Control-Allow-Credentials', 'false')
                         ->header('Access-Control-Allow-Methods', '*')
                         ->header('Access-Control-Allow-Headers', '*');
                         // ->header('Access-Control-Allow-Origin', \URL::to('/'));
