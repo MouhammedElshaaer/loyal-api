@@ -272,13 +272,15 @@ class AdminController extends Controller
 
     public function getActionLogs(Request $request){
         
+        $headers = [
+            'Access-Control-Allow-Origin' => '*',
+            'Vary' => 'Origin',
+            'Access-Control-Allow-Credentials' => 'true',
+            'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS, PUT, DELETE',
+            'Access-Control-Allow-Headers' => 'Content-Type, X-Auth-Token, Origin',
+        ];
         $this->initResponse(200, 'success', ActionLogResource::collection($this->getAllDataRows(ActionLog::class)));
-        return response()->header('Access-Control-Allow-Origin', '*')
-                        ->header('Vary', 'Origin')
-                        ->header('Access-Control-Allow-Credentials', 'false')
-                        ->header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE')
-                        ->header('Access-Control-Allow-Headers', 'Content-Type, X-Auth-Token, Origin')
-                        ->json($this->data, 200);
+        return response()->json($this->data, 200, $headers);
     }
 
     /*******************************************************************************
