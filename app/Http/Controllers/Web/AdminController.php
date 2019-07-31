@@ -271,7 +271,10 @@ class AdminController extends Controller
      *******************************************************************************/
 
     public function getActionLogs(Request $request){
-        return ActionLogResource::collection($this->getAllDataRows(ActionLog::class));
+        
+        $this->initResponse(200, 'success', ActionLogResource::collection($this->getAllDataRows(ActionLog::class)));
+        return response()->json($this->data, 200)
+                        ->header('Access-Control-Allow-Origin', \URL::to('/'));
     }
 
     /*******************************************************************************
@@ -327,8 +330,7 @@ class AdminController extends Controller
             $this->initResponse(200, 'success');
         }
 
-        return response()->json($this->data, 200)
-                        ->header('Access-Control-Allow-Origin', \URL::to('/'));
+        return response()->json($this->data, 200);
 
     }
 
