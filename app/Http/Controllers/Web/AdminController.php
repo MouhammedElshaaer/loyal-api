@@ -274,11 +274,11 @@ class AdminController extends Controller
         
         $this->initResponse(200, 'success', ActionLogResource::collection($this->getAllDataRows(ActionLog::class)));
         return response()->json($this->data, 200)
-                        ->header('Access-Control-Allow-Origin', \URL::to('/'))
+                        ->header('Access-Control-Allow-Origin', "*")
                         ->header('Vary', 'Origin')
                         ->header('Access-Control-Allow-Credentials', 'true')
-                        ->header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, DELETE')
-                        ->header('Access-Control-Allow-Headers', 'Content-Type, Accept, X-Requested-With, remember-me');
+                        ->header('Access-Control-Allow-Methods', '*')
+                        ->header('Access-Control-Allow-Headers', '*');
                         // ->header('Access-Control-Allow-Origin', \URL::to('/'));
     }
 
