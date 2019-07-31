@@ -274,7 +274,8 @@ class AdminController extends Controller
         
         $this->initResponse(200, 'success', ActionLogResource::collection($this->getAllDataRows(ActionLog::class)));
         return response()->json($this->data, 200)
-                        ->header('Access-Control-Allow-Origin', 'http://localhost:4200');
+                        ->header('Access-Control-Allow-Origin', 'http://localhost:4200')
+                        ->header('Vary', 'Origin');
                         // ->header('Access-Control-Allow-Origin', \URL::to('/'));
     }
 
