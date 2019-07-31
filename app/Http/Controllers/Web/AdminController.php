@@ -327,13 +327,15 @@ class AdminController extends Controller
             $this->initResponse(200, 'success');
         }
 
-        return response()->json($this->data, 200);
+        return response()->json($this->data, 200)
+                        ->header('Access-Control-Allow-Origin', \URL::to('/'));
 
     }
 
     public function getNotifications(NotificationRequest $request){
 
-        return auth()->user()->notifications;
+        $this->initResponse(200, 'success', auth()->user()->notifications);
+        return response()->json($this->data, 200);
 
     }
 }
