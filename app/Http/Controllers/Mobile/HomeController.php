@@ -23,9 +23,9 @@ use App\Http\Resources\TransactionPoints as TransactionPointsResource;
 
 class HomeController extends Controller
 {
-    
+
     public function homeContent(HomeContentRequest $request){
-        
+
         $user = auth()->user();
         $ads = $this->getAds();
 
@@ -33,6 +33,7 @@ class HomeController extends Controller
         $trendingRewards = Voucher::where('deactivated', false)->orderBy('instances', 'desc')->take(5)->get();
         $latestVoucherInstances = VoucherInstance::where('user_id', $user->id)
                                                     ->where('deactivated', false)
+                                                    // ->where('is_valid', true)
                                                     ->take(5)
                                                     ->get();
         $latestExpire = null;
@@ -49,7 +50,7 @@ class HomeController extends Controller
             'total_expire' => $user->total_expire,
             'latest_expire' => $latestExpire,
             'latest_expire_points' => TransactionPointsResource::collection($latest_expire_points),
-            'ads' => AdsResource::collection($ads),
+            'ads' => AdsResource::collection($ads? $ads: collect([])),
             'trending_rewards' => $trendingRewards,
             'latest_vouchers' => VoucherInstanceResource::collection($latestVoucherInstances)
         ];
@@ -80,7 +81,7 @@ class HomeController extends Controller
                 $voucherInstance = VoucherInstance::create($attributes);
                 $voucher->instances += 1;
                 $voucher->save();
-                
+
                 $status = 'redeem_success';
                 $actionScope = 'voucher';
                 $actionType = $this->resolveActionFromStatus($actionScope, $status);
@@ -89,7 +90,7 @@ class HomeController extends Controller
                 $this->createUpdateDataRow(ActionLog::class, $actionLogAttributes);
 
                 /**
-                 * Note the next commented lines query the database to get the user model 
+                 * Note the next commented lines query the database to get the user model
                  */
                 // $totalPoints = $this->getDataRowByPrimaryKey(User::class, $user->id)->total_points;
                 // $data = ['total_points' => $totalPoints];
@@ -119,5 +120,5 @@ class HomeController extends Controller
     /*******************************************************************************
      ********************************* Utilities ***********************************
      *******************************************************************************/
-    
+
 }

@@ -4,7 +4,7 @@ return [
 
     'default_locale' => 'en',
 
-    'settings' =>[
+    'settings' => [
         'pending_duration' => 'PENDING_DURATION',
         'premium_pending_duration' => 'PREMIUM_PENDING_DURATION',
         'valid_duration' => 'VALID_DURATION',
@@ -19,7 +19,7 @@ return [
         'ads' => 'ADS',
     ],
 
-    'default_settings' =>[
+    'default_settings' => [
         "valid_duration" => "5",
         "premium_valid_duration" => "7",
         "pending_duration" => "1",
@@ -33,14 +33,14 @@ return [
         "policies" => "new may be simple text or html markup"
     ],
 
-    'roles' =>[
+    'roles' => [
         'admin' => 'admin',
         'customer' => 'customer',
         'cashier' => 'cashier',
         'premium' => 'premium',
     ],
 
-    'status_codes' =>[
+    'status_codes' => [
         'valid_status' => '100',
         'used_status' => '110',
         'refunded_status' => '111',
@@ -49,7 +49,7 @@ return [
         'status_error' => '0',
     ],
 
-    'status' =>[
+    'status' => [
         '100' => 'valid',
         '110' => 'used',
         '111' => 'refunded',
@@ -58,14 +58,14 @@ return [
         '0' => 'status error',
     ],
 
-    'scopes' =>[
+    'scopes' => [
         'customer' => 'CUSTOMER',
         'cashier' => 'CASHIER',
         'admin' => 'ADMIN',
         'system' => 'SYSTEM',
     ],
 
-    'actions' =>[
+    'actions' => [
         'transaction_refund_success' => 'TRANSACTION_REFUND',
         'transaction_add_transaction_success' => 'TRANSACTION_ADD',
         'transaction_voucher_used_success' => 'TRANSACTION_ADD_WITH_VOUCHER',
@@ -75,11 +75,26 @@ return [
         'voucher_redeem_success' => 'REDEEM',
     ],
 
-    'file_uploading' =>[
+    'file_uploading' => [
         'image_size_threshold_mb' => '1',
         'image_thumbnail_suffix' => 'thumbnail',
         'image_thumbnail_width_px' => '512',
         'image_storage_path' => 'storage/images/',
     ],
 
+    'testing' => [
+        'users_number' => '100',
+        'transactions_number' => '100',
+        'vouchers_number' => '100',
+        'voucher_instances_number' => '100',
+        'invoice_max_value' => '1000',
+        'voucher_min_points' => '100',
+        'voucher_max_points' => '5000',
+        'points_min_value' => '4',
+        'points_max_value' => '4000',
+        'min_discount' => '10',
+        'max_discount' => '50',
+        'date_start' => '-15 days',
+        'date_end' => '+15 days',
+    ],
 ];

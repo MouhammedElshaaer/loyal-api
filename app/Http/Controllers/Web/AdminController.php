@@ -43,7 +43,7 @@ class AdminController extends Controller
     public function fetchSettings(FetchSettingsRequest $request){
 
         foreach($request->settings as $settingName=>$settingValue){
-            
+
             $configuration = $this->getConfiguration(config('constants.settings.'.$settingName));
             $setting = $this->getSetting(config('constants.settings.'.$settingName));
 
@@ -104,12 +104,12 @@ class AdminController extends Controller
      *******************************************************************************/
 
     public function getReport(){
-        
+
         if (!$report = Report::find($id)) { $this->initResponse(400, 'get_report_fail'); }
         else { $this->initResponse(200, 'get_report_success', $report); }
         return response()->json($this->data, 200);
     }
-    
+
     public function getReports(){
 
         $reports = Report::all();
@@ -128,7 +128,7 @@ class AdminController extends Controller
     }
 
     public function deleteReport($id){
-        
+
         $report = Report::find($id);
         if (!$report) { $this->initResponse(400, 'get_report_fail'); }
         else {
@@ -158,9 +158,9 @@ class AdminController extends Controller
     }
 
     public function updateVoucher(AddUpdateVoucherRequest $request, $id){
-        
+
         $attributes = $request->only('value', 'points', 'title', 'description', 'deactivated');
-        
+
         if (!$voucher = Voucher::find($id)) { $this->initResponse(400, 'update_voucher_fail'); }
         else {
             $voucher->update($attributes);
@@ -177,7 +177,7 @@ class AdminController extends Controller
     }
 
     public function deleteVoucher($id){
-        
+
         if (!$voucher = Voucher::find($id)) { $this->initResponse(400, 'get_voucher_fail'); }
         else {
             if (!$this->deleteLocales($voucher->id, Voucher::class)) {
@@ -271,16 +271,9 @@ class AdminController extends Controller
      *******************************************************************************/
 
     public function getActionLogs(Request $request){
-        
-        $headers = [
-            'Access-Control-Allow-Origin' => '*',
-            'Vary' => 'Origin',
-            'Access-Control-Allow-Credentials' => 'true',
-            'Access-Control-Allow-Methods' => 'POST, GET, OPTIONS, PUT, DELETE',
-            'Access-Control-Allow-Headers' => 'Content-Type, X-Auth-Token, Origin',
-        ];
+
         $this->initResponse(200, 'success', ActionLogResource::collection($this->getAllDataRows(ActionLog::class)));
-        return response()->json($this->data, 200, $headers);
+        return response()->json($this->data, 200);
     }
 
     /*******************************************************************************
@@ -297,20 +290,20 @@ class AdminController extends Controller
             $tokens = [];
             $usersId = [];
             if ($request->has('users_id') && $request->users_id && count($request->users_id)>0){
-    
+
                 $tokens = [];
                 $usersId = $request->users_id;
                 foreach($usersId as $user_id){
-    
+
                     $userDevices = $this->getDataRows(Device::class, 'user_id', $user_id)
                                         ->map(function ($device) { return $device->token; })
                                         ->toArray();
-    
+
                     $tokens = array_merge($tokens, $userDevices);
                 }
-    
+
             } else {
-    
+
                 $tokens = $this->getAllDataRows(Device::class)
                                 ->map(function ($device) { return $device->token; })
                                 ->toArray();
@@ -318,21 +311,21 @@ class AdminController extends Controller
                 $usersId = $this->getAllDataRows(Device::class)
                                 ->map(function ($device) { return $device->user_id; })
                                 ->toArray();
-    
+
             }
             $notification->users()->attach($usersId);
-    
+
             if ($tokens && count($tokens)>0) {
-    
+
                 $this->notificationsService->notify(
                     $tokens,
                     $request->title,
                     $request->body,
                     $request->has('data')? $request->data: null
                 );
-    
+
             }
-    
+
             $this->initResponse(200, 'success');
         }
 

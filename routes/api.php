@@ -69,7 +69,7 @@ Route::group(['middleware' => ['auth:api', 'canAccess:'.$cashier_privileged]], f
  */
 // Route::group(['middleware' => ['auth:api', 'canAccess:'.$admin_privileged]], function () {
 Route::group(['middleware' => ['auth:api']], function () {
-    
+
     //Dashboard
     Route::get('admin/dashboard', 'Web\AdminController@dashboard');
     //Reports
