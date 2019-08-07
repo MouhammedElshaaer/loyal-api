@@ -41,6 +41,8 @@ Route::group(['middleware' =>['auth:api', 'canAccess:'.$admin_customer_privilege
     Route::post('mobile/reset', 'Mobile\UsersController@resetPassword');
     Route::post('mobile/report', 'Mobile\UsersController@addReport');
     Route::post('mobile/redeem', 'Mobile\HomeController@redeemVoucher');
+    Route::post('mobile/profile', 'Mobile\HomeController@updateProfile');
+
 
 });
 
@@ -90,6 +92,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('web/cashier/delete/{id}', 'Web\AdminController@deleteUser');
     //Users + Cashier
     Route::post('web/user/update', 'Web\AdminController@updateUser');
+    //Users
+    Route::get('web/users', 'Web\AdminController@getUsers');
     //Action Logs
     Route::get('web/actions', 'Web\AdminController@getActionLogs');
     //Notifications
@@ -126,6 +130,5 @@ Route::post('store', 'Shared\ImagesController@store');
 /**
  * Staging Routes
  */
-
 
 

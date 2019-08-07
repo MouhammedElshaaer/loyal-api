@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\App;
 
 use App\Http\Requests\HomeContentRequest;
 use App\Http\Requests\RedeemVoucherRequest;
+use App\Http\Requests\UpdateProfileRequest;
 
 use Carbon\Carbon;
 
@@ -33,9 +34,16 @@ class HomeController extends Controller
         $trendingRewards = Voucher::where('deactivated', false)->orderBy('instances', 'desc')->take(5)->get();
         $latestVoucherInstances = VoucherInstance::where('user_id', $user->id)
                                                     ->where('deactivated', false)
-                                                    // ->where('is_valid', true)
                                                     ->take(5)
-                                                    ->get();
+                                                    ->get()
+                                                    /**
+                                                     * note we make the next where clause after we get the users
+                                                     * collection because the 'is_valid' is an appended attribute
+                                                     * not a column
+                                                     */
+                                                    ->where('is_valid', true);
+
+        return response()->json(['latestVoucherInstances'=>$latestVoucherInstances]);
         $latestExpire = null;
         if(count($latest_expire_points) > 0){
             $latestExpire = Carbon::parse($latest_expire_points[0]->valid_end_date)->toFormattedDateString();
@@ -115,6 +123,18 @@ class HomeController extends Controller
             }
         }
         return response()->json($this->data , 200);
+    }
+
+    public function updateProfile(UpdateProfileRequest $request) {
+
+        $attributes = $request->only('name', 'image');
+        // $request->replace($attributes);
+
+        $user = $this->createUpdateDataRow(User::class, $attributes);
+
+        $this->initResponse(200, 'success');
+        return response()->json($this->data, 200);
+
     }
 
     /*******************************************************************************

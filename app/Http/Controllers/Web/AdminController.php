@@ -226,6 +226,14 @@ class AdminController extends Controller
      ************************************ Users ************************************
      *******************************************************************************/
 
+    public function getUsers(){
+
+        $users = User::where('deactivated', false)->get();
+        $this->initResponse(200, 'success', $users);
+        return response()->json($this->data, 200);
+
+    }
+
     public function createCashier(CreateUserRequest $request){
 
         $attributes = $request->only('country_code', 'phone', 'name', 'email', 'password', 'image');
@@ -249,7 +257,8 @@ class AdminController extends Controller
 
     public function updateUser(Request $request){
 
-        $attributes = $request->all();
+        // $attributes = $request->all();
+        $attributes = $request->only('deactivated');
         $user = $this->createUpdateDataRow(User::class, $attributes);
 
         if (!$user) { $this->initResponse(500, 'server_error'); }
