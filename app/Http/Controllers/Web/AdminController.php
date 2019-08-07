@@ -11,6 +11,8 @@ use App\Http\Requests\UpdateReportRequest;
 use App\Http\Requests\AddUpdateVoucherRequest;
 use App\Http\Requests\NotifyRequest;
 use App\Http\Requests\NotificationRequest;
+use App\Http\Requests\UpdateCustomerRequest;
+use App\Http\Requests\UpdateCashierRequest;
 
 use App\Http\Resources\User as UserResource;
 
@@ -257,10 +259,33 @@ class AdminController extends Controller
         return response()->json($this->data, 200);
     }
 
+    public function updateCustomer(UpdateCustomerRequest $request){
+
+        $attributes = $request->only('id', 'deactivated');
+        $user = $this->createUpdateDataRow(User::class, $attributes);
+
+        if (!$user) { $this->initResponse(500, 'server_error'); }
+
+        $this->initResponse(200, 'success');
+        return response()->json($this->data, 200);
+
+    }
+
+    public function updateCashier(UpdateCashierRequest $request){
+
+        $attributes = $request->only('id', 'name', 'email', 'image', 'verified', 'deactivated');
+        $user = $this->createUpdateDataRow(User::class, $attributes);
+
+        if (!$user) { $this->initResponse(500, 'server_error'); }
+
+        $this->initResponse(200, 'success');
+        return response()->json($this->data, 200);
+
+    }
+
     public function updateUser(Request $request){
 
-        // $attributes = $request->all();
-        $attributes = $request->only('deactivated');
+        $attributes = $request->all();
         $user = $this->createUpdateDataRow(User::class, $attributes);
 
         if (!$user) { $this->initResponse(500, 'server_error'); }

@@ -91,7 +91,8 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('web/cashier/create', 'Web\AdminController@createCashier');
     Route::post('web/cashier/delete/{id}', 'Web\AdminController@deleteUser');
     //Users + Cashier
-    Route::post('web/user/update', 'Web\AdminController@updateUser');
+    Route::post('web/customer', 'Web\AdminController@updateCustomer');
+    Route::post('web/cashier', 'Web\AdminController@updateCashier');
     //Users
     Route::get('web/users', 'Web\AdminController@getUsers');
     //Action Logs
