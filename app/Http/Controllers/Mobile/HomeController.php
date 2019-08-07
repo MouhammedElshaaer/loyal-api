@@ -43,7 +43,6 @@ class HomeController extends Controller
                                                      */
                                                     ->where('is_valid', true);
 
-        return response()->json(['latestVoucherInstances'=>$latestVoucherInstances]);
         $latestExpire = null;
         if(count($latest_expire_points) > 0){
             $latestExpire = Carbon::parse($latest_expire_points[0]->valid_end_date)->toFormattedDateString();
