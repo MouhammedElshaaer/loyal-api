@@ -232,7 +232,7 @@ class AdminController extends Controller
 
     public function getUsers(){
 
-        $this->initResponse(200, 'success', UserResource::collection(User::all();));
+        $this->initResponse(200, 'success', UserResource::collection(User::all()));
         return response()->json($this->data, 200);
 
     }
