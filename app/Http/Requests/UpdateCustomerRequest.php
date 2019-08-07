@@ -30,7 +30,7 @@ class UpdateCustomerRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => 'required|boolean',
+            'id' => 'required',
             'deacticated' => 'required|boolean'
         ];
     }
