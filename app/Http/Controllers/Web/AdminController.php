@@ -232,8 +232,7 @@ class AdminController extends Controller
 
     public function getUsers(){
 
-        $users = User::where('deactivated', false)->get();
-        $this->initResponse(200, 'success', UserResource::collection($users));
+        $this->initResponse(200, 'success', UserResource::collection(User::all();));
         return response()->json($this->data, 200);
 
     }
