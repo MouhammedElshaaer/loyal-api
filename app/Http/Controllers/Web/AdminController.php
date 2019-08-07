@@ -12,6 +12,8 @@ use App\Http\Requests\AddUpdateVoucherRequest;
 use App\Http\Requests\NotifyRequest;
 use App\Http\Requests\NotificationRequest;
 
+use App\Http\Resources\User as UserResource;
+
 use App\Http\Traits\ResponseUtilities;
 use App\Http\Traits\CRUDUtilities;
 use App\Http\Traits\LocaleUtilities;
@@ -229,7 +231,7 @@ class AdminController extends Controller
     public function getUsers(){
 
         $users = User::where('deactivated', false)->get();
-        $this->initResponse(200, 'success', $users);
+        $this->initResponse(200, 'success', UserResource::collection($users));
         return response()->json($this->data, 200);
 
     }
