@@ -31,7 +31,7 @@ class UpdateCustomerRequest extends FormRequest
     {
         return [
             'id' => 'required',
-            'deacticated' => 'required|boolean'
+            'deactivated' => 'required|boolean'
         ];
     }
 
