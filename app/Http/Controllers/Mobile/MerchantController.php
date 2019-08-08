@@ -51,7 +51,7 @@ class MerchantController extends Controller
         \DB::beginTransaction();
 
         /**
-         * TODO: Check the invoice_value if greater than or equal to a premium category add this role to user 
+         * TODO: Check the invoice_value if greater than or equal to a premium category add this role to user
          */
 
         try {
@@ -60,7 +60,7 @@ class MerchantController extends Controller
             $user = $this->getDataRowByKey(User::class, 'qr_code', $request->user_qr_code);
             if (!$user) { throw new Exception('User not found'); }
             else if (!$user->verified) { throw new Exception('User not verified'); }
-            
+
             $transactionAttributes = $request->only('invoice_number', 'invoice_value');
             $transactionAttributes['user_id'] = $user->id;
             $transaction = $this->createUpdateDataRow(Transaction::class, $transactionAttributes);
@@ -73,7 +73,7 @@ class MerchantController extends Controller
             $actionType = $this->resolveActionFromStatus($actionScope, $status);
 
             $this->initResponse(200, $status);
-            
+
             if ($request->has('voucher_qr_code')) {
 
                 $voucherInstance = $this->getDataRowByKey(VoucherInstance::class, 'qr_code', $request->voucher_qr_code);
@@ -82,7 +82,7 @@ class MerchantController extends Controller
                 else if ($voucherInstance->deactivated){ throw new Exception("Voucher deactivated"); }
                 else if ($voucherInstance->user_id != $user->id) { throw new Exception("User unauthorized to use this voucher"); }
                 else {
-    
+
                     $voucherInstanceAttributes = [
                         'id' => $voucherInstance->id,
                         'transaction_id' => $transaction->id,
@@ -90,30 +90,34 @@ class MerchantController extends Controller
                     ];
 
                     if ($this->createUpdateDataRow(VoucherInstance::class, $voucherInstanceAttributes)) {
-                      
+
                         $status = 'voucher_used_success';
                         $actionType = $this->resolveActionFromStatus($actionScope, $status);
-                        
+
                         $this->initResponse(200, $status);
 
                     } else { throw new Exception("Failed to use this voucher"); }
                 }
             }
 
-            $tokens = $this->getDataRows(Device::class, 'user_id', $user->id)
-                        ->map(function ($device) { return $device->token; })
-                        ->toArray();
 
-            if (count($tokens)) {
+            /**
+                Notifications to be test
+             */
+            // $tokens = $this->getDataRows(Device::class, 'user_id', $user->id)
+            //             ->map(function ($device) { return $device->token; })
+            //             ->toArray();
 
-                dispatch(new SendNotification(
-                    $this->notificationsService,
-                    $tokens, //device tokens that will be notified
-                    ucfirst(str_replace("_", " ", $status)), //notification title
-                    __('messages.'.$status) //notification body
-                ));
+            // if (count($tokens)) {
 
-            }
+            //     dispatch(new SendNotification(
+            //         $this->notificationsService,
+            //         $tokens, //device tokens that will be notified
+            //         ucfirst(str_replace("_", " ", $status)), //notification title
+            //         __('messages.'.$status) //notification body
+            //     ));
+
+            // }
 
             $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $transaction->id, Transaction::class, 'cashier', $actionType);
             $this->createUpdateDataRow(ActionLog::class, $actionLogAttributes);
@@ -150,25 +154,28 @@ class MerchantController extends Controller
             }
             else {
                 $this->initResponse(400, $statusCode);
-                $actionType = $this->resolveActionFromStatus($actionScope, $status);                
+                $actionType = $this->resolveActionFromStatus($actionScope, $status);
                 $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $voucherInstance->id, VoucherInstance::class, 'cashier', $actionType);
 
             }
 
-            $tokens = $this->getDataRows(Device::class, 'user_id', $voucherInstance->user_id)
-                        ->map(function ($device) { return $device->token; })
-                        ->toArray();
-            
-            if (count($tokens)) {
+            /**
+                Notifications to be test
+             */
+            // $tokens = $this->getDataRows(Device::class, 'user_id', $voucherInstance->user_id)
+            //             ->map(function ($device) { return $device->token; })
+            //             ->toArray();
 
-                dispatch(new SendNotification(
-                    $this->notificationsService,
-                    $tokens, //device tokens that will be notified
-                    ucfirst(strtolower(str_replace("_", " ", $status))) //notification title
-                ));
+            // if (count($tokens)) {
 
-            }
-            
+            //     dispatch(new SendNotification(
+            //         $this->notificationsService,
+            //         $tokens, //device tokens that will be notified
+            //         ucfirst(strtolower(str_replace("_", " ", $status))) //notification title
+            //     ));
+
+            // }
+
         }
         else { $this->initResponse(400, 'get_voucher_fail'); }
 
@@ -194,21 +201,23 @@ class MerchantController extends Controller
                 $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $transaction->id, Transaction::class, 'cashier', $actionType);
                 $this->createUpdateDataRow(ActionLog::class, $actionLogAttributes);
 
+                /**
+                    Notifications to be test
+                */
+                // $tokens = $this->getDataRows(Device::class, 'user_id', $transaction->user_id)
+                //             ->map(function ($device) { return $device->token; })
+                //             ->toArray();
 
-                $tokens = $this->getDataRows(Device::class, 'user_id', $transaction->user_id)
-                            ->map(function ($device) { return $device->token; })
-                            ->toArray();
-                            
-                if (count($tokens)) {
+                // if (count($tokens)) {
 
-                    dispatch(new SendNotification(
-                        $this->notificationsService,
-                        $tokens, //device tokens that will be notified
-                        ucfirst(str_replace("_", " ", $status)), //notification title
-                        __('messages.'.$status) //notification body
-                    ));
+                //     dispatch(new SendNotification(
+                //         $this->notificationsService,
+                //         $tokens, //device tokens that will be notified
+                //         ucfirst(str_replace("_", " ", $status)), //notification title
+                //         __('messages.'.$status) //notification body
+                //     ));
 
-                }
+                // }
 
             } else { $this->initResponse(400, 'already_refunded'); }
 
