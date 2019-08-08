@@ -126,7 +126,9 @@ class HomeController extends Controller
 
     public function updateProfile(UpdateProfileRequest $request) {
 
+        $user = auth()->user();
         $attributes = $request->only('name', 'image');
+        $attributes['id'] = $user->id;
         // $request->replace($attributes);
 
         $user = $this->createUpdateDataRow(User::class, $attributes);
