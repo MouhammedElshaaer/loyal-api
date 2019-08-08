@@ -51,6 +51,36 @@ class TransactionPoints extends Model
     ];
 
     /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'used_at',
+        'refunded_at',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'created_at' => 'datetime:l jS \\of F Y h:i:s A',
+        'updated_at' => 'datetime:l jS \\of F Y h:i:s A',
+        'used_at' => 'datetime:l jS \\of F Y h:i:s A',
+        'refunded_at' => 'datetime:l jS \\of F Y h:i:s A',
+    ];
+
+    /**
+     * Get the Transaction that owns the TransactionPoints.
+     */
+    public function transaction()
+    {
+        return $this->belongsTo('App\Models\Transaction');
+    }
+
+    /**
      * Get the VoucherInstancePoints for the TransactionPoints.
      */
     public function voucherInstancePoints(){
@@ -109,7 +139,7 @@ class TransactionPoints extends Model
     public function getPendingEndDateAttribute(){
         $pendingDuration = $this->getSetting(config('constants.settings.pending_duration'))->value;
         return $this->created_at->addDays($pendingDuration)->toFormattedDateString();
-         
+
     }
 
     public function getValidEndDateAttribute(){

@@ -16,6 +16,7 @@ class TransactionPoints extends JsonResource
     {
         return [
             'id' => $this->id,
+            'invoice_number' => $this->transaction->invoice_number,
             'original' => $this->original,
             'redeemed' => $this->redeemed,
             'available_points' => $this->available_points,
@@ -27,9 +28,9 @@ class TransactionPoints extends JsonResource
             'is_expired' => $this->is_expired,
             'pending_end_date' => $this->pending_end_date,
             'valid_end_date' => $this->valid_end_date,
-            'used_at' => $this->used_at,
-            'refunded_at' => $this->refunded_at,
-            'created_at' => $this->created_at->toFormattedDateString(),
+            'used_at' => $this->used_at->toDayDateTimeString(),
+            'refunded_at' => $this->refunded_at->toDayDateTimeString(),
+            'created_at' => $this->created_at->toDayDateTimeString(),
         ];
     }
 }

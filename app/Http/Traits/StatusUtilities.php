@@ -25,7 +25,12 @@ trait StatusUtilities
     }
     public function getPendingVersion($transactionPoints){
 
+        $invoice_number = $transactionPoints->transaction->invoice_number;
         $transactionPointsCopy = $transactionPoints->toArray();
+
+        $transactionPointsCopy['redeemed'] = 0;
+        $transactionPointsCopy['available_points'] = $transactionPointsCopy['original'];
+        $transactionPointsCopy['invoice_number'] = $invoice_number;
 
         $transactionPointsCopy['is_pending'] = true;
         $transactionPointsCopy['is_used'] = false;
@@ -37,29 +42,48 @@ trait StatusUtilities
 
         $transactionPointsCopy['status'] = config('constants.status.'.$statusCode);
 
+        unset($transactionPointsCopy['transaction']);
         return $transactionPointsCopy;
     }
 
-    public function getUsedVersion($transactionPoints){
+    public function getUsedVersions($transactionPoints){
 
-        $transactionPointsCopy = $transactionPoints->toArray();
+        $usedVersions = [];
+        foreach($transactionPoints->voucherInstancePoints as $voucherInstancePoint){
 
-        $transactionPointsCopy['is_pending'] = false;
-        $transactionPointsCopy['is_used'] = true;
-        $transactionPointsCopy['is_refunded'] = false;
-        $transactionPointsCopy['is_valid'] = false;
-        $transactionPointsCopy['is_expired'] = false;
+            $invoice_number = $transactionPoints->transaction->invoice_number;
+            $transactionPointsCopy = $transactionPoints->toArray();
 
-        $statusCode = config('constants.status_codes.used_status');
+            $amount = $voucherInstancePoint->amount;
+            $transactionPointsCopy['original'] = $amount;
+            $transactionPointsCopy['redeemed'] = $amount;
+            $transactionPointsCopy['available_points'] = 0;
+            $transactionPointsCopy['invoice_number'] = $invoice_number;
 
-        $transactionPointsCopy['status'] = config('constants.status.'.$statusCode);
+            $transactionPointsCopy['is_pending'] = false;
+            $transactionPointsCopy['is_used'] = true;
+            $transactionPointsCopy['is_refunded'] = false;
+            $transactionPointsCopy['is_valid'] = false;
+            $transactionPointsCopy['is_expired'] = false;
 
-        return $transactionPointsCopy;
+            $transactionPointsCopy['used_at'] = $voucherInstancePoint->created_at->toDayDateTimeString();
+
+            $statusCode = config('constants.status_codes.used_status');
+            $transactionPointsCopy['status'] = config('constants.status.'.$statusCode);
+
+            unset($transactionPointsCopy['voucher_instance_points']);
+            unset($transactionPointsCopy['transaction']);
+            $usedVersions[] = $transactionPointsCopy;
+        }
+        return $usedVersions;
     }
 
     public function getRefundedVersion($transactionPoints){
 
+        $invoice_number = $transactionPoints->transaction->invoice_number;
         $transactionPointsCopy = $transactionPoints->toArray();
+
+        $transactionPointsCopy['invoice_number'] = $invoice_number;
 
         $transactionPointsCopy['is_pending'] = false;
         $transactionPointsCopy['is_used'] = false;
@@ -71,12 +95,18 @@ trait StatusUtilities
 
         $transactionPointsCopy['status'] = config('constants.status.'.$statusCode);
 
+        unset($transactionPointsCopy['transaction']);
         return $transactionPointsCopy;
     }
 
     public function getValidVersion($transactionPoints){
 
+        $invoice_number = $transactionPoints->transaction->invoice_number;
         $transactionPointsCopy = $transactionPoints->toArray();
+
+        $transactionPointsCopy['redeemed'] = 0;
+        $transactionPointsCopy['available_points'] = $transactionPointsCopy['original'];
+        $transactionPointsCopy['invoice_number'] = $invoice_number;
 
         $transactionPointsCopy['is_pending'] = false;
         $transactionPointsCopy['is_used'] = false;
@@ -88,12 +118,16 @@ trait StatusUtilities
 
         $transactionPointsCopy['status'] = config('constants.status.'.$statusCode);
 
+        unset($transactionPointsCopy['transaction']);
         return $transactionPointsCopy;
     }
 
     public function getExpiredVersion($transactionPoints){
 
+        $invoice_number = $transactionPoints->transaction->invoice_number;
         $transactionPointsCopy = $transactionPoints->toArray();
+
+        $transactionPointsCopy['invoice_number'] = $invoice_number;
 
         $transactionPointsCopy['is_pending'] = false;
         $transactionPointsCopy['is_used'] = false;
@@ -105,6 +139,7 @@ trait StatusUtilities
 
         $transactionPointsCopy['status'] = config('constants.status.'.$statusCode);
 
+        unset($transactionPointsCopy['transaction']);
         return $transactionPointsCopy;
     }
 }

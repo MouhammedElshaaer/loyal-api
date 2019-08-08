@@ -151,28 +151,39 @@ class HomeController extends Controller
         $historyPoints = [];
         foreach($user->points as $point) {
 
-            if($point->is_used){
+            if ($point->is_pending) {
+
+                $historyPoints[] = $this->getPendingVersion($point);
+
+            }
+            else if($point->is_used){
 
                 $historyPoints[] = $this->getPendingVersion($point);
                 $historyPoints[] = $this->getValidVersion($point);
+                $historyPoints = array_merge($historyPoints, $this->getUsedVersions($point));
 
             }
             else if($point->is_refunded){
 
                 $historyPoints[] = $this->getPendingVersion($point);
+                $historyPoints[] = $this->getRefundedVersion($point);
 
             }
             else if($point->is_valid){
 
                 $historyPoints[] = $this->getPendingVersion($point);
+                $historyPoints[] = $this->getValidVersion($point);
+                $historyPoints = array_merge($historyPoints, $this->getUsedVersions($point));
+
             }
             else if($point->is_expired){
 
                 $historyPoints[] = $this->getPendingVersion($point);
                 $historyPoints[] = $this->getValidVersion($point);
-            }
+                $historyPoints = array_merge($historyPoints, $this->getUsedVersions($point));
+                $historyPoints[] = $this->getExpiredVersion($point);
 
-            $historyPoints[] = new TransactionPointsResource($point);
+            }
 
         }
 
