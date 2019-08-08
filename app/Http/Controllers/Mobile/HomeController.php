@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\App;
 use App\Http\Requests\HomeContentRequest;
 use App\Http\Requests\RedeemVoucherRequest;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Requests\TransactionPointsHistoryRequest;
 
 use Carbon\Carbon;
 
@@ -30,7 +31,9 @@ class HomeController extends Controller
         $user = auth()->user();
         $ads = $this->getAds();
 
-        $latest_expire_points = $user->latest_expire;
+        $totalValid = $user->total_valid;
+        $totalExpired = $user->total_expired;
+        $expiring_points = $user->expiring_points;
         $trendingRewards = Voucher::where('deactivated', false)->orderBy('instances', 'desc')->take(5)->get();
         $latestVoucherInstances = VoucherInstance::where('user_id', $user->id)
                                                     ->where('deactivated', false)
@@ -43,9 +46,9 @@ class HomeController extends Controller
                                                      */
                                                     ->where('is_valid', true);
 
-        $latestExpire = null;
-        if(count($latest_expire_points) > 0){
-            $latestExpire = Carbon::parse($latest_expire_points[0]->valid_end_date)->toFormattedDateString();
+        $latestExpiringPointsDate = null;
+        if(count($expiring_points) > 0){
+            $latestExpiringPointsDate = Carbon::parse($expiring_points[0]->valid_end_date)->toFormattedDateString();
         }
 
         if (config('constants.default_locale')!=$request->headers->get('locale')) {
@@ -53,10 +56,11 @@ class HomeController extends Controller
         }
 
         $homeContent = [
-            'total_points' => $user->total_points,
-            'total_expire' => $user->total_expire,
-            'latest_expire' => $latestExpire,
-            'latest_expire_points' => TransactionPointsResource::collection($latest_expire_points),
+            'total_valid' => $totalValid,
+            'total_expired' => $totalExpired,
+            'total_expiring' => $totalValid,
+            'latest_expiring_points_date' => $latestExpiringPointsDate,
+            'expiring_points' => TransactionPointsResource::collection($expiring_points),
             'ads' => AdsResource::collection($ads? $ads: collect([])),
             'trending_rewards' => $trendingRewards,
             'latest_vouchers' => VoucherInstanceResource::collection($latestVoucherInstances)
@@ -72,7 +76,7 @@ class HomeController extends Controller
         $user = auth()->user();
         $voucher = Voucher::find($request->voucher_id);
         if (!$voucher || $voucher->deactivated) { $this->initResponse(400, 'get_voucher_fail'); }
-        else if ($user->total_points < $voucher->points) { $this->initResponse(400, 'no_enough_points'); }
+        else if ($user->total_valid < $voucher->points) { $this->initResponse(400, 'no_enough_points'); }
         else {
             $attributes = [
                 'user_id'=>$user->id,
@@ -99,7 +103,7 @@ class HomeController extends Controller
                 /**
                  * Note the next commented lines query the database to get the user model
                  */
-                // $totalPoints = $this->getDataRowByPrimaryKey(User::class, $user->id)->total_points;
+                // $totalPoints = $this->getDataRowByPrimaryKey(User::class, $user->id)->total_valid;
                 // $data = ['total_points' => $totalPoints];
 
                 /**
@@ -108,7 +112,7 @@ class HomeController extends Controller
                  * be reflected in the attribute value. So, I subtract the voucher points from the
                  * total_points attribute to make use of the cached query result in $user model
                  */
-                $data = ['total_points' => $user->total_points - $voucher->points];
+                $data = ['total_points' => $user->total_valid - $voucher->points];
 
                 /**Commiting Transaction */
                 \DB::commit();
@@ -137,6 +141,15 @@ class HomeController extends Controller
         else { $this->initResponse(200, 'success', $this->getDataRowByPrimaryKey(User::class, $user->id)); }
 
         return response()->json($this->data, 200);
+
+    }
+
+    public function getTransactionPointsHistory(TransactionPointsHistoryRequest $request){
+
+        $user = auth()->user();
+        $points = $user->points;
+
+        return response()->json(['points'=> $expiring_points]);
 
     }
 

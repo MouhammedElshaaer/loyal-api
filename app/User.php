@@ -52,9 +52,10 @@ class User extends Authenticatable
      * @var array
      */
     protected $appends = [
-        'total_points',
-        'total_expire',
-        'latest_expire'
+        'points',
+        'expiring_points',
+        'total_valid',
+        'total_expired'
     ];
 
     /**
@@ -78,17 +79,30 @@ class User extends Authenticatable
         return $model;
     }
 
-    public function linkedSocialAccounts()
-    {
-        return $this->hasMany(LinkedSocialAccount::class);
-    }
-
     /**
-     * Get the voucher instance status.
+     * Get all points.
      *
      * @return bool
      */
-    public function getTotalPointsAttribute()
+    public function getPointsAttribute()
+    {
+        $points = [];
+        $transactions = $this->transactions()->orderBy('created_at')->get();
+        foreach ($transactions as $transaction) {
+
+            $transactionPoints = $transaction->transactionPoints;
+            array_push($points, $transactionPoints);
+
+        }
+        return collect($points);
+    }
+
+    /**
+     * Get sum of valid points.
+     *
+     * @return bool
+     */
+    public function getTotalValidAttribute()
     {
         $totalValid = 0;
         foreach ($this->transactions as $transaction) {
@@ -97,7 +111,6 @@ class User extends Authenticatable
             if ($transactionPoints->is_valid) { $totalValid += $transactionPoints->available_points; }
 
         }
-        // dump($totalValid);
         return $totalValid;
     }
 
@@ -106,7 +119,7 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function getTotalExpireAttribute()
+    public function getTotalExpiredAttribute()
     {
         /**
          * Here we should calculate all user valid points from transactions table
@@ -114,7 +127,7 @@ class User extends Authenticatable
 
         $totalExpire = 0;
         foreach ($this->transactions as $transaction) {
-            
+
             $transactionPoints = $transaction->transactionPoints;
             if ($transactionPoints->is_expired) { $totalExpire += $transactionPoints->available_points; }
 
@@ -127,17 +140,17 @@ class User extends Authenticatable
      *
      * @return bool
      */
-    public function getLatestExpireAttribute()
+    public function getExpiringPointsAttribute()
     {
-        $latestExpire = [];
+        $expiringPoints = [];
         $transactions = $this->transactions()->orderBy('created_at')->get();
         foreach ($transactions as $transaction) {
 
             $transactionPoints = $transaction->transactionPoints;
-            if ($transactionPoints->is_valid) { array_push($latestExpire, $transactionPoints); }
+            if ($transactionPoints->is_valid) { array_push($expiringPoints, $transactionPoints); }
 
         }
-        return collect($latestExpire);
+        return collect($expiringPoints);
     }
 
     /**
@@ -146,6 +159,14 @@ class User extends Authenticatable
     public function roles()
     {
         return $this->belongsToMany('App\Models\Role');
+    }
+
+    /**
+     * The linkedSocialAccounts that belong to the user.
+     */
+    public function linkedSocialAccounts()
+    {
+        return $this->hasMany(LinkedSocialAccount::class);
     }
 
     /**
