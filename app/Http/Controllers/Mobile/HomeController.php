@@ -133,7 +133,9 @@ class HomeController extends Controller
 
         $user = $this->createUpdateDataRow(User::class, $attributes);
 
-        $this->initResponse(200, 'success');
+        if (!$user) { $this->initResponse(500, 'server_error'); }
+        else { $this->initResponse(200, 'success', $this->getDataRowByPrimaryKey(User::class, $user->id)); }
+
         return response()->json($this->data, 200);
 
     }
