@@ -14,9 +14,10 @@ trait CRUDUtilities
         else {
             $dataRowId = $attributes['id'];
             unset($attributes['id']);
-            $dataRow = ($dataTypePath)::find($dataRowId)->update($attributes);
+            ($dataTypePath)::find($dataRowId)->update($attributes);
+            $dataRow = ($dataTypePath)::find($dataRowId);
         }
-        
+
         return $dataRow;
     }
 
