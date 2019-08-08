@@ -147,14 +147,43 @@ class HomeController extends Controller
     public function getTransactionPointsHistory(TransactionPointsHistoryRequest $request){
 
         $user = auth()->user();
-        $points = $user->points;
 
-        return response()->json(['points'=> $expiring_points]);
+        $historyPoints = [];
+        foreach($user->points as $point) {
+
+            if($point->is_used){
+
+                $historyPoints[] = $this->getPendingVersion($point);
+                $historyPoints[] = $this->getValidVersion($point);
+
+            }
+            else if($point->is_refunded){
+
+                $historyPoints[] = $this->getPendingVersion($point);
+
+            }
+            else if($point->is_valid){
+
+                $historyPoints[] = $this->getPendingVersion($point);
+            }
+            else if($point->is_expired){
+
+                $historyPoints[] = $this->getPendingVersion($point);
+                $historyPoints[] = $this->getValidVersion($point);
+            }
+
+            $historyPoints[] = new TransactionPointsResource($point);
+
+        }
+
+        $this->initResponse(200, 'success',$historyPoints);
+        return response()->json($this->data, 200);
 
     }
 
     /*******************************************************************************
      ********************************* Utilities ***********************************
      *******************************************************************************/
+
 
 }

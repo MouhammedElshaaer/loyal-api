@@ -19,7 +19,7 @@ class TransactionPoints extends JsonResource
             'original' => $this->original,
             'redeemed' => $this->redeemed,
             'available_points' => $this->available_points,
-            'status' => $this->status,
+            'status' => config('constants.status.'.$this->status),
             'is_used' => $this->is_used,
             'is_refunded' => $this->is_refunded,
             'is_valid' => $this->is_valid,
