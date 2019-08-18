@@ -230,9 +230,27 @@ class AdminController extends Controller
      ************************************ Users ************************************
      *******************************************************************************/
 
-    public function getUsers(){
+    public function getUsers(Request $request){
 
-        $this->initResponse(200, 'success', UserResource::collection(User::all()));
+        $paginationItemsNumber = 2;
+
+        if ($request->has('query')) {
+            $items = User::where('email', 'LIKE', '%'.$request->query("query").'%')->paginate($paginationItemsNumber);
+            $total_pages = User::where('email', 'LIKE', '%'.$request->query("query").'%')->paginate($paginationItemsNumber)->lastPage();
+            $total_items = User::where('email', 'LIKE', '%'.$request->query("query").'%')->paginate($paginationItemsNumber)->total();
+        } else {
+            $items = User::paginate($paginationItemsNumber);
+            $total_pages = User::paginate($paginationItemsNumber)->lastPage();
+            $total_items = User::paginate($paginationItemsNumber)->total();
+        }
+
+        $paginate_response = [
+            'users' => $items? UserResource::collection($items): [],
+            'total_pages' => $total_pages,
+            'total_items' => $total_items
+        ];
+
+        $this->initResponse(200, 'success', $paginate_response);
         return response()->json($this->data, 200);
 
     }
@@ -298,6 +316,15 @@ class AdminController extends Controller
         if ($user= getDataRowByPrimaryKey(User::class, $id)) { $user->roles()->detach(); }
         if (!$this->deleteDataRow(User::class, $id)) { $this->initResponse(500, 'server_error'); }
         $this->initResponse(200, 'success');
+        return response()->json($this->data, 200);
+    }
+
+    public function searchUsers(Request $request){
+
+        $data = [
+            'string' => $request->query('q')
+        ];
+        $this->initResponse(200, 'success', $data);
         return response()->json($this->data, 200);
     }
 

@@ -96,6 +96,7 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('web/cashier', 'Web\AdminController@updateCashier');
     //Users
     Route::get('web/users', 'Web\AdminController@getUsers');
+    Route::get('web/users/search', 'Web\AdminController@searchUsers');
     //Action Logs
     Route::get('web/actions', 'Web\AdminController@getActionLogs');
     //Notifications
