@@ -13,7 +13,7 @@ class VoucherInstance extends JsonResource
      * @return array
      */
     public function toArray($request)
-    {  
+    {
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
@@ -26,7 +26,7 @@ class VoucherInstance extends JsonResource
             'is_used' => $this->is_used,
             'is_valid' => $this->is_valid,
             'is_expired' => $this->is_expired,
-            'created_at' => $this->created_at->toFormattedDateString(),
+            'created_at' => $this->created_at,
         ];
     }
 }

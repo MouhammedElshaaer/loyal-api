@@ -39,6 +39,7 @@ class HomeController extends Controller
         $trendingRewards = Voucher::where('deactivated', false)->orderBy('instances', 'desc')->take(5)->get();
         $latestVoucherInstances = VoucherInstance::where('user_id', $user->id)
                                                     ->where('deactivated', false)
+                                                    ->orderBy('created_at', 'desc')
                                                     ->take(5)
                                                     ->get()
                                                     /**

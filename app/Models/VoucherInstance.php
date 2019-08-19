@@ -51,6 +51,26 @@ class VoucherInstance extends Model
         'is_expired',
     ];
 
+    /**
+     * The attributes that should be mutated to dates.
+     *
+     * @var array
+     */
+    protected $dates = [
+        'used_at'
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'created_at' => 'datetime:l jS \\of F Y h:i:s A',
+        'updated_at' => 'datetime:l jS \\of F Y h:i:s A',
+        'used_at' => 'datetime:l jS \\of F Y h:i:s A'
+    ];
+
     public static function create(array $attributes = []){
         $model = static::query()->create($attributes);
 
@@ -133,7 +153,7 @@ class VoucherInstance extends Model
     public function getValidEndDateAttribute(){
         $validDuration = $this->getSetting(config('constants.settings.valid_duration'))->value;
         return $this->created_at->addDays($validDuration)->toFormattedDateString();
-         
+
     }
 
     /**
