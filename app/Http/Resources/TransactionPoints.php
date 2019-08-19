@@ -28,9 +28,9 @@ class TransactionPoints extends JsonResource
             'is_expired' => $this->is_expired,
             'pending_end_date' => $this->pending_end_date,
             'valid_end_date' => $this->valid_end_date,
-            'used_at' => $this->used_at,
-            'refunded_at' => $this->refunded_at,
-            'created_at' => $this->created_at,
+            'used_at' => $this->used_at? $this->used_at->toDayDateTimeString(): null,
+            'refunded_at' => $this->refunded_at? $this->refunded_at->toDayDateTimeString(): null,
+            'created_at' => $this->created_at->toDayDateTimeString(),
         ];
     }
 }
