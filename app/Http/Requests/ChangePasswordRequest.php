@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\App;
 
 use App\Http\Requests\Traits\UsesCustomErrorMessage;
 
-class BindDeviceRequest extends FormRequest
+class ChangePasswordRequest extends FormRequest
 {
     use UsesCustomErrorMessage;
 
@@ -30,8 +30,8 @@ class BindDeviceRequest extends FormRequest
     public function rules()
     {
         return [
-            'token' => 'required',
-            'type' => 'required'
+            'password' => 'required',
+            'old_password' => 'required'
         ];
     }
 

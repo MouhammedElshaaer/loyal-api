@@ -13,14 +13,17 @@ return [
     'social_signup_fail'=> 'طلب غير مصرح',
     'missing_associated_email'=> 'لا يمكن الحصول على البريد الإلكترونى',
 
+    'awaiting_verification'=> 'تم تغيير الرقم, تم إسال كود لتفعيل الحساب',
     'non_verified'=> 'برجاء تفعيل حسابك',
     'verification_success'=> 'تم تفعيل الحساب',
     'already_verified'=> 'ًلقد تم تفعيل هذا الحساب مسبقا',
+    'phone_already_taken'=> 'تم استخدام هذا الرقم مع حساب اخر',
     'invalid_otp'=> 'الكود غير صحيح',
 
     'phone_verification_success'=> 'تم تأكيد الرمز',
 
     'password_reset_successfully'=> 'تم تغيير كلمة االسر بنجاح',
+    'wrong_password'=> 'كلمة مرور خاطئة',
 
     'user_validation_success' =>'تم تأكيد بيانات المستخدم',
     'user_validation_fail' =>'لم يتم العثور على مستخدم بهذه البيانات',
@@ -42,7 +45,7 @@ return [
     'get_report_fail'=> 'لا يوجد تقرير بهذه البيانات',
     'add_report_success'=> 'تم ارسال التقرير',
     'delete_report_success'=> 'تم حذف التقرير بنجاح',
-    
+
     'update_voucher_success'=> 'تم تعديل الكوبون',
     'update_voucher_fail'=> 'لا يوجد كوبون بهذه البيانات',
     'get_voucher_fail'=> 'لا يوجد كوبون بهذه البيانات',
@@ -70,5 +73,5 @@ return [
     'delete_locales_fail'=> 'لم يتم حذف اللغات الأخرى',
 
     'server_error'=> 'خطأ في الخادم الداخلي',
-    
+
 ];

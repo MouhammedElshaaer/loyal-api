@@ -232,7 +232,7 @@ class AdminController extends Controller
 
     public function getUsers(Request $request){
 
-        $paginationItemsNumber = 2;
+        $paginationItemsNumber = 1;
 
         if ($request->has('query')) {
             $items = User::where('email', 'LIKE', '%'.$request->query("query").'%')->paginate($paginationItemsNumber);

@@ -15,14 +15,17 @@ return [
     'social_signup_fail'=> 'Can’t grant access',
     'missing_associated_email'=> 'Can’t get user email',
 
+    'awaiting_verification'=> 'Success, a verification code sent, Please confirm',
     'non_verified'=> 'Would you please verify your Loyal account',
     'verification_success'=> 'Verification complete',
     'already_verified'=> 'This account already verified',
+    'phone_already_taken'=> 'This phone already associated with another account',
     'invalid_otp'=> 'Invalid code',
 
     'phone_verification_success'=> 'Verification complete',
 
     'password_reset_success'=> 'Password reset successfully',
+    'wrong_password'=> 'Wrong password',
 
     'user_validation_success' =>'Validation success',
     'user_validation_fail' =>'No user associated with this credentials',
@@ -79,5 +82,5 @@ return [
     'success'=> 'Success response',
     'server_error'=> 'Internal Server Error',
     'custom_message'=> ':message',
-    
+
 ];

@@ -43,6 +43,8 @@ Route::group(['middleware' =>['auth:api', 'canAccess:'.$admin_customer_privilege
     Route::post('mobile/report', 'Mobile\UsersController@addReport');
     Route::post('mobile/redeem', 'Mobile\HomeController@redeemVoucher');
     Route::post('mobile/profile', 'Mobile\HomeController@updateProfile');
+    Route::post('mobile/phone', 'Mobile\HomeController@changePhone');
+    Route::post('mobile/password', 'Mobile\HomeController@changePassword');
 
 
 });
@@ -96,7 +98,6 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('web/cashier', 'Web\AdminController@updateCashier');
     //Users
     Route::get('web/users', 'Web\AdminController@getUsers');
-    Route::get('web/users/search', 'Web\AdminController@searchUsers');
     //Action Logs
     Route::get('web/actions', 'Web\AdminController@getActionLogs');
     //Notifications

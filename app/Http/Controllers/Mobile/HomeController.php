@@ -10,6 +10,8 @@ use App\Http\Requests\HomeContentRequest;
 use App\Http\Requests\RedeemVoucherRequest;
 use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Requests\TransactionPointsHistoryRequest;
+use App\Http\Requests\ChangePhoneRequest;
+use App\Http\Requests\ChangePasswordRequest;
 
 use Carbon\Carbon;
 
@@ -139,6 +141,53 @@ class HomeController extends Controller
 
         if (!$user) { $this->initResponse(500, 'server_error'); }
         else { $this->initResponse(200, 'success', $this->getDataRowByPrimaryKey(User::class, $user->id)); }
+
+        return response()->json($this->data, 200);
+
+    }
+
+    public function changePhone(ChangePhoneRequest $request) {
+
+        $user = $this->getDataRowByKey(User::class, 'phone', $request->phone);
+        if ($user && $user->verified) { $this->initResponse(400, 'phone_already_taken'); }
+        else {
+
+            if ($user) { $this->deleteDataRow(User::class, $user->id); }
+
+            $user = auth()->user();
+            $attributes = $request->only('phone', 'country_code');
+            $attributes['verified'] = false;
+            $attributes['id'] = $user->id;
+
+            $user = $this->createUpdateDataRow(User::class, $attributes);
+
+            if (!$user) { $this->initResponse(500, 'server_error'); }
+            else {
+                $this->sendVerificationCode($user->id);
+                $this->initResponse(200, 'awaiting_verification');
+            }
+
+        }
+
+        return response()->json($this->data, 200);
+
+    }
+
+    public function changePassword(ChangePasswordRequest $request) {
+
+        $user = auth()->user();
+        if (!password_verify($request->old_password, $user->password)) { $this->initResponse(400, 'wrong_password'); }
+        else {
+
+            $attributes = $request->only('password');
+            $attributes['password'] = bcrypt($attributes['password']);
+            $attributes['id'] = $user->id;
+
+            $user = $this->createUpdateDataRow(User::class, $attributes);
+
+            if (!$user) { $this->initResponse(500, 'server_error'); }
+            else { $this->initResponse(200, 'success'); }
+        }
 
         return response()->json($this->data, 200);
 

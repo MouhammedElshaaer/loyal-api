@@ -35,7 +35,7 @@ trait ResponseUtilities
         $data = ["image"=>$user->image, "name" => $user->name, "email" => $user->email];
         $this->initResponse(201, 'social_signup_success', $data);
     }
-    
+
     protected function initErrorResponse(Exception $e){
 
         report($e);
@@ -46,7 +46,7 @@ trait ResponseUtilities
 
         $this->initResponse(500, 'server_error');
         $this->data['error'] = $error;
-        
+
     }
 
     protected function initResponse($code, $messagesArrayKey, $data=null, $params=[]){
@@ -60,9 +60,9 @@ trait ResponseUtilities
 
         /**
          * TODO:
-         * Actual implementation if sms verification code
+         * Actual implementation of sms verification code
          */
-        
+
         // $otp = $this->generateOTP(4);
         $otp = "1234";
         //Update the user instance in the DB
