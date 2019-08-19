@@ -34,7 +34,7 @@ class VoucherInstance extends Model
      */
     protected $hidden = [
         'deactivated',
-        // 'created_at',
+        'created_at',
         'updated_at'
     ];
 
