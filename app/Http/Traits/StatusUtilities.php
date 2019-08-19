@@ -49,15 +49,17 @@ trait StatusUtilities
     public function getUsedVersions($transactionPoints){
 
         $usedVersions = [];
+        $available_points = $transactionPoints->available_points;
         foreach($transactionPoints->voucherInstancePoints as $voucherInstancePoint){
 
             $invoice_number = $transactionPoints->transaction->invoice_number;
             $transactionPointsCopy = $transactionPoints->toArray();
 
             $amount = $voucherInstancePoint->amount;
-            $transactionPointsCopy['original'] = $amount;
+            $available_points -= $amount;
+            // $transactionPointsCopy['original'] = $amount;
             $transactionPointsCopy['redeemed'] = $amount;
-            $transactionPointsCopy['available_points'] = 0;
+            $transactionPointsCopy['available_points'] = $available_points;
             $transactionPointsCopy['invoice_number'] = $invoice_number;
 
             $transactionPointsCopy['is_pending'] = false;
