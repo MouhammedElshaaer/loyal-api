@@ -66,7 +66,10 @@ class HomeController extends Controller
             'expiring_points' => TransactionPointsResource::collection($expiring_points),
             'ads' => AdsResource::collection($ads? $ads: collect([])),
             'trending_rewards' => $trendingRewards,
-            'latest_vouchers' => VoucherInstanceResource::collection($latestVoucherInstances)
+            'latest_vouchers' => VoucherInstanceResource::collection($latestVoucherInstances),
+            'policies' => $this->getSetting(config('constants.settings.policies'))->value,
+            'terms_conditions' => $this->getSetting(config('constants.settings.terms_conditions'))->value,
+            'about' => $this->getSetting(config('constants.settings.about'))->value
         ];
 
         $this->initResponse(200, 'success', $homeContent);

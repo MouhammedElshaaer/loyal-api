@@ -16,7 +16,9 @@ return [
         'premium_threshold' => 'PREMIUM_THRESHOLD',
         'premium_allowed' => 'PREMIUM_ALLOWED',
         'policies' => 'POLICIES',
-        'ads' => 'ADS',
+        'terms_conditions' => 'TERMS_CONDITIONS',
+        'about' => 'ABOUT',
+        'ads' => 'ADS'
     ],
 
     'default_settings' => [
@@ -30,14 +32,16 @@ return [
         "premium_currency_unit" => "1",
         "premium_threshold" => "1000",
         "premium_allowed" => false,
-        "policies" => "new may be simple text or html markup"
+        "policies" => "new may be simple text or <h2>html</h2> markup",
+        'terms_conditions' => '<h2>terms and conditions</h2>',
+        'about' => '<h2>About</h2>'
     ],
 
     'roles' => [
         'admin' => 'admin',
         'customer' => 'customer',
         'cashier' => 'cashier',
-        'premium' => 'premium',
+        'premium' => 'premium'
     ],
 
     'status_codes' => [
@@ -46,7 +50,7 @@ return [
         'refunded_status' => '111',
         'pending_status' => '10',
         'expired_status' => '11',
-        'status_error' => '0',
+        'status_error' => '0'
     ],
 
     'status' => [
@@ -55,7 +59,7 @@ return [
         '111' => 'refunded',
         '10' => 'pending',
         '11' => 'expired',
-        '0' => 'status error',
+        '0' => 'status error'
     ],
 
     'scopes' => [
