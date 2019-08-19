@@ -42,6 +42,7 @@ trait StatusUtilities
 
         $transactionPointsCopy['status'] = config('constants.status.'.$statusCode);
 
+        unset($transactionPointsCopy['voucher_instance_points']);
         unset($transactionPointsCopy['transaction']);
         return $transactionPointsCopy;
     }
@@ -67,7 +68,7 @@ trait StatusUtilities
             $transactionPointsCopy['is_valid'] = false;
             $transactionPointsCopy['is_expired'] = false;
 
-            $transactionPointsCopy['used_at'] = $voucherInstancePoint->created_at->toDayDateTimeString();
+            $transactionPointsCopy['used_at'] = $voucherInstancePoint->created_at->toDateTimeString();
 
             $statusCode = config('constants.status_codes.used_status');
             $transactionPointsCopy['status'] = config('constants.status.'.$statusCode);
@@ -76,7 +77,7 @@ trait StatusUtilities
             unset($transactionPointsCopy['transaction']);
             $usedVersions[] = $transactionPointsCopy;
         }
-        return $usedVersions;
+        return array_reverse($usedVersions);
     }
 
     public function getRefundedVersion($transactionPoints){
@@ -96,6 +97,7 @@ trait StatusUtilities
 
         $transactionPointsCopy['status'] = config('constants.status.'.$statusCode);
 
+        unset($transactionPointsCopy['voucher_instance_points']);
         unset($transactionPointsCopy['transaction']);
         return $transactionPointsCopy;
     }
@@ -119,6 +121,7 @@ trait StatusUtilities
 
         $transactionPointsCopy['status'] = config('constants.status.'.$statusCode);
 
+        unset($transactionPointsCopy['voucher_instance_points']);
         unset($transactionPointsCopy['transaction']);
         return $transactionPointsCopy;
     }
@@ -140,6 +143,7 @@ trait StatusUtilities
 
         $transactionPointsCopy['status'] = config('constants.status.'.$statusCode);
 
+        unset($transactionPointsCopy['voucher_instance_points']);
         unset($transactionPointsCopy['transaction']);
         return $transactionPointsCopy;
     }

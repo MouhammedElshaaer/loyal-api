@@ -51,7 +51,7 @@ class HomeController extends Controller
 
         $latestExpiringPointsDate = null;
         if(count($expiring_points) > 0){
-            $latestExpiringPointsDate = Carbon::parse($expiring_points[0]->valid_end_date)->toFormattedDateString();
+            $latestExpiringPointsDate = Carbon::parse($expiring_points[0]->valid_end_date)->toDateTimeString();
         }
 
         if (config('constants.default_locale')!=$request->headers->get('locale')) {
@@ -211,30 +211,30 @@ class HomeController extends Controller
             }
             else if($point->is_used){
 
-                $historyPoints[] = $this->getPendingVersion($point);
-                $historyPoints[] = $this->getValidVersion($point);
                 $historyPoints = array_merge($historyPoints, $this->getUsedVersions($point));
+                $historyPoints[] = $this->getValidVersion($point);
+                $historyPoints[] = $this->getPendingVersion($point);
 
             }
             else if($point->is_refunded){
 
-                $historyPoints[] = $this->getPendingVersion($point);
                 $historyPoints[] = $this->getRefundedVersion($point);
+                $historyPoints[] = $this->getPendingVersion($point);
 
             }
             else if($point->is_valid){
 
-                $historyPoints[] = $this->getPendingVersion($point);
-                $historyPoints[] = $this->getValidVersion($point);
                 $historyPoints = array_merge($historyPoints, $this->getUsedVersions($point));
+                $historyPoints[] = $this->getValidVersion($point);
+                $historyPoints[] = $this->getPendingVersion($point);
 
             }
             else if($point->is_expired){
 
-                $historyPoints[] = $this->getPendingVersion($point);
-                $historyPoints[] = $this->getValidVersion($point);
-                $historyPoints = array_merge($historyPoints, $this->getUsedVersions($point));
                 $historyPoints[] = $this->getExpiredVersion($point);
+                $historyPoints = array_merge($historyPoints, $this->getUsedVersions($point));
+                $historyPoints[] = $this->getValidVersion($point);
+                $historyPoints[] = $this->getPendingVersion($point);
 
             }
 

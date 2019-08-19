@@ -152,7 +152,7 @@ class VoucherInstance extends Model
 
     public function getValidEndDateAttribute(){
         $validDuration = $this->getSetting(config('constants.settings.valid_duration'))->value;
-        return $this->created_at->addDays($validDuration)->toFormattedDateString();
+        return $this->created_at->addDays($validDuration)->toDateTimeString();
 
     }
 

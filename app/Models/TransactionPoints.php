@@ -66,10 +66,10 @@ class TransactionPoints extends Model
      * @var array
      */
     protected $casts = [
-        'created_at' => 'datetime:l jS \\of F Y h:i:s A',
-        'updated_at' => 'datetime:l jS \\of F Y h:i:s A',
-        'used_at' => 'datetime:l jS \\of F Y h:i:s A',
-        'refunded_at' => 'datetime:l jS \\of F Y h:i:s A',
+        'created_at' => 'datetime:Y-m-d H:i:s',
+        'updated_at' => 'datetime:Y-m-d H:i:s',
+        'used_at' => 'datetime:Y-m-d H:i:s',
+        'refunded_at' => 'datetime:Y-m-d H:i:s',
     ];
 
     /**
@@ -138,7 +138,7 @@ class TransactionPoints extends Model
 
     public function getPendingEndDateAttribute(){
         $pendingDuration = $this->getSetting(config('constants.settings.pending_duration'))->value;
-        return $this->created_at->addDays($pendingDuration)->toFormattedDateString();
+        return $this->created_at->addDays($pendingDuration)->toDateTimeString();
 
     }
 
@@ -146,7 +146,7 @@ class TransactionPoints extends Model
         $pendingDuration = $this->getSetting(config('constants.settings.pending_duration'))->value;
         $validDuration = $this->getSetting(config('constants.settings.valid_duration'))->value;
         $pendingDurationEndDate = $this->created_at->addDays($pendingDuration);
-        return $pendingDurationEndDate->addDays($validDuration)->toFormattedDateString();
+        return $pendingDurationEndDate->addDays($validDuration)->toDateTimeString();
     }
 
 }
