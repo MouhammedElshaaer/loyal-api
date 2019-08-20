@@ -12,6 +12,6 @@ class Report extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'message', 'attachment'
+        'message', 'attachment', 'data_type', 'data_row_id'
     ];
 }

@@ -53,7 +53,7 @@ class UsersController extends Controller
         $provider =  $request->provider_name;
         $socialToken = $request->social_token;
         $providerUser = null;
-        
+
         $providerUser = $this->socialite($provider, $socialToken);
         if ($providerUser) {
 
@@ -67,10 +67,10 @@ class UsersController extends Controller
 
     /**
      * Find or create user instance by provider user instance and provider name.
-     * 
+     *
      * @param ProviderUser $providerUser
      * @param string $provider
-     * 
+     *
      * @return User
      */
     public function findOrCreate(ProviderUser $providerUser, string $provider): User
@@ -78,7 +78,7 @@ class UsersController extends Controller
         $linkedSocialAccount = LinkedSocialAccount::where('provider_name', $provider)
                                                     ->where('provider_id', $providerUser->getId())
                                                     ->first();
-                                                    
+
         if ($linkedSocialAccount) {
             $user = $linkedSocialAccount->user;
 
@@ -137,7 +137,7 @@ class UsersController extends Controller
     }
 
     public function completeSignup(CompleteSignupRequest $request){
-        
+
         $socialToken = $request->social_token;
         $provider =  $request->provider_name;
         $attributes = $request->only('country_code', 'phone', 'name');
@@ -148,7 +148,7 @@ class UsersController extends Controller
 
             if($providerUser->getEmail()){$user = $this->findOrCreate($providerUser, $provider);}
             else{$this->initResponse(400, 'missing_associated_email');}
-            
+
             if(!$user){$this->initResponse(400, 'user_validation_fail');}
             else{
                 $user->update($attributes);
@@ -163,7 +163,7 @@ class UsersController extends Controller
     public function verifyAccount(UserVerificationRequest $request){
 
         $user = null;
-        $otp = $request->code; 
+        $otp = $request->code;
 
         if($request->has('phone')){
 
@@ -176,7 +176,7 @@ class UsersController extends Controller
             $socialToken = $request->social_token;
             $provider =  $request->provider_name;
             $providerUser = $this->socialite($provider, $socialToken);
-            
+
             if ($providerUser) {
 
                 if($providerUser->getEmail()){$user = $this->findOrCreate($providerUser, $provider);}
@@ -187,8 +187,8 @@ class UsersController extends Controller
 
         if($user){
             if(!$user->verified){
-                
-                if($otp == $user->otp){    
+
+                if($otp == $user->otp){
 
                     //Update the user instance in the DB
                     $user->verified = true;
@@ -234,14 +234,14 @@ class UsersController extends Controller
 
             }else{$this->initResponse(400, 'invalid_otp');}
         }else{$this->initResponse(400, 'user_validation_fail');}
- 
+
         return response()->json($this->data , 200);
     }
 
     public function resetPassword(ResetPasswordRequest $request){
 
         $attributes = $request->only('password', 'code');
-        
+
         if(auth()->user()){
             $user = User::where('id', auth()->user()->id)->first();
             if($user){
@@ -274,7 +274,7 @@ class UsersController extends Controller
     }
 
     public function logout(Request $request){
-        
+
         if(auth()->user()){
 
             $accessToken = auth()->user()->token();
@@ -287,18 +287,18 @@ class UsersController extends Controller
     }
 
 
-    
+
     /*******************************************************************************
      *********************************** Reports ***********************************
      *******************************************************************************/
 
     public function addReport(AddReportRequest $request){
 
-        $attributes = $request->only('user_id', 'message', 'attachment');
-        if( User::find($attributes['user_id']) ){
-            $report = Report::create($attributes);
-            $this->initResponse(200, 'add_report_success');
-        }else{throw new Exception();}
+        $user = auth()->user();
+
+        $attributes = $request->only('message', 'attachment', 'data_type', 'data_row_id');
+        $report = Report::create($attributes);
+        $this->initResponse(200, 'add_report_success');
 
         return response()->json($this->data, 200);
     }
@@ -308,7 +308,7 @@ class UsersController extends Controller
      *******************************************************************************/
 
     protected function providerUserFromIdToken($idToken){
-        
+
         $client = new Google_Client(['client_id' => config('services.google.client_id')]);
         $providerUser = null;
         $payload = $client->verifyIdToken($idToken);

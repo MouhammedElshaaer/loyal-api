@@ -30,9 +30,10 @@ class AddReportRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => 'required|numeric',
             'message' => 'required|string',
-            'attachment' => 'required',
+            'attachment' => 'string',
+            'data_type' => 'string',
+            'data_row_id' => 'numeric',
         ];
     }
 

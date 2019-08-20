@@ -15,9 +15,10 @@ class CreateReportsTable extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedInteger('user_id');
             $table->text('message');
             $table->text('attachment');
+            $table->string('data_type');
+            $table->unsignedBigInteger('data_row_id');
             $table->boolean('deactivated')->default(0);
             $table->timestamps();
         });
