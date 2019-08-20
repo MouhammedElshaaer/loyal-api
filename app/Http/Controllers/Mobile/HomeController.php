@@ -167,7 +167,7 @@ class HomeController extends Controller
 
             if (!$user) { $this->initResponse(500, 'server_error'); }
             else {
-                $this->sendVerificationCode($user->id);
+                $this->sendVerificationCode(User::class, $user->id, '1234');
                 $this->initResponse(200, 'awaiting_verification');
             }
 

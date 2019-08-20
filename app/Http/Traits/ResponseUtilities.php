@@ -14,7 +14,7 @@ trait ResponseUtilities
         if (!$user->verified) {
 
             $this->initResponse(402, 'non_verified');
-            $this->sendVerificationCode($user->id);
+            $this->sendVerificationCode(User::class, $user->id, '1234');
             return false;
 
         } else {
@@ -28,7 +28,7 @@ trait ResponseUtilities
 
     protected function signupSuccessResponse($user){
         $this->initResponse(200, 'signup_success');
-        $this->sendVerificationCode($user->id);
+        $this->sendVerificationCode(User::class, $user->id, '1234');
     }
 
     protected function socialSignupSuccessResponse($user){
@@ -56,7 +56,7 @@ trait ResponseUtilities
         $this->data['data'] = $data? $data: new \stdClass();
     }
 
-    public function sendVerificationCode($id){
+    public function sendVerificationCode($dataTypePath, $dataRowId, $code){
 
         /**
          * TODO:
@@ -64,12 +64,15 @@ trait ResponseUtilities
          */
 
         // $otp = $this->generateOTP(4);
-        $otp = "1234";
-        //Update the user instance in the DB
-        $user = User::find($id);
-        $user->otp = $otp;
-        $user->save();
-        //Refreshing the cached user
-        auth()->guard('api')->setUser($user);
+        $otp = $code;
+        //Update the dataRow instance in the DB
+        $dataRow = ($dataTypePath)::find($dataRowId);
+        $dataRow->otp = $otp;
+        $dataRow->save();
+
+        if($dataTypePath == User::class){
+            //Refreshing the cached user
+            auth()->guard('api')->setUser($dataRow);
+        }
     }
 }

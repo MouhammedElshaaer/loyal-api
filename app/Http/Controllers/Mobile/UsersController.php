@@ -213,7 +213,7 @@ class UsersController extends Controller
         $user = User::where("phone", $request->phone)->where("country_code", $request->country_code)->first();
         if($user){
             $this->initResponse(200, 'user_validation_success');
-            $this->sendVerificationCode($user->id);
+            $this->sendVerificationCode(User::class, $user->id, '1234');
         }else{$this->initResponse(400, 'user_validation_fail');}
 
         return response()->json($this->data , 200);
@@ -266,7 +266,7 @@ class UsersController extends Controller
             $user->otp = null;
             $user->save();
 
-            $this->sendVerificationCode($user->id);
+            $this->sendVerificationCode(User::class, $user->id, '1234');
             $this->initResponse(200, 'resend_code_success');
         }
 
