@@ -27,6 +27,7 @@ use App\User;
 use App\Models\LinkedSocialAccount;
 use App\Models\Report;
 use App\Models\Role;
+use App\Models\Device;
 
 class UsersController extends Controller
 {
@@ -104,7 +105,7 @@ class UsersController extends Controller
                     'image' => $providerUser->getAvatar(),
                 ]);
 
-                if (!$role = $this->getDataRowByKey(Role::class, 'name', 'customer')) { $user->roles()->attach($role); }
+                if (!$role = $this->getDataRow(Role::class, 'name', 'customer')) { $user->roles()->attach($role); }
                 $this->socialSignupSuccessResponse($user);
 
             }else{
@@ -129,7 +130,7 @@ class UsersController extends Controller
         $user = $this->createUpdateDataRow(User::class, $attributes);
         if($user){
 
-            if ($role = $this->getDataRowByKey(Role::class, 'name', 'customer')) { $user->roles()->attach($role); }
+            if ($role = $this->getDataRow(Role::class, 'name', 'customer')) { $user->roles()->attach($role); }
             $this->signupSuccessResponse($user);
         }
 
@@ -280,6 +281,7 @@ class UsersController extends Controller
             $accessToken = auth()->user()->token();
             \DB::table('oauth_refresh_tokens')->where('access_token_id', $accessToken->id)->update(['revoked' => true]);
             $accessToken->revoke();
+            if ($request->has('token')) { $this->deleteDataRow(Device::class, 'token', $request->token); }
             $this->initResponse(200, 'logout_success');
 
         }else{$this->initResponse(400, 'unauthorized');}

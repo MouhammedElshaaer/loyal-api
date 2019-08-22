@@ -33,9 +33,11 @@ class UpdateCashierRequest extends FormRequest
             'id' => 'required',
             'name' => 'required',
             'email' => 'required',
-            'image' => 'required',
-            'verified' => 'required',
-            'deactivated' => 'required'
+            // 'image' => 'required',
+            'country_code' => 'required',
+            'phone' => 'required',
+            // 'password' => 'required',
+            // 'deactivated' => 'required'
         ];
     }
 

@@ -5,9 +5,13 @@ namespace App\Http\Controllers\Mobile;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+use App\Http\Resources\VoucherInstance as VoucherInstanceResource;
+use App\Http\Resources\User as UserResource;
+
 use App\Http\Requests\AddTransactionRequest;
 use App\Http\Requests\CheckVoucherInstanceRequest;
 use App\Http\Requests\RefundTransactionRequest;
+use App\Http\Requests\CustomerFromQRCodeRequest;
 
 use App\Jobs\SendNotification;
 
@@ -57,7 +61,7 @@ class MerchantController extends Controller
         try {
 
             $points = $this->resolvePoints($request->invoice_value);
-            $user = $this->getDataRowByKey(User::class, 'qr_code', $request->user_qr_code);
+            $user = $this->getDataRow(User::class, 'qr_code', $request->user_qr_code);
             if (!$user) { throw new Exception('User not found'); }
             else if (!$user->verified) { throw new Exception('User not verified'); }
 
@@ -76,7 +80,7 @@ class MerchantController extends Controller
 
             if ($request->has('voucher_qr_code')) {
 
-                $voucherInstance = $this->getDataRowByKey(VoucherInstance::class, 'qr_code', $request->voucher_qr_code);
+                $voucherInstance = $this->getDataRow(VoucherInstance::class, 'qr_code', $request->voucher_qr_code);
                 if (!$voucherInstance){ throw new Exception("Voucher not found"); }
                 else if ($voucherInstance->is_used){ throw new Exception("Voucher already used"); }
                 else if ($voucherInstance->deactivated){ throw new Exception("Voucher deactivated"); }
@@ -147,7 +151,7 @@ class MerchantController extends Controller
 
             if ($voucherInstance->is_valid) {
 
-                $this->initResponse(200, $statusCode);
+                $this->initResponse(200, $statusCode, new VoucherInstanceResource($voucherInstance));
                 $actionType = $this->resolveActionFromStatus($actionScope, $status);
                 $actionLogAttributes = $this->initLogAttributes(auth()->user()->id, $voucherInstance->id, VoucherInstance::class, 'cashier', $actionType);
 
@@ -224,6 +228,38 @@ class MerchantController extends Controller
         } else{ $this->initResponse(400, 'invalid_invoice_number'); }
 
         return response()->json($this->data, 200);
+
+    }
+
+    /*******************************************************************************
+     ******************** Terms & Conditions, Policies and About *******************
+     *******************************************************************************/
+
+    public function dashboard(Request $request){
+
+        $dashboardContent = [
+            'terms_conditions' => $this->getSetting(config('constants.settings.terms_conditions'))->value,
+            'policies' => $this->getSetting(config('constants.settings.policies'))->value,
+            'about' => $this->getSetting(config('constants.settings.about'))->value
+        ];
+
+        $this->initResponse(200, 'success', $dashboardContent);
+        return response()->json($this->data , 200);
+
+    }
+
+    /*******************************************************************************
+     ***************************** Customer Validation *****************************
+     *******************************************************************************/
+
+    public function getCustomerFromQRCode(CustomerFromQRCodeRequest $request){
+
+        $customer = $this->getDataRow(User::class, 'qr_code', $request->qr_code);
+        if (!$customer) { $this->initResponse(200, 'user_validation_fail'); }
+        else if ($customer->deactivated) { $this->initResponse(200, 'deactivated_account'); }
+        else if (!$customer->verified) { $this->initResponse(200, 'non_verified'); }
+        else { $this->initResponse(200, 'user_validation_success', new UserResource($customer)); }
+        return response()->json($this->data , 200);
 
     }
 

@@ -27,11 +27,11 @@ trait LogUtilities
     }
 
     public function getScope($scopeName){
-        return $this->getDataRowByKey(Scope::class, 'name', $scopeName);
+        return $this->getDataRow(Scope::class, 'name', $scopeName);
     }
 
     public function getAction($actionType){
-        return $this->getDataRowByKey(Action::class, 'type', $actionType);
+        return $this->getDataRow(Action::class, 'type', $actionType);
     }
 
     public function resolveActionFromStatus($actionScope, $status){

@@ -64,9 +64,11 @@ Route::group(['middleware' =>['auth:api', 'canAccess:'.$cashier_customer_privile
 Route::group(['middleware' => ['auth:api', 'canAccess:'.$cashier_privileged]], function () {
 
     /**Merchant*/
+    Route::get('mobile/dashboard', 'Mobile\MerchantController@dashboard');
+    Route::post('mobile/qrcode/customers', 'Mobile\MerchantController@getCustomerFromQRCode');
     Route::post('mobile/transaction', 'Mobile\MerchantController@addTransaction');
     Route::post('mobile/refund', 'Mobile\MerchantController@refundTransaction');
-    Route::post('mobile/voucher/check', 'Mobile\MerchantController@checkVoucherInstance');
+    Route::post('mobile/qrcode/vouchers', 'Mobile\MerchantController@checkVoucherInstance');
 });
 
 /**
@@ -91,13 +93,13 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::post('web/settings/fetch', 'Web\AdminController@fetchSettings');
     Route::post('web/configuration', 'Web\AdminController@addConfiguration');
     //Cashier
+    Route::get('web/cashiers', 'Web\AdminController@getCashiers');
     Route::post('web/cashier/create', 'Web\AdminController@createCashier');
-    Route::post('web/cashier/delete/{id}', 'Web\AdminController@deleteUser');
-    //Users + Cashier
-    Route::post('web/customer', 'Web\AdminController@updateCustomer');
     Route::post('web/cashier', 'Web\AdminController@updateCashier');
+    Route::post('web/cashier/delete/{id}', 'Web\AdminController@deleteUser');
     //Users
     Route::get('web/users', 'Web\AdminController@getUsers');
+    Route::post('web/customer', 'Web\AdminController@updateCustomer');
     //Action Logs
     Route::get('web/actions', 'Web\AdminController@getActionLogs');
     //Notifications

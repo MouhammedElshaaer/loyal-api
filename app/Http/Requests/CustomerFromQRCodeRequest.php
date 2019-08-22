@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\App;
 
 use App\Http\Requests\Traits\UsesCustomErrorMessage;
 
-class CreateUserRequest extends FormRequest
+class CustomerFromQRCodeRequest extends FormRequest
 {
     use UsesCustomErrorMessage;
 
@@ -30,11 +30,7 @@ class CreateUserRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required',
-            'email' => 'email|required|unique:users',
-            'password' => 'required|min:8',
-            'country_code' => 'required',
-            'phone' => 'required|unique:users|numeric|digits_between:8,14'
+            'qr_code' => 'required'
         ];
     }
 

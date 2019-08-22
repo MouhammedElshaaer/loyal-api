@@ -16,7 +16,8 @@ return [
     'missing_associated_email'=> 'Can’t get user email',
 
     'awaiting_verification'=> 'Success, a verification code sent, Please confirm',
-    'non_verified'=> 'Would you please verify your Loyal account',
+    'non_verified'=> 'This account is not verified',
+    'deactivated_account'=> 'This account is deactivated',
     'verification_success'=> 'Verification complete',
     'already_verified'=> 'This account already verified',
     'phone_already_taken'=> 'This phone already associated with another account',

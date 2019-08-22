@@ -79,7 +79,7 @@ class NotificationsService
 
 	protected function removeTokens($tokens){
 		foreach ($tokens as $token){
-			if ($dataRow = $this->getDataRowByKey(Device::class, 'token', $token)) { $dataRow->delete; }
+			if ($dataRow = $this->getDataRow(Device::class, 'token', $token)) { $dataRow->delete; }
 		}
 	}
 

@@ -152,11 +152,11 @@ class HomeController extends Controller
 
     public function changePhone(ChangePhoneRequest $request) {
 
-        $user = $this->getDataRowByKey(User::class, 'phone', $request->phone);
+        $user = $this->getDataRow(User::class, 'phone', $request->phone);
         if ($user && $user->verified) { $this->initResponse(400, 'phone_already_taken'); }
         else {
 
-            if ($user) { $this->deleteDataRow(User::class, $user->id); }
+            if ($user) { $this->deleteDataRowByPrimaryKey(User::class, $user->id); }
 
             $user = auth()->user();
             $attributes = $request->only('phone', 'country_code');

@@ -26,7 +26,7 @@ trait CRUDUtilities
         return ($dataTypePath)::find($PrimaryKey);
     }
 
-    public function getDataRowByKey($dataTypePath, $key, $value){
+    public function getDataRow($dataTypePath, $key, $value){
 
         return ($dataTypePath)::where($key, $value)->first();
     }
@@ -41,9 +41,17 @@ trait CRUDUtilities
         return ($dataTypePath)::all();
     }
 
-    public function deleteDataRow($dataTypePath, $dataTypeId){
+    public function deleteDataRowByPrimaryKey($dataTypePath, $dataRowId){
 
-        $dataType = ($dataTypePath)::find($dataTypeId);
+        $dataType = ($dataTypePath)::find($dataRowId);
+        if (!$dataType){return false;}
+        $dataType->delete();
+        return true;
+    }
+
+    public function deleteDataRow($dataTypePath, $key, $value){
+
+        $dataType = ($dataTypePath)::where($key, $value)->first();
         if (!$dataType){return false;}
         $dataType->delete();
         return true;

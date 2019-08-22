@@ -12,6 +12,8 @@ use App\Models\Configuration;
 
 class FetchSettingsRequest extends FormRequest
 {
+    use UsesCustomErrorMessage;
+
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -23,11 +25,10 @@ class FetchSettingsRequest extends FormRequest
             //We use raw() here as we want a case sensitive comparison
             if(!Configuration::where(\DB::raw("BINARY `category`"), config('constants.settings.'.$config))->first()){return false;}
         }
-        $locale = $this->headers->get('locale');
-        App::setLocale($locale);
+        App::setLocale($this->headers->get('locale'));
         return true;
     }
-    
+
     protected function failedAuthorization()
     {
         throw new AuthorizationException();
@@ -41,7 +42,7 @@ class FetchSettingsRequest extends FormRequest
     public function rules()
     {
         return [
-            
+
         ];
     }
 
@@ -53,10 +54,5 @@ class FetchSettingsRequest extends FormRequest
     public function messages()
     {
         return  __('validation.custom');
-    }
-
-    public function message()
-    {
-        return __('messages.validation_error');
     }
 }

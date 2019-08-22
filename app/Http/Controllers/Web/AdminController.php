@@ -233,15 +233,15 @@ class AdminController extends Controller
     public function getUsers(Request $request){
 
         $paginationItemsNumber = 1;
-
+        $role = Role::where('name', 'customer')->first();
         if ($request->has('query')) {
-            $items = User::where('email', 'LIKE', '%'.$request->query("query").'%')->paginate($paginationItemsNumber);
-            $total_pages = User::where('email', 'LIKE', '%'.$request->query("query").'%')->paginate($paginationItemsNumber)->lastPage();
-            $total_items = User::where('email', 'LIKE', '%'.$request->query("query").'%')->paginate($paginationItemsNumber)->total();
+            $items = $role->users()->where('email', 'LIKE', '%'.$request->query("query").'%')->paginate($paginationItemsNumber);
+            $total_pages = $role->users()->where('email', 'LIKE', '%'.$request->query("query").'%')->paginate($paginationItemsNumber)->lastPage();
+            $total_items = $role->users()->where('email', 'LIKE', '%'.$request->query("query").'%')->paginate($paginationItemsNumber)->total();
         } else {
-            $items = User::paginate($paginationItemsNumber);
-            $total_pages = User::paginate($paginationItemsNumber)->lastPage();
-            $total_items = User::paginate($paginationItemsNumber)->total();
+            $items = $role->users()->paginate($paginationItemsNumber);
+            $total_pages = $role->users()->paginate($paginationItemsNumber)->lastPage();
+            $total_items = $role->users()->paginate($paginationItemsNumber)->total();
         }
 
         $paginate_response = [
@@ -267,7 +267,7 @@ class AdminController extends Controller
             $user->verified = true;
             $user->save();
 
-            if ($role = $this->getDataRowByKey(Role::class, 'name', 'cashier')) {
+            if ($role = $this->getDataRow(Role::class, 'name', 'cashier')) {
                 $user->roles()->attach($role);
             }
         }
@@ -288,9 +288,23 @@ class AdminController extends Controller
 
     }
 
+    public function getCashiers(Request $request){
+
+        $role = Role::where('name', 'cashier')->first();
+        if ($request->has('query')) {
+            $items = $role->users()->where('email', 'LIKE', '%'.$request->query("query").'%')->get();
+        } else {
+            $items = $role->users;
+        }
+
+        $this->initResponse(200, 'success', $items? UserResource::collection($items): []);
+        return response()->json($this->data, 200);
+
+    }
+
     public function updateCashier(UpdateCashierRequest $request){
 
-        $attributes = $request->only('id', 'name', 'email', 'image', 'verified', 'deactivated');
+        $attributes = $request->only('id', 'name', 'email', 'image', 'country_code', 'phone', 'password', 'deactivated');
         $user = $this->createUpdateDataRow(User::class, $attributes);
 
         if (!$user) { $this->initResponse(500, 'server_error'); }
@@ -314,7 +328,7 @@ class AdminController extends Controller
     public function deleteUser(Request $request, $id){
 
         if ($user= getDataRowByPrimaryKey(User::class, $id)) { $user->roles()->detach(); }
-        if (!$this->deleteDataRow(User::class, $id)) { $this->initResponse(500, 'server_error'); }
+        if (!$this->deleteDataRowByPrimaryKey(User::class, $id)) { $this->initResponse(500, 'server_error'); }
         $this->initResponse(200, 'success');
         return response()->json($this->data, 200);
     }

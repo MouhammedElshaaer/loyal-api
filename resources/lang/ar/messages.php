@@ -14,7 +14,8 @@ return [
     'missing_associated_email'=> 'لا يمكن الحصول على البريد الإلكترونى',
 
     'awaiting_verification'=> 'تم تغيير الرقم, تم إسال كود لتفعيل الحساب',
-    'non_verified'=> 'برجاء تفعيل حسابك',
+    'non_verified'=> 'هذا الحساب غير مفعل',
+    'deactivated_account'=> 'هذا الحساب موقوف',
     'verification_success'=> 'تم تفعيل الحساب',
     'already_verified'=> 'ًلقد تم تفعيل هذا الحساب مسبقا',
     'phone_already_taken'=> 'تم استخدام هذا الرقم مع حساب اخر',
