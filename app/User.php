@@ -87,7 +87,7 @@ class User extends Authenticatable
     public function getPointsAttribute()
     {
         $points = [];
-        $transactions = $this->transactions()->orderBy('created_at')->get();
+        $transactions = $this->transactions()->orderBy('created_at', 'desc')->get();
         foreach ($transactions as $transaction) {
 
             $transactionPoints = $transaction->transactionPoints;
