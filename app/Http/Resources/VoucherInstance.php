@@ -22,7 +22,7 @@ class VoucherInstance extends JsonResource
             'used_at' => $this->used_at? $this->used_at->toDateTimeString(): null,
             'invoice_number' => $this->transaction_id? $this->transaction->invoice_number: null,
             'valid_end_date' => $this->valid_end_date,
-            'status' => $this->status,
+            'status' => config('constants.status.'.$this->status),
             'is_used' => $this->is_used,
             'is_valid' => $this->is_valid,
             'is_expired' => $this->is_expired,
