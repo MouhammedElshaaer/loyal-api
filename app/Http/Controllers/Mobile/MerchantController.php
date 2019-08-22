@@ -255,9 +255,9 @@ class MerchantController extends Controller
     public function getCustomerFromQRCode(CustomerFromQRCodeRequest $request){
 
         $customer = $this->getDataRow(User::class, 'qr_code', $request->qr_code);
-        if (!$customer) { $this->initResponse(200, 'user_validation_fail'); }
-        else if ($customer->deactivated) { $this->initResponse(200, 'deactivated_account'); }
-        else if (!$customer->verified) { $this->initResponse(200, 'non_verified'); }
+        if (!$customer) { $this->initResponse(400, 'user_validation_fail'); }
+        else if ($customer->deactivated) { $this->initResponse(400, 'deactivated_account'); }
+        else if (!$customer->verified) { $this->initResponse(400, 'non_verified'); }
         else { $this->initResponse(200, 'user_validation_success', new UserResource($customer)); }
         return response()->json($this->data , 200);
 
