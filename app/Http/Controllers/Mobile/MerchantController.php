@@ -16,6 +16,7 @@ use App\Http\Requests\CustomerFromQRCodeRequest;
 use App\Jobs\SendNotification;
 
 use Exception;
+use Carbon\Carbon;
 
 use App\User;
 
