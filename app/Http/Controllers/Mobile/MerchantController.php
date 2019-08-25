@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 
 use App\Http\Resources\VoucherInstance as VoucherInstanceResource;
 use App\Http\Resources\User as UserResource;
+use App\Http\Resources\ActionLog as ActionLogResource;
 
 use App\Http\Requests\AddTransactionRequest;
 use App\Http\Requests\CheckVoucherInstanceRequest;
@@ -266,6 +267,18 @@ class MerchantController extends Controller
         else { $this->initResponse(200, 'user_validation_success', new UserResource($customer)); }
         return response()->json($this->data , 200);
 
+    }
+
+    /*******************************************************************************
+     ********************************* Action Logs *********************************
+     *******************************************************************************/
+
+    public function getActionLogs(Request $request){
+
+        $actionLogs = $this->getDataRows(ActionLog::class, 'user_id', auth()->user()->id);
+
+        $this->initResponse(200, 'success', ActionLogResource::collection($actionLogs));
+        return response()->json($this->data, 200);
     }
 
     /*******************************************************************************

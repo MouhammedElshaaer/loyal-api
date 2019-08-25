@@ -65,6 +65,7 @@ Route::group(['middleware' => ['auth:api', 'canAccess:'.$cashier_privileged]], f
 
     /**Merchant*/
     Route::get('mobile/dashboard', 'Mobile\MerchantController@dashboard');
+    Route::get('mobile/actions', 'Mobile\MerchantController@getActionLogs');
     Route::post('mobile/qrcode/customers', 'Mobile\MerchantController@getCustomerFromQRCode');
     Route::post('mobile/transaction', 'Mobile\MerchantController@addTransaction');
     Route::post('mobile/refund', 'Mobile\MerchantController@refundTransaction');

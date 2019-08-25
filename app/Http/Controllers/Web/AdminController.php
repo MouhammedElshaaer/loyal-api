@@ -15,6 +15,8 @@ use App\Http\Requests\UpdateCustomerRequest;
 use App\Http\Requests\UpdateCashierRequest;
 
 use App\Http\Resources\User as UserResource;
+use App\Http\Resources\Setting as SettingResource;
+use App\Http\Resources\ActionLog as ActionLogResource;
 
 use App\Http\Traits\ResponseUtilities;
 use App\Http\Traits\CRUDUtilities;
@@ -32,9 +34,6 @@ use App\Models\ActionLog;
 use App\Models\Device;
 use App\Models\Notification;
 use App\User;
-
-use App\Http\Resources\Setting as SettingResource;
-use App\Http\Resources\ActionLog as ActionLogResource;
 
 use Exception;
 
