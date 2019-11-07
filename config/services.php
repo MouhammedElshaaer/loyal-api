@@ -45,16 +45,14 @@ return [
     ],
 
     'google' => [
-        // 'client_id' => '485802115186-l7hmv3ube5b7vuue8vdprdlsdt4j6htm.apps.googleusercontent.com', //loyal.['loyal']
-        // 'client_secret' => 'Gvb_ow0o26Coh4c9cOg5AopE',//loyal.['loyal']
-        'client_id' => '449221771045-9u290n0csjj3fu3ftfdglm546lqovp16.apps.googleusercontent.com', //loyality.['Web client 1']
-        'client_secret' => 'gRqUaiW8YAV0aYvwLIbjXTr7',//loyality['Web client 1']
+        'client_id' => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_APP_SECRET'),
         'redirect' => "",
     ],
 
     'facebook' => [
-        'client_id' => "878316139200558",
-        'client_secret' => "8f8b0df7d7fdeebc2ac715aea66d2261",
+        'client_id' => env('FACEBOOK_CLIENT_ID'),
+        'client_secret' => env('FACEBOOK_APP_SECRET'),
         'redirect' => "",
     ],
 
