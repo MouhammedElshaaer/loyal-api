@@ -1,6 +1,6 @@
 # Loyal Webservice
 
-A webservice that is serving 3 clients, a Customer android/ios mobile application, a Merchant android/ios mobile application, and an Admin Angular web application.
+Loyal webservice is a reward system manager that is serving 3 clients, a Customer android/ios mobile application, a Merchant android/ios mobile application, and an Admin Angular web application.
 
 ## The basic functional requirements
 
